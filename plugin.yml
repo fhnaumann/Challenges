@@ -1,0 +1,29 @@
+main: me.wand555.Challenges.Challenges
+name: Challenges
+version: 0.0.1
+description: A Challenge plugin to customize vanilla experience!
+api-version: 1.13
+author: wand555
+commands:
+  challenge:
+    usage: /challenge <option>
+    description: General options.
+  timer:
+    usage: /timer <option>
+    description: timer settings
+  pos:
+    usage: /pos <name> Sets a pos visible to all players.
+    description: Registers new pos with name and player postion.
+  bp:
+    usage: /bp
+    description: Opens up shared backpack.
+    permission: challenge.bp
+  hp:
+    usage: /hp <amount> <player>
+    description: Sets the players HP.
+    permission: challenge.hp
+  settings:
+    usage: /settings
+    description: Opens gui with settings.
+    permission: challenge.settings.view
+    
