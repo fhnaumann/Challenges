@@ -21,6 +21,8 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoRegenerationChall
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.SharedHealthChallenge.SharedHealthChallenge;
 import me.wand555.Challenges.ChallengeProfile.Positions.PositionManager;
 import me.wand555.Challenges.Config.LanguageMessages;
@@ -174,10 +176,39 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 				mlgChallenge.setTimer(new MLGTimer(PLUGIN, mlgChallenge.getTimer().getTotalTimeToMLG(), mlgChallenge.getTimer().getTimeToMLG()));
 			}
 		}
+		
+		OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);
+		if(onBlockChallenge.isActive()) {
+			if(onBlockChallenge.getTimer() == null
+					|| onBlockChallenge.getTimer().getTimeTo() == 0
+					|| onBlockChallenge.getTimer().getTotalTimeTo() == 0) {
+				//noch nie gestartet
+				onBlockChallenge.setTimer(new OnBlockTimer(PLUGIN, onBlockChallenge));
+			}
+			else if(onBlockChallenge.getTimer().isCancelled()) {
+				onBlockChallenge.setTimer(new OnBlockTimer(PLUGIN, onBlockChallenge, onBlockChallenge.getTimer().getTotalTimeTo(), onBlockChallenge.getTimer().getTimeTo()));
+			}
+			
+			getParticipantsAsPlayers().forEach(p -> onBlockChallenge.addPlayerToBossBar(p));
+		}
+	}
+	
+	private String getMultipleCausers(Player[] causers) {
+		StringBuilder stringBuilder = new StringBuilder();
+		for(int i=0; i<causers.length; i++) {
+			stringBuilder.append(causers[i].getName());
+			if(i+1 >= causers.length) {
+				//last one
+			}
+			else {
+				stringBuilder.append(", ");
+			}
+		}
+		return stringBuilder.toString();
 	}
 
 	@Override
-	public void endChallenge(Player causer, ChallengeEndReason reason) {
+	public void endChallenge(ChallengeEndReason reason, Player... causer) {
 		restoreChallenge = new RestoreChallenge(getParticipantsAsPlayers(), getSecondTimer().getTime(), reason);
 		setPaused();
 		setDone();
@@ -188,25 +219,28 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 			reasonMessage = LanguageMessages.endChallengeComplete.replace("[TIME]", DateUtil.formatDuration(secondTimer.getTime()));
 			break;
 		case NATURAL_DEATH:
-			reasonMessage = LanguageMessages.endChallengeNaturalDeath.replace("[PLAYER]", causer.getName());
+			reasonMessage = LanguageMessages.endChallengeNaturalDeath.replace("[PLAYER]", causer[0].getName());
 			break;
 		case NO_BLOCK_BREAK:
-			reasonMessage = LanguageMessages.endChallengeNoBreak.replace("[PLAYER]", causer.getName());
+			reasonMessage = LanguageMessages.endChallengeNoBreak.replace("[PLAYER]", causer[0].getName());
 			break;
 		case NO_BLOCK_PLACE:
-			reasonMessage = LanguageMessages.endChallengeNoPlace.replace("[PLAYER]", causer.getName());
+			reasonMessage = LanguageMessages.endChallengeNoPlace.replace("[PLAYER]", causer[0].getName());
 			break;
 		case NO_CRAFTING:
-			reasonMessage = LanguageMessages.endChallengeNoCrafting.replace("[PLAYER]", causer.getName());
+			reasonMessage = LanguageMessages.endChallengeNoCrafting.replace("[PLAYER]", causer[0].getName());
 			break;
 		case NO_DAMAGE:
-			reasonMessage = LanguageMessages.endChallengeNoDamage.replace("[PLAYER]", causer.getName());
+			reasonMessage = LanguageMessages.endChallengeNoDamage.replace("[PLAYER]", causer[0].getName());
 			break;
 		case NO_SNEAKING:
-			reasonMessage = LanguageMessages.endChallengeNoSneaking.replace("[PLAYER]", causer.getName());
+			reasonMessage = LanguageMessages.endChallengeNoSneaking.replace("[PLAYER]", causer[0].getName());
 			break;
 		case FAILED_MLG:
-			reasonMessage = "translate later";
+			reasonMessage = LanguageMessages.endChallengeFailedMLG.replace("[PLAYER]", causer[0].getName());
+			break;
+		case NOT_ON_BLOCK:
+			reasonMessage = LanguageMessages.endChallengeNotOnBlock.replace("[PLAYER]", getMultipleCausers(causer));
 			break;
 		default:
 			reasonMessage = "Unknown";

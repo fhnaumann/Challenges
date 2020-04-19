@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,6 +29,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
 import me.wand555.Challenges.Config.LanguageMessages;
 import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
 
@@ -35,11 +37,13 @@ public class GUIClickListener implements Listener {
 
 	private GUI gui;
 	private SignMenuFactory signMenuFactory;
+	private Challenges plugin;
 	
 	public GUIClickListener(Challenges plugin, GUI gui, SignMenuFactory signMenuFactory) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		this.gui = gui;
 		this.signMenuFactory = signMenuFactory;
+		this.plugin = plugin;
 	}
 	
 	@EventHandler
@@ -315,7 +319,92 @@ public class GUIClickListener implements Listener {
 								reloadOtherPlayerInvs(gui, p);
 								
 								break;
-							}			
+							}	
+							case 15:
+							{			
+								OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);														
+								if(!onBlockChallenge.isActive()) {
+									signMenuFactory
+						            .newMenu(new ArrayList<String>(LanguageMessages.onBlockSign))
+						            .reopenIfFail()
+						            .response((player, lines) -> {
+						            	
+						            	String[] entered = lines[0].split(" ");
+						            	if(entered.length == 4) {
+						            		String enteredLine2 = entered[0];
+							            	String enteredLine3 = entered[1];
+							            	String enteredLine4 = entered[2];
+							            	String enteredLine5 = entered[3];
+							            	if(StringUtils.isNumericSpace(enteredLine2) && !enteredLine2.isEmpty()
+							            			&& StringUtils.isNumericSpace(enteredLine3) && !enteredLine3.isEmpty()
+							            			&& StringUtils.isNumericSpace(enteredLine4) && !enteredLine4.isEmpty()
+							            			&& StringUtils.isNumericSpace(enteredLine5) && !enteredLine5.isEmpty()) {
+							            		int earliestToShown = (int) Math.round(Double.valueOf(enteredLine2));
+							            		int latestToShown = (int) Math.round(Double.valueOf(enteredLine3));
+							            		int earliestOnBlock = (int) Math.round(Double.valueOf(enteredLine4));
+							            		int latestOnBlock = (int) Math.round(Double.valueOf(enteredLine5));
+							            		
+							            		if(earliestToShown > 0 && latestToShown > 0 
+							            				&& earliestOnBlock > 0 && latestOnBlock > 0) {
+							            			if(earliestToShown <= latestToShown || earliestOnBlock <= latestOnBlock) {
+							            				System.out.println(onBlockChallenge);
+							            				
+							            				//onBlockChallenge.setAround();
+							            				onBlockChallenge.setEarliestToShow(earliestToShown);
+							            				onBlockChallenge.setLatestToShow(latestToShown);
+							            				onBlockChallenge.setEarliestOnBlock(earliestOnBlock);
+							            				onBlockChallenge.setLatestOnBlock(latestOnBlock);
+							            				reloadOtherPlayerInvs(gui, p);
+							            				p.sendMessage(LanguageMessages.signCorrect);
+							            				System.out.println(onBlockChallenge.isActive());
+							            				//onBlockChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+							            				Bukkit.getScheduler().runTaskLater(plugin, () -> {
+							            					gui.createGUI(p, GUIType.PUNISHMENT, onBlockChallenge.getPunishCause());
+							            				}, 1L);
+							            				
+							            				return true;
+							            			}
+							            			else {
+							            				p.sendMessage(LanguageMessages.signLatestLowerThanEarliestWrong);
+							            			}
+							            		}
+							            		else {
+							            			p.sendMessage(LanguageMessages.signTooLowWrong);
+							            		}
+							            	}
+							            	else {
+							            		p.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", "Entered"));
+							            	}
+						            	}
+						            	else {
+						            		
+						            	} 	
+						                return false; // failure. becaues reopenIfFail was called, menu will reopen when closed.
+						            })
+						            .open(p);
+								}
+								else {
+									System.out.println("turned again");
+									onBlockChallenge.setAround();
+									onBlockChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+									gui.createGUI(p, GUIType.OVERVIEW);
+									if(onBlockChallenge.getTimer() != null) {
+										onBlockChallenge.getTimer().cancel();
+									}
+									onBlockChallenge.setEarliestToShow(0);
+									onBlockChallenge.setLatestToShow(0);
+									onBlockChallenge.setEarliestOnBlock(0);
+									onBlockChallenge.setLatestOnBlock(0);
+									onBlockChallenge.setTimer(null);
+									//onBlockChallenge.setBossBar(null);
+								}
+								
+								
+								reloadOtherPlayerInvs(gui, p);
+								
+								
+								break;
+							}
 							default:
 								return;
 							}
@@ -327,7 +416,7 @@ public class GUIClickListener implements Listener {
 						if(slot <= 35) event.setCancelled(true);
 						GenericChallenge genericChallenge = GenericChallenge.getChallenge(gui.punishmentChallengeTypeOpenGUI.get(p.getUniqueId()));
 						Punishable punishable = GenericChallenge.getChallenge(gui.punishmentChallengeTypeOpenGUI.get(p.getUniqueId()));
-						gui.punishmentChallengeTypeOpenGUI.remove(p.getUniqueId());
+						//gui.punishmentChallengeTypeOpenGUI.remove(p.getUniqueId());
 						switch(slot) {
 						case 0:
 							punishable.setPunishType(PunishType.NOTHING);
@@ -340,8 +429,9 @@ public class GUIClickListener implements Listener {
 							.newMenu(new ArrayList<String>(LanguageMessages.punishmentAmountSign))
 				            .reopenIfFail()
 				            .response((player, lines) -> {
-				            	String enteredLine1 = lines[0];        	
-				            	if(StringUtils.isNumericSpace(enteredLine1) && !enteredLine1.isEmpty()) {
+				            	String enteredLine1 = lines[0];   
+				            	System.out.println(enteredLine1);
+				            	if(StringUtils.isNumeric(enteredLine1) && !enteredLine1.isEmpty()) {
 				            		int number = Integer.valueOf(enteredLine1);
 				            		switch(number) {
 				            		case 1:
@@ -491,6 +581,7 @@ public class GUIClickListener implements Listener {
 						default:
 							break;
 						}
+						reloadOtherPlayerInvs(gui, p);
 					}
 				}
 			}
@@ -500,7 +591,7 @@ public class GUIClickListener implements Listener {
 	private void reloadOtherPlayerInvs(GUI gui, Player changer) {
 		ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
 			.filter(p -> !p.getUniqueId().equals(changer.getUniqueId()))
-			.filter(p -> p.getOpenInventory().getType() != InventoryType.CRAFTING)
+			.filter(p -> p.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.GREEN + "Settings"))
 			.forEach(p -> gui.createGUI(p, GUIType.OVERVIEW));
 	}
 }

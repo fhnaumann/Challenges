@@ -37,6 +37,9 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomizedCraftingC
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomizedMobDropsChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallengeStatus;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.SharedHealthChallenge.SharedHealthChallenge;
 import me.wand555.Challenges.ChallengeProfile.Positions.Position;
 import me.wand555.Challenges.Timer.SecondTimer;
@@ -44,10 +47,12 @@ import me.wand555.Challenges.Timer.TimerMessage;
 import me.wand555.EndLinking.ObsidianPlatform;
 import me.wand555.NetherLinking.Gate;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
+import org.bukkit.boss.BarColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigHandler extends ConfigUtil {
@@ -136,9 +141,9 @@ public class ConfigHandler extends ConfigUtil {
 		new NoSneakingChallenge().setActive(cfg.getBoolean("noSneaking.Boolean"));
 		new RandomizedBlockDropsChallenge().setActive(cfg.getBoolean("randomizedBlockDrops"));
 		new RandomizedMobDropsChallenge().setActive(cfg.getBoolean("randomizedMobDrops"));
-		new RandomizedCraftingChallenge().setActive(cfg.getBoolean("randomizedCrafting"));
-		
+		new RandomizedCraftingChallenge().setActive(cfg.getBoolean("randomizedCrafting"));	
 		new MLGChallenge().setActive(cfg.getBoolean("randomMLG"));
+		new OnBlockChallenge().setActive(cfg.getBoolean("onBlock.Boolean"));
 		
 		if(cProfile.hasStarted) {
 			cProfile.setSecondTimer(new SecondTimer(PLUGIN, cfg.getLong("Timer")));
@@ -184,6 +189,24 @@ public class ConfigHandler extends ConfigUtil {
 								string -> Material.valueOf(((String) string).split(",")[1]), 
 								(v1, v2) -> v1, 
 								LinkedHashMap::new)));
+			}
+			OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);
+			if(onBlockChallenge.isActive()) {
+				onBlockChallenge.setEarliestToShow(cfg.getInt("onBlock.EarliestToShow"));
+				onBlockChallenge.setLatestToShow(cfg.getInt("onBlock.LatestToShow"));
+				onBlockChallenge.setEarliestOnBlock(cfg.getInt("onBlock.EarliestOnBlock"));
+				onBlockChallenge.setLatestOnBlock(cfg.getInt("onBlock.LatestOnBlock"));
+				onBlockChallenge.setStatus(OnBlockChallengeStatus.valueOf(cfg.getString("onBlock.Status")));
+				if(cfg.isSet("onBlock.ToStayOn")) onBlockChallenge.setToStayOn(Material.valueOf(cfg.getString("onBlock.ToStayOn")));
+				//message will be constructed in Timer constructor		
+				if(cfg.isSet("onBlock.TimeTo")) {
+					//not really necessary, the boss bar just cannot be null
+					onBlockChallenge.createBossBar("", BarColor.WHITE);
+					onBlockChallenge.setTimer(new OnBlockTimer(PLUGIN, 
+							onBlockChallenge, 
+							cfg.getLong("onBlock.TotalTimeTo"), 
+							cfg.getLong("onBlock.TimeTo")));
+				}
 			}
 		}
 		else {
@@ -257,9 +280,9 @@ public class ConfigHandler extends ConfigUtil {
 		cfg.set("noSneaking.Boolean", GenericChallenge.isActive(ChallengeType.NO_SNEAKING));
 		cfg.set("randomizedBlockDrops", GenericChallenge.isActive(ChallengeType.RANDOMIZE_BLOCK_DROPS));
 		cfg.set("randomizedMobDrops", GenericChallenge.isActive(ChallengeType.RANDOMIZE_MOB_DROPS));
-		cfg.set("randomizedCrafting", GenericChallenge.isActive(ChallengeType.RANDOMIZE_CRAFTING));
-		
+		cfg.set("randomizedCrafting", GenericChallenge.isActive(ChallengeType.RANDOMIZE_CRAFTING));		
 		cfg.set("randomMLG", GenericChallenge.isActive(ChallengeType.MLG));
+		cfg.set("onBlock.Boolean", GenericChallenge.isActive(ChallengeType.ON_BLOCK));
 		
 		if(cProfile.hasStarted) {
 			cfg.set("Timer", cProfile.getSecondTimer().getTime());
@@ -303,6 +326,22 @@ public class ConfigHandler extends ConfigUtil {
 				cfg.set("randomizedDrops", randomChallenge.getRandomizeMapped().entrySet().stream()
 						.map(entry -> entry.getKey().toString() + "," + entry.getValue().toString())
 						.collect(Collectors.toList()));
+			}
+			
+			OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);
+			if(onBlockChallenge.isActive()) {
+				cfg.set("onBlock.EarliestToShow", onBlockChallenge.getEarliestToShow());
+				cfg.set("onBlock.LatestToShow", onBlockChallenge.getLatestToShow());
+				cfg.set("onBlock.EarliestOnBlock", onBlockChallenge.getEarliestOnBlock());
+				cfg.set("onBlock.LatestOnBlock", onBlockChallenge.getLatestOnBlock());
+				cfg.set("onBlock.Status", onBlockChallenge.getStatus().toString());
+				if(onBlockChallenge.getToStayOn() != null) cfg.set("onBlock.ToStayOn", onBlockChallenge.getToStayOn().toString());
+				//message has to be constructed on start again, because user can change language while stored in config
+				if(onBlockChallenge.getTimer() != null) {
+					onBlockChallenge.getBossBar().removeAll();
+					cfg.set("onBlock.TimeTo", onBlockChallenge.getTimer().getTimeTo());
+					cfg.set("onBlock.TotalTimeTo", onBlockChallenge.getTimer().getTotalTimeTo());
+				}
 			}
 		}
 		saveCustomYml(cfg, file);

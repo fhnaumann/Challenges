@@ -87,7 +87,7 @@ public class MLGChallenge extends GenericChallenge {
 				.map(Bukkit::getPlayer)
 				.filter(p1 -> p1 != null)
 				.forEach(WorldUtil::loadPlayerInformationInChallengeAndApply);
-			ChallengeProfile.getInstance().endChallenge(p, ChallengeEndReason.FAILED_MLG);
+			ChallengeProfile.getInstance().endChallenge(ChallengeEndReason.FAILED_MLG, p);
 			ChallengeProfile.getInstance().setInMLGRightNow();
 			inMLGWorld.clear();
 		}

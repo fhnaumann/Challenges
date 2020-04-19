@@ -32,7 +32,7 @@ public class PlayerDeathListener implements Listener {
 			if(cProfile.isInChallenge(player.getUniqueId())) {
 				if(cProfile.canTakeEffect()) {
 					event.getDrops().clear();
-					cProfile.endChallenge(player, ChallengeEndReason.NATURAL_DEATH);
+					cProfile.endChallenge(ChallengeEndReason.NATURAL_DEATH, player);
 					player.spigot().respawn();	
 				}
 			}

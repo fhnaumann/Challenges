@@ -78,6 +78,9 @@ public class GUI implements ItemDisplayCreator {
 				case 14:
 					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.MLG).getDisplayItem());
 					break;
+				case 15:
+					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.ON_BLOCK).getDisplayItem());
+					break;
 				default:	
 					gui.setItem(i, createGlass());
 				}

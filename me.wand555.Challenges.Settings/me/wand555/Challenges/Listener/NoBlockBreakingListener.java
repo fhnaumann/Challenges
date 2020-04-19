@@ -26,11 +26,11 @@ public class NoBlockBreakingListener implements Listener {
 				if(cProfile.isInChallenge(event.getPlayer().getUniqueId())) {
 					NoBlockBreakingChallenge nBBChallenge = GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_BREAKING);
 					if(nBBChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-						cProfile.endChallenge(event.getPlayer(), ChallengeEndReason.NO_BLOCK_PLACE);
+						cProfile.endChallenge(ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());
 					}
 					else {
-						nBBChallenge.enforcePunishment(event.getPlayer(), cProfile.getParticipantsAsPlayers(), nBBChallenge.getPunishType());
-						String message = nBBChallenge.createReasonMessage(event.getPlayer(), nBBChallenge.getPunishCause(), nBBChallenge.getPunishType());
+						nBBChallenge.enforcePunishment(nBBChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), event.getPlayer());
+						String message = nBBChallenge.createReasonMessage(nBBChallenge.getPunishCause(), nBBChallenge.getPunishType(), event.getPlayer());
 						cProfile.sendMessageToAllParticipants(message);
 					}
 					if(nBBChallenge.getPunishType() == PunishType.NOTHING) {

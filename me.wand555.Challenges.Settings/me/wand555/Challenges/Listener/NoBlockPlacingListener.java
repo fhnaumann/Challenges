@@ -34,11 +34,11 @@ public class NoBlockPlacingListener implements Listener {
 								&& event.getBlock().getRelative(BlockFace.DOWN).getType() == Material.OBSIDIAN)) {
 						NoBlockPlacingChallenge nBPChallenge = GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_PLACING);
 						if(nBPChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-							cProfile.endChallenge(event.getPlayer(), ChallengeEndReason.NO_BLOCK_PLACE);
+							cProfile.endChallenge(ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());
 						}
 						else {
-							nBPChallenge.enforcePunishment(event.getPlayer(), cProfile.getParticipantsAsPlayers(), nBPChallenge.getPunishType());
-							String message = nBPChallenge.createReasonMessage(event.getPlayer(), nBPChallenge.getPunishCause(), nBPChallenge.getPunishType());
+							nBPChallenge.enforcePunishment(nBPChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), event.getPlayer());
+							String message = nBPChallenge.createReasonMessage(nBPChallenge.getPunishCause(), nBPChallenge.getPunishType(), event.getPlayer());
 							cProfile.sendMessageToAllParticipants(message);
 						}
 						if(nBPChallenge.getPunishType() == PunishType.NOTHING) {

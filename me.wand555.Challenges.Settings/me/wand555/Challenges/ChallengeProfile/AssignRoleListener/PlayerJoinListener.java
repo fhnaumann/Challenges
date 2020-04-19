@@ -12,6 +12,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.CustomHealthChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
 import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
 
 public class PlayerJoinListener implements Listener {
@@ -31,6 +32,7 @@ public class PlayerJoinListener implements Listener {
 		if(WorldLinkManager.worlds.contains(event.getPlayer().getWorld())) {
 			ChallengeProfile.getInstance().addToParticipants(event.getPlayer().getUniqueId());
 			CustomHealthChallenge cHealthChallenge = GenericChallenge.getChallenge(ChallengeType.CUSTOM_HEALTH);
+			OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);
 			Player p = event.getPlayer();
 			if(ChallengeProfile.getInstance().canTakeEffect()) {
 				if(cHealthChallenge.isActive()) {			
@@ -46,7 +48,11 @@ public class PlayerJoinListener implements Listener {
 					p.setHealthScale(p.getHealth());
 					p.damage(0);
 					//p.kickPlayer("Custom HP were changed. Please join back now.");
-				}		
+				}
+				
+				if(onBlockChallenge.isActive()) {
+					onBlockChallenge.addPlayerToBossBar(p);
+				}
 			}
 		}
 	}

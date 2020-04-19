@@ -11,7 +11,13 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 
 public class MLGTimer extends BukkitRunnable {
 
+	/**
+	 * The total time, not being subtracted from. Stays the same for a whole "MLG Iteration"
+	 */
 	private long totalTimeToMLG;
+	/**
+	 * Changes every second (-20) until its down to or below 0. 
+	 */
 	private long timeToMLG;
 	
 	public MLGTimer(Challenges plugin, MLGChallenge mlgChallenge) {

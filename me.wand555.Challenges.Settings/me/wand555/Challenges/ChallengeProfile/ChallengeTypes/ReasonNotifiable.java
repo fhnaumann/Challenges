@@ -6,34 +6,49 @@ import me.wand555.Challenges.Config.LanguageMessages;
 
 public interface ReasonNotifiable {
 
+	default String createPassedMessage(ChallengeType cause) {
+		switch(cause) {
+		case ON_BLOCK:
+			return LanguageMessages.passedOnBlock;
+		default: return "unknown";
+		}
+	}
+	
 	/**
 	 * This method will break the plugin if the ChallengeType is something else than the type with that this method was called with.
-	 * 
-	 * @param causer
 	 * @param cause
 	 * @param punishment
+	 * @param causers
+	 * 
 	 * @return null if challenge is not active otherwise message to be displayed in chat.
 	 */
-	default String createReasonMessage(Player causer, ChallengeType cause, PunishType punishment) {
+	default String createReasonMessage(ChallengeType cause, PunishType punishment, Player... causers) {
 		//if(punishment == PunishType.NOTHING) return null;
-		GenericChallenge genericChallenge = GenericChallenge.getChallenge(cause);
-		if(!genericChallenge.isActive()) return null;	
-		switch(cause) {
-		case NO_BLOCK_PLACING:
-			return LanguageMessages.violationBlockPlacing.replace("[PLAYER]", causer.getName())
-					.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
-		case NO_BLOCK_BREAKING:
-			return LanguageMessages.violationBlockBreaking.replace("[PLAYER]", causer.getName())
-					.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
-		case NO_CRAFTING:
-			return LanguageMessages.violationCrafting.replace("[PLAYER]", causer.getName())
-					.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
-		case NO_SNEAKING:
-			return LanguageMessages.violationSneaking.replace("[PLAYER]", causer.getName())
-					.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));	
-		default:
-			return causer.getName() + " has failed a challenge (unknown reason) (" + getFittingPunishmentMessage(punishment) + ")!";
-		}		
+		
+		for(Player causer : causers) {
+			GenericChallenge genericChallenge = GenericChallenge.getChallenge(cause);
+			if(!genericChallenge.isActive()) return null;	
+			switch(cause) {
+			case NO_BLOCK_PLACING:
+				return LanguageMessages.violationBlockPlacing.replace("[PLAYER]", causer.getName())
+						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
+			case NO_BLOCK_BREAKING:
+				return LanguageMessages.violationBlockBreaking.replace("[PLAYER]", causer.getName())
+						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
+			case NO_CRAFTING:
+				return LanguageMessages.violationCrafting.replace("[PLAYER]", causer.getName())
+						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
+			case NO_SNEAKING:
+				return LanguageMessages.violationSneaking.replace("[PLAYER]", causer.getName())
+						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));	
+			case ON_BLOCK:
+				return LanguageMessages.violationOnBlock.replace("[PLAYER]", causer.getName())
+						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
+			default:
+				return causer.getName() + " has failed a challenge (unknown reason) (" + getFittingPunishmentMessage(punishment) + ")!";
+			}		
+		}
+		return "unkown error... Please contact Finex#1120 on discord!";
 	}
 	
 	/**

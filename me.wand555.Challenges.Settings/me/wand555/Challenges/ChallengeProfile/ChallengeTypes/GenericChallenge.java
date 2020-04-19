@@ -67,6 +67,7 @@ public abstract class GenericChallenge implements ItemDisplayCreator {
 	}
 	
 	private String getFittingPunishmentMessage2(PunishType punishment) {
+		System.out.println("PUNISHMENT: " + punishment);
 		switch(punishment) {
 		case NOTHING: return LanguageMessages.punishNothing;
 		case HEALTH_1: return LanguageMessages.punishHealth.replace("[AMOUNT]", "1");
@@ -117,6 +118,7 @@ public abstract class GenericChallenge implements ItemDisplayCreator {
 		case RANDOMIZE_MOB_DROPS: return LanguageMessages.guiRandomMobDropsName;
 		case RANDOMIZE_CRAFTING: return LanguageMessages.guiRandomCraftingName;
 		case MLG: return LanguageMessages.guiRandomMLGName;
+		case ON_BLOCK: return LanguageMessages.guiOnBlockName;
 		default: return "";
 		}
 	}

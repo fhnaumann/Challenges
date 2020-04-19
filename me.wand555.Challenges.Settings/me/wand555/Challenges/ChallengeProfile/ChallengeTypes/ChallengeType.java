@@ -15,10 +15,17 @@ NO_SNEAKING(true, false),
 RANDOMIZE_BLOCK_DROPS(false, false),
 RANDOMIZE_MOB_DROPS(false, false),
 RANDOMIZE_CRAFTING(false, false),
-
-MLG(false, false)
+MLG(false, false),
+ON_BLOCK(true, false)
 ;
+	/**
+	 * If the challenge is punishable
+	 */
 	private final boolean punishable;
+	/**
+	 * If the challenge holds any numbers/values to be displayed in the GUI.
+	 * Hence that's why MLG is false, despite having numbers interally.
+	 */
 	private final boolean amountable;
 	
 	ChallengeType(boolean punishable, boolean amountable) {

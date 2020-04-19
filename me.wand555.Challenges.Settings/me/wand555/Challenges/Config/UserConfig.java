@@ -18,7 +18,7 @@ public class UserConfig extends ConfigUtil {
 		PLUGIN.getConfig().addDefault("Language", "#Supported Languages:");
 		PLUGIN.getConfig().addDefault("Language", "#English - " + Language.ENGLISH.getAbbreviation());
 		PLUGIN.getConfig().addDefault("Language", "#German - " + Language.GERMAN.getAbbreviation());
-		PLUGIN.getConfig().addDefault("Language", "en");
+		PLUGIN.getConfig().addDefault("Language", "de");
 		PLUGIN.saveConfig();
 	}
 	
@@ -71,6 +71,8 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("endChallengeNoBreak", "&2[PLAYER] &7broke a block! The challenge ended!");
 		msgDefaults.put("endChallengeNoCrafting", "&2[PLAYER] &7crafted an item! The challenge ended!");
 		msgDefaults.put("endChallengeNoSneaking", "&2[PLAYER] &7sneaked! The challenge ended!");
+		msgDefaults.put("endChallengeFailedMLG", "&2[PLAYER] failed the MLG! The challenge ended!");
+		msgDefaults.put("endChallengeNotOnBlock", "&2[PLAYER] &7failed to stand on the block! The challenge ended!");
 		
 		msgDefaults.put("timerMessageStart", "&7&l/timer start");
 		msgDefaults.put("timerMessagePause", "&7&lPAUSED &2[TIME] &7- /timer pause");
@@ -98,6 +100,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiRandomMobDropsName", "&7&lRandomized Mobdrops");
 		msgDefaults.put("guiRandomCraftingName", "&7&lRandomized Crafting");
 		msgDefaults.put("guiRandomMLGName", "&7&lRandom MLG");
+		msgDefaults.put("guiOnBlockName", "&7&lForceBlock");
 		
 		msgDefaults.put("guiDeathLore", "The challenge ends when a player dies!");
 		msgDefaults.put("guiFortressSpawnLore", "You will always spawn near a nether fortress!");
@@ -114,6 +117,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiRandomMobDropsLore", "All mob drops will be randomized!");
 		msgDefaults.put("guiRandomCraftingLore", "All crafting recipes will be randomized!");
 		msgDefaults.put("guiMLGLore", "Random MLG's in custom intervals!");
+		msgDefaults.put("guiOnBlockLore", "All players have to stand on a certain block type in random intervals (configurable)!");
 		
 		msgDefaults.put("guiCustomHealthAmount", "&7Custom HP: &a[AMOUNT]HP");
 		msgDefaults.put("punishItemDisplay", "&7Punishment: &a[PUNISHMENT]");
@@ -132,7 +136,9 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("violationBlockBreaking", "&2[PLAYER] &7has broken a block (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationCrafting", "&2[PLAYER] &7has crafted (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationSneaking", "&2[PLAYER] &7has sneaked (Punishment: &2[PUNISHMENT]&7)!");
+		msgDefaults.put("violationOnBlock", "&2[PLAYER] &7failed to stand on the block (Punishment: &2[PUNISHMENT]&7!");
 		
+		msgDefaults.put("passedOnBlock", "All players stood on the correct block!");
 		
 		msgDefaults.put("titleChallengeChange", "&e[CHALLENGE] &7is [STATUS]");
 		msgDefaults.put("titleWithAmountChallengeChange", "&e[CHALLENGE] &7(&a[AMOUNT]&7) is [STATUS]");
@@ -141,12 +147,16 @@ public class UserConfig extends ConfigUtil {
 		
 		msgDefaults.put("customHealthSign", "__Write the amount_of hearts above!");
 		msgDefaults.put("mlgSign", "__Order is_Early Late Height");
-		msgDefaults.put("punishmentAmountSign", "Choose a value_between 1 and 10!_(both inclusive)");
+		msgDefaults.put("onBlockSign", "__Order is_Earliest Latest");
+		msgDefaults.put("punishmentAmountSign", "_Choose a value_between 1 and 10!_(both inclusive)");
 		
 		msgDefaults.put("signCorrect", "&7Successfully changed settings.");
-		msgDefaults.put("signTooLowWrong", "&7A number entered is too low.");
+		msgDefaults.put("signTooLowWrong", "&7a number entered is too low.");
 		msgDefaults.put("signLatestLowerThanEarliestWrong", "&7Latest cannot be smaller than earliest.");
 		msgDefaults.put("signNoNumberInRange", "&7'&a[NUMBER]&7' has to be between 1 and 10 (inclusive).");
+		
+		msgDefaults.put("onBlockHidden", "&7Waiting for block...");
+		msgDefaults.put("onBlockShown", "&7Stand on &e[BLOCK] &7in &2[TIME]&7!");
 		
 		msgDefaults.keySet().stream()
 			.filter(key -> !cfg.isSet(key))
@@ -196,6 +206,8 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("endChallengeNoBreak", "&2[PLAYER] &7baute einen Block ab! Die Challenge ist vorbei!");
 		msgDefaults.put("endChallengeNoCrafting", "&2[PLAYER] &7craftete ein Item! Die Challenge ist vorbei!");
 		msgDefaults.put("endChallengeNoSneaking", "&2[PLAYER] &7sneakte! Die Challenge ist vorbei!");
+		msgDefaults.put("endChallengeFailedMLG", "&2[PLAYER] hat den MLG nicht geschafft! Die Challenge ist vorbei!");
+		msgDefaults.put("endChallengeNotOnBlock", "&2[PLAYER] &7stand nicht auf dem Block! Die Challenge ist vorbei!");
 		
 		msgDefaults.put("timerMessageStart", "&7&l/timer start");
 		msgDefaults.put("timerMessagePause", "&7&lPAUSIERT &2[TIME] &7- /timer pause");
@@ -223,6 +235,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiRandomMobDropsName", "&7&lZufällige Mobdrops");
 		msgDefaults.put("guiRandomCraftingName", "&7&lZufälliges Crafting");
 		msgDefaults.put("guiRandomMLGName", "&7&lZufälliger MLG");
+		msgDefaults.put("guiOnBlockName", "&7&lForceBlock");
 		
 		msgDefaults.put("guiDeathLore", "Die Challenge ist vorbei sobald ein Spieler stirbt!");
 		msgDefaults.put("guiFortressSpawnLore", "Du spawnst im Nether immer in der Nähe einer Festung!");
@@ -239,6 +252,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiRandomMobDropsLore", "Alle Mob-Drops sind zufällig!");
 		msgDefaults.put("guiRandomCraftingLore", "Alle Crafting Rezepte sind zufällig!");
 		msgDefaults.put("guiMLGLore", "Zufällige MLG's in ausgewählten Intervallen!");
+		msgDefaults.put("guiOnBlockLore", "Es werden in bestimmten Intervallen zufällig Blöcke ausgewählt, auf denen ihr nach einer konfigurienten Zeit draufstehen müsst!");
 		
 		msgDefaults.put("guiCustomHealthAmount", "&7Ausgewählte HP: &a[AMOUNT]HP");
 		msgDefaults.put("punishItemDisplay", "&7Bestrafung: &a[PUNISHMENT]");
@@ -257,18 +271,26 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("violationBlockBreaking", "&2[PLAYER] &7hat einen Block abgebaut (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationCrafting", "&2[PLAYER] &7hat ein item gecraftet (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationSneaking", "&2[PLAYER] &7hat gesneakt (Bestrafung: &2[PUNISHMENT]&7)!");
+		msgDefaults.put("violationOnBlock", "&2[PLAYER] &7stand nicht auf dem Block (Bestrafung: &2[PUNISHMENT]&7!");
+		
+		msgDefaults.put("passedOnBlock", "Alle Spieler standen auf dem korrekten Block!");
 		
 		msgDefaults.put("titleChallengeChange", "&e[CHALLENGE] &7ist [STATUS]");
 		msgDefaults.put("titleWithAmountChallengeChange", "&e[CHALLENGE] &7(&a[AMOUNT]&7) ist [STATUS]");
 		msgDefaults.put("subtitleChallengeChange", "&2Bestrafung: &e[PUNISHMENT]");
 		msgDefaults.put("subtitleWithAmountChallengeChange", "&2Bestrafung: &e[PUNISHMENT]&7(&a[AMOUNT]&7)");
 		msgDefaults.put("customHealthSign", "__Wähle die Anzahl_der Herzen oben!");
-		msgDefaults.put("mlgSign", "Schreibe nach dem '':''_Minimal: _Maximal: _MLG Höhe: ");
-		msgDefaults.put("punishmentAmountSign", "Wähle einen Wert_zwischen 1 und 10!_(beide inklusive)");
+		msgDefaults.put("mlgSign", "__Anordnung ist_frueh spaet Hoehe");
+		msgDefaults.put("onBlockSign", "__Anordnung ist_frueh spaet");
+		msgDefaults.put("punishmentAmountSign", "_Wähle einen Wert_zwischen 1 und 10!_(beide inklusive)");
+		
 		msgDefaults.put("signCorrect", "&7Einstellungen erfolgreich aktualisiert.");
 		msgDefaults.put("signTooLowWrong", "&7Eine der Zahlen ist zu niedrig.");
 		msgDefaults.put("signLatestLowerThanEarliestWrong", "&7Maximal kann nicht kleiner als Minimal sein.");
 		msgDefaults.put("signNoNumberInRange", "&7''&a[NUMBER]&7'' muss zwischen 1 und 10 sein (inklusive).");
+		
+		msgDefaults.put("onBlockHidden", "&7Waiting for block...");
+		msgDefaults.put("onBlockShown", "&7Stand on &e[BLOCK] &7in &2[TIME]&7!");
 		
 		msgDefaults.keySet().stream()
 		.filter(key -> !cfg.isSet(key))

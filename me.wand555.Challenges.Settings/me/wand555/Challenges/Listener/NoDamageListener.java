@@ -27,7 +27,7 @@ public class NoDamageListener implements Listener {
 						ChallengeProfile cProfile = ChallengeProfile.getInstance();
 						Player player = (Player) event.getEntity();
 						if(cProfile.isInChallenge(player.getUniqueId())) {
-							cProfile.endChallenge(player, ChallengeEndReason.NO_DAMAGE);
+							cProfile.endChallenge(ChallengeEndReason.NO_DAMAGE, player);
 						}
 					}			
 				}

@@ -58,6 +58,8 @@ public class LanguageMessages extends ConfigUtil {
 	public static String endChallengeNoBreak;
 	public static String endChallengeNoCrafting;
 	public static String endChallengeNoSneaking;
+	public static String endChallengeFailedMLG;
+	public static String endChallengeNotOnBlock;
 	
 	public static String timerMessageStart;
 	public static String timerMessagePause;
@@ -85,6 +87,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String guiRandomMobDropsName;
 	public static String guiRandomCraftingName;
 	public static String guiRandomMLGName;
+	public static String guiOnBlockName;
 	
 	public static ArrayList<String> guiDeathLore;
 	public static ArrayList<String> guiFortressSpawnLore;
@@ -101,6 +104,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static ArrayList<String> guiRandomMobDropsLore;
 	public static ArrayList<String> guiRandomCraftingLore;
 	public static ArrayList<String> guiMLGLore;
+	public static ArrayList<String> guiOnBlockLore;
 	
 	public static String guiCustomHealthAmount;
 	/**
@@ -127,7 +131,12 @@ public class LanguageMessages extends ConfigUtil {
 	public static String violationBlockBreaking;
 	public static String violationCrafting;
 	public static String violationSneaking;
+	public static String violationOnBlock;
 	
+	/**
+	 * Message in chat when (mostly everyone) passed a certain challenge. Not all challenges notify in chat.
+	 */
+	public static String passedOnBlock;
 	
 	/**
 	 * Message in title when settings are changed.
@@ -142,6 +151,7 @@ public class LanguageMessages extends ConfigUtil {
 	 */
 	public static ArrayList<String> customHealthSign;
 	public static ArrayList<String> mlgSign;
+	public static ArrayList<String> onBlockSign;
 	public static ArrayList<String> punishmentAmountSign;	
 	
 	/**
@@ -151,6 +161,11 @@ public class LanguageMessages extends ConfigUtil {
 	public static String signTooLowWrong;
 	public static String signLatestLowerThanEarliestWrong;
 	public static String signNoNumberInRange;
+	/**
+	 * The title on the bossbar depending on the status of the OnBlock/ForceBlock Challenge
+	 */
+	public static String onBlockHidden;
+	public static String onBlockShown;
 	
 	public static String onlyForPlayers;
 	
@@ -192,6 +207,8 @@ public class LanguageMessages extends ConfigUtil {
 		endChallengeNoBreak = format(cfg.getString("endChallengeNoBreak"));
 		endChallengeNoCrafting = format(cfg.getString("endChallengeNoCrafting"));
 		endChallengeNoSneaking = format(cfg.getString("endChallengeNoSneaking"));
+		endChallengeFailedMLG = format(cfg.getString("endChallengeFailedMLG"));
+		endChallengeNotOnBlock = format(cfg.getString("endChallengeNotOnBlock"));
 		
 		timerMessageStart = formatWithoutPrefix(cfg.getString("timerMessageStart"));
 		timerMessagePause = formatWithoutPrefix(cfg.getString("timerMessagePause"));
@@ -219,6 +236,7 @@ public class LanguageMessages extends ConfigUtil {
 		guiRandomMobDropsName = formatWithoutPrefix(cfg.getString("guiRandomMobDropsName"));
 		guiRandomCraftingName = formatWithoutPrefix(cfg.getString("guiRandomCraftingName"));
 		guiRandomMLGName = formatWithoutPrefix(cfg.getString("guiRandomMLGName"));
+		guiOnBlockName = formatWithoutPrefix(cfg.getString("guiOnBlockName"));
 		
 		guiDeathLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiDeathLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
@@ -250,6 +268,8 @@ public class LanguageMessages extends ConfigUtil {
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		guiMLGLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiMLGLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
+		guiOnBlockLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiOnBlockLore")), 20, "_", true).split("_"))
+				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		
 		guiCustomHealthAmount = formatWithoutPrefix(cfg.getString("guiCustomHealthAmount"));
 		punishItemDisplay = formatWithoutPrefix(cfg.getString("punishItemDisplay"));
@@ -268,7 +288,9 @@ public class LanguageMessages extends ConfigUtil {
 		violationBlockBreaking = format(cfg.getString("violationBlockBreaking")); 
 		violationCrafting = format(cfg.getString("violationCrafting"));
 		violationSneaking = format(cfg.getString("violationSneaking"));
+		violationOnBlock = format(cfg.getString("violationOnBlock"));
 		
+		passedOnBlock = format(cfg.getString("passedOnBlock"));
 		
 		titleChallengeChange = formatWithoutPrefix(cfg.getString("titleChallengeChange"));
 		titleWithAmountChallengeChange = formatWithoutPrefix(cfg.getString("titleWithAmountChallengeChange"));
@@ -278,6 +300,8 @@ public class LanguageMessages extends ConfigUtil {
 				.stream().collect(Collectors.toCollection(ArrayList::new));
 		mlgSign = Lists.newArrayList(cfg.getString("mlgSign").split("_"))
 				.stream().collect(Collectors.toCollection(ArrayList::new));
+		onBlockSign = Lists.newArrayList(cfg.getString("onBlockSign").split("_"))
+				.stream().collect(Collectors.toCollection(ArrayList::new));
 		punishmentAmountSign = Lists.newArrayList(cfg.getString("punishmentAmountSign").split("_"))
 				.stream().collect(Collectors.toCollection(ArrayList::new));
 	
@@ -285,6 +309,9 @@ public class LanguageMessages extends ConfigUtil {
 		signTooLowWrong = format(cfg.getString("signTooLowWrong"));
 		signLatestLowerThanEarliestWrong = format(cfg.getString("signLatestLowerThanEarliestWrong"));
 		signNoNumberInRange = format(cfg.getString("signNoNumberInRange"));
+		
+		onBlockHidden = formatWithoutPrefix(cfg.getString("onBlockHidden"));
+		onBlockShown = formatWithoutPrefix(cfg.getString("onBlockShown"));
 	}
 	
 	public static String format(String msg) {

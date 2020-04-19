@@ -35,11 +35,11 @@ public class NoCraftingListener implements Listener {
 									if(event.getCurrentItem().getType() != Material.AIR) {
 										NoCraftingChallenge nCChallenge = GenericChallenge.getChallenge(ChallengeType.NO_CRAFTING);
 										if(nCChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-											cProfile.endChallenge(player, ChallengeEndReason.NO_BLOCK_PLACE);
+											cProfile.endChallenge(ChallengeEndReason.NO_BLOCK_PLACE, player);
 										}
 										else {
-											nCChallenge.enforcePunishment(player, cProfile.getParticipantsAsPlayers(), nCChallenge.getPunishType());
-											String message = nCChallenge.createReasonMessage(player, nCChallenge.getPunishCause(), nCChallenge.getPunishType());
+											nCChallenge.enforcePunishment(nCChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), player);
+											String message = nCChallenge.createReasonMessage(nCChallenge.getPunishCause(), nCChallenge.getPunishType(), player);
 											cProfile.sendMessageToAllParticipants(message);
 										}
 										if(nCChallenge.getPunishType() == PunishType.NOTHING) {

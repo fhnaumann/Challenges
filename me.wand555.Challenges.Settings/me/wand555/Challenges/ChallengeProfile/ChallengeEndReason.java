@@ -8,6 +8,7 @@ public enum ChallengeEndReason {
 	NO_BLOCK_BREAK,
 	NO_CRAFTING, 
 	NO_SNEAKING,
-	FAILED_MLG
+	FAILED_MLG, 
+	NOT_ON_BLOCK
 	;
 }

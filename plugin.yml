@@ -1,6 +1,6 @@
 main: me.wand555.Challenges.Challenges
 name: Challenges
-version: 0.0.1
+version: 1.0.0
 description: A Challenge plugin to customize vanilla experience!
 api-version: 1.13
 author: wand555

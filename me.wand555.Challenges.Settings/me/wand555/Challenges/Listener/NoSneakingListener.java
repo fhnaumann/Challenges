@@ -27,11 +27,11 @@ public class NoSneakingListener implements Listener {
 					if(cProfile.isInChallenge(event.getPlayer().getUniqueId())) {
 						NoSneakingChallenge nSChallenge = GenericChallenge.getChallenge(ChallengeType.NO_SNEAKING);
 						if(nSChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-							cProfile.endChallenge(event.getPlayer(), ChallengeEndReason.NO_BLOCK_PLACE);
+							cProfile.endChallenge(ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());
 						}
 						else {
-							nSChallenge.enforcePunishment(event.getPlayer(), cProfile.getParticipantsAsPlayers(), nSChallenge.getPunishType());
-							String message = nSChallenge.createReasonMessage(event.getPlayer(), nSChallenge.getPunishCause(), nSChallenge.getPunishType());
+							nSChallenge.enforcePunishment(nSChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), event.getPlayer());
+							String message = nSChallenge.createReasonMessage(nSChallenge.getPunishCause(), nSChallenge.getPunishType(), event.getPlayer());
 							cProfile.sendMessageToAllParticipants(message);
 						}
 						if(nSChallenge.getPunishType() == PunishType.NOTHING) {

@@ -17,6 +17,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
 import me.wand555.Challenges.Config.LanguageMessages;
 import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
 
@@ -27,6 +28,7 @@ public class RestoreChallenge {
 	private final HashSet<RestorePlayerData> playerData;
 	private final long OLD_TIME;
 	private final ChallengeEndReason reason;
+	
 	private final long TIME_TO_MLG;
 	private final long TOTAL_TIME_TO_MLG;
 	
@@ -48,6 +50,13 @@ public class RestoreChallenge {
 		else {
 			TIME_TO_MLG = 0;
 			TOTAL_TIME_TO_MLG = 0;
+		}
+		
+		OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);
+		if(onBlockChallenge.isActive()) {
+			if(onBlockChallenge.getTimer() != null) {
+				
+			}
 		}
 	}
 	
