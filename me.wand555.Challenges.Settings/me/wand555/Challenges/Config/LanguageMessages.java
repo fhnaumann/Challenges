@@ -49,6 +49,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String targetNotInChallenge;
 	public static String registeredPosition;
 	public static String returnPosition;
+	public static String backpackDisabled;
 	
 	public static String endChallengeReset;
 	public static String endChallengeComplete;
@@ -72,6 +73,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String bpSyntax;
 	public static String settingSyntax;
 	
+	public static String guiBackpackName;
 	public static String guiDeathName;
 	public static String guiFortressSpawnName;
 	public static String guiNoDamageName;
@@ -89,6 +91,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String guiRandomMLGName;
 	public static String guiOnBlockName;
 	
+	public static ArrayList<String> guiBackpackLore;
 	public static ArrayList<String> guiDeathLore;
 	public static ArrayList<String> guiFortressSpawnLore;
 	public static ArrayList<String> guiNoDamageLore;
@@ -127,15 +130,18 @@ public class LanguageMessages extends ConfigUtil {
 	/**
 	 * Message in chat when a player violates a challenge. Holds [PLAYER] and [PUNISHMENT] placeholders.
 	 */
+	public static String violationNoDamage;
 	public static String violationBlockPlacing;
 	public static String violationBlockBreaking;
 	public static String violationCrafting;
 	public static String violationSneaking;
+	public static String violationMLG;
 	public static String violationOnBlock;
 	
 	/**
 	 * Message in chat when (mostly everyone) passed a certain challenge. Not all challenges notify in chat.
 	 */
+	public static String passedMLG;
 	public static String passedOnBlock;
 	
 	/**
@@ -198,6 +204,7 @@ public class LanguageMessages extends ConfigUtil {
 		targetNotInChallenge = format(cfg.getString("targetNotInChallenge"));
 		registeredPosition = format(cfg.getString("registeredPosition"));
 		returnPosition = format(cfg.getString("returnPosition"));
+		backpackDisabled = format(cfg.getString("backpackDisabled"));
 		
 		endChallengeReset = format(cfg.getString("endChallengeReset"));
 		endChallengeComplete = format(cfg.getString("endChallengeComplete"));
@@ -221,6 +228,7 @@ public class LanguageMessages extends ConfigUtil {
 		bpSyntax = format(cfg.getString("bpSyntax"));
 		settingSyntax = format(cfg.getString("settingSyntax"));
 		
+		guiBackpackName = formatWithoutPrefix(cfg.getString("guiBackpackName"));
 		guiDeathName = formatWithoutPrefix(cfg.getString("guiDeathName"));
 		guiFortressSpawnName = formatWithoutPrefix(cfg.getString("guiFortressSpawnName"));
 		guiNoDamageName = formatWithoutPrefix(cfg.getString("guiNoDamageName"));
@@ -244,9 +252,9 @@ public class LanguageMessages extends ConfigUtil {
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		guiNoDamageLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiNoDamageLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
-		guiNoRegLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiDeathLore")), 20, "_", true).split("_"))
+		guiNoRegLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiNoRegLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
-		guiNoRegHardLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiNoRegLore")), 20, "_", true).split("_"))
+		guiNoRegHardLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiNoRegHardLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		guiCustomHealthLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiCustomHealthLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
@@ -270,6 +278,8 @@ public class LanguageMessages extends ConfigUtil {
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		guiOnBlockLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiOnBlockLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
+		guiBackpackLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiBackpackLore")), 20, "_", true).split("_"))
+				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		
 		guiCustomHealthAmount = formatWithoutPrefix(cfg.getString("guiCustomHealthAmount"));
 		punishItemDisplay = formatWithoutPrefix(cfg.getString("punishItemDisplay"));
@@ -284,12 +294,15 @@ public class LanguageMessages extends ConfigUtil {
 		punishAllItemsAll = formatWithoutPrefix(cfg.getString("punishAllItemsAll"));
 		punishChallengeOver = formatWithoutPrefix(cfg.getString("punishChallengeOver"));
 		
+		violationNoDamage = format(cfg.getString("violationNoDamage"));
 		violationBlockPlacing = format(cfg.getString("violationBlockPlacing"));
 		violationBlockBreaking = format(cfg.getString("violationBlockBreaking")); 
 		violationCrafting = format(cfg.getString("violationCrafting"));
 		violationSneaking = format(cfg.getString("violationSneaking"));
+		violationMLG = format(cfg.getString("violationMLG"));
 		violationOnBlock = format(cfg.getString("violationOnBlock"));
 		
+		passedMLG = format(cfg.getString("passedMLG"));
 		passedOnBlock = format(cfg.getString("passedOnBlock"));
 		
 		titleChallengeChange = formatWithoutPrefix(cfg.getString("titleChallengeChange"));

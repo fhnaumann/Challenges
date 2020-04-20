@@ -7,11 +7,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import me.wand555.Challenges.Challenges;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ReasonNotifiable;
 
 public class Backpack {
 
 	public static final int BACKPACK_SIZE = 27;
 	private final Challenges plugin;
+	
+	private boolean isEnabled;
 	
 	private HashSet<UUID> openPlayers = new HashSet<UUID>();
 	private ItemStack[] contents = new ItemStack[27];
@@ -68,5 +71,19 @@ public class Backpack {
 	 */
 	public static int getBackpackSize() {
 		return BACKPACK_SIZE;
+	}
+
+	/**
+	 * @return the isEnabled
+	 */
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	/**
+	 * @param isEnabled the isEnabled to set
+	 */
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
 	}
 }

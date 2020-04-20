@@ -19,7 +19,7 @@ public class RandomizedCraftingChallenge extends RandomChallenge {
 	@Override
 	public ItemStack getDisplayItem() {
 		return createItem(Material.ORANGE_TERRACOTTA, 
-				LanguageMessages.guiRandomMobDropsName, 
+				LanguageMessages.guiRandomCraftingName, 
 				new ArrayList<String>(LanguageMessages.guiRandomCraftingLore), 
 				super.active);
 	}

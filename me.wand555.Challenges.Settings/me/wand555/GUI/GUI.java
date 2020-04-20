@@ -1,5 +1,6 @@
 package me.wand555.GUI;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -12,6 +13,7 @@ import com.google.common.collect.Lists;
 
 import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.ChallengeProfile.Backpack;
+import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemDisplayCreator;
@@ -80,6 +82,13 @@ public class GUI implements ItemDisplayCreator {
 					break;
 				case 15:
 					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.ON_BLOCK).getDisplayItem());
+					break;
+				
+				case 26:
+					gui.setItem(i, createItem(Material.CHEST, 
+							LanguageMessages.guiBackpackName, 
+							new ArrayList<String>(LanguageMessages.guiBackpackLore), 
+							ChallengeProfile.getInstance().getBackpack().isEnabled()));
 					break;
 				default:	
 					gui.setItem(i, createGlass());

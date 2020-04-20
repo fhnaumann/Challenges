@@ -23,6 +23,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoBlockBreakingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoBlockPlacingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoCraftingChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoDamageChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoRegenerationChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoSneakingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
@@ -77,12 +78,16 @@ public class GUIClickListener implements Listener {
 							}	
 							case 2:
 							{
-								
-								GenericChallenge genericChallenge = GenericChallenge.getChallenge(ChallengeType.NO_DAMAGE);
-								genericChallenge.setAround();
-								gui.createGUI(p, GUIType.OVERVIEW);
-								reloadOtherPlayerInvs(gui, p);
-								genericChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+								NoDamageChallenge noDamageChallenge = GenericChallenge.getChallenge(ChallengeType.NO_DAMAGE);
+								if(!noDamageChallenge.isActive()) {
+									gui.createGUI(p, GUIType.PUNISHMENT, noDamageChallenge.getPunishCause());
+								}
+								else {
+									noDamageChallenge.setAround();
+									gui.createGUI(p, GUIType.OVERVIEW);
+									reloadOtherPlayerInvs(gui, p);
+									noDamageChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());		
+								}
 								break;
 							}			
 							case 3:
@@ -279,13 +284,15 @@ public class GUIClickListener implements Listener {
 							            		
 							            		if(earliest > 0 && latest > 0 && height > 0) {
 							            			if(earliest <= latest) {
-							            				mlgChallenge.setAround();
 							            				mlgChallenge.setEarliest(earliest);
 							            				mlgChallenge.setLatest(latest);
 							            				mlgChallenge.setHeight(height);
 							            				reloadOtherPlayerInvs(gui, p);
 							            				p.sendMessage(LanguageMessages.signCorrect);
-							            				mlgChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+							            				//mlgChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+							            				Bukkit.getScheduler().runTaskLater(plugin, () -> {
+							            					gui.createGUI(p, GUIType.PUNISHMENT, mlgChallenge.getPunishCause());
+							            				}, 1L);
 							            				return true;
 							            			}
 							            			else {
@@ -312,10 +319,12 @@ public class GUIClickListener implements Listener {
 									mlgChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
 									if(mlgChallenge.getTimer() != null) {
 										mlgChallenge.getTimer().cancel();
+										mlgChallenge.setTimer(null);
 									}
+									gui.createGUI(p, GUIType.OVERVIEW);
 								}
 								
-								gui.createGUI(p, GUIType.OVERVIEW);
+								
 								reloadOtherPlayerInvs(gui, p);
 								
 								break;
@@ -405,6 +414,12 @@ public class GUIClickListener implements Listener {
 								
 								break;
 							}
+							
+							case 26:
+								ChallengeProfile.getInstance().getBackpack().setEnabled(!ChallengeProfile.getInstance().getBackpack().isEnabled());
+								gui.createGUI(p, GUIType.OVERVIEW);
+								reloadOtherPlayerInvs(gui, p);
+								break;
 							default:
 								return;
 							}

@@ -62,6 +62,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("targetNotInChallenge", "&7The player '&a[PLAYER]&7' is not in a challenge.");
 		msgDefaults.put("registeredPosition", "&7Registered position &a[POS]&7.");
 		msgDefaults.put("returnPosition", "&7Position: &2&l[X]&7/&2&l[Y]&7/&2&l[Z] &7'&a[POSNAME]&7' in the world &2[WORLD]&7.");
+		msgDefaults.put("backpackDisabled", "&7Backpack is disabled.");
 		
 		msgDefaults.put("endChallengeReset", "&7Type &a/challenge reset &7to reset the challenge.");
 		msgDefaults.put("endChallengeComplete", "&7The challenge has been completed in &2&l[TIME]&7!");
@@ -85,6 +86,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("bpSyntax", "&7Syntax: &a/bp");
 		msgDefaults.put("settingSyntax", "&7Syntax: &a/settings");
 		
+		msgDefaults.put("guiBackpackName", "&7&lTeam Backpack");
 		msgDefaults.put("guiDeathName", "&7&lDeath");
 		msgDefaults.put("guiFortressSpawnName", "&7&lGuarantee Fortress Spawn");
 		msgDefaults.put("guiNoDamageName", "&7&lNo Damage");
@@ -102,6 +104,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiRandomMLGName", "&7&lRandom MLG");
 		msgDefaults.put("guiOnBlockName", "&7&lForceBlock");
 		
+		msgDefaults.put("guiBackpackLore", "&7&A backpack all challenge participants share!");
 		msgDefaults.put("guiDeathLore", "The challenge ends when a player dies!");
 		msgDefaults.put("guiFortressSpawnLore", "You will always spawn near a nether fortress!");
 		msgDefaults.put("guiNoDamageLore", "The challenge ends when a player takes damage!");
@@ -132,13 +135,16 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("punishAllItemsAll", "&7&lAll lose all items");
 		msgDefaults.put("punishChallengeOver", "&7&lThe challenge ends");
 		
+		msgDefaults.put("violationNoDamage", "&2[PLAYER] &7took damage (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationBlockPlacing", "&2[PLAYER] &7has placed a block (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationBlockBreaking", "&2[PLAYER] &7has broken a block (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationCrafting", "&2[PLAYER] &7has crafted (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationSneaking", "&2[PLAYER] &7has sneaked (Punishment: &2[PUNISHMENT]&7)!");
+		msgDefaults.put("violationMLG", "&2[PLAYER] &7failed the MLG (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationOnBlock", "&2[PLAYER] &7failed to stand on the block (Punishment: &2[PUNISHMENT]&7!");
 		
-		msgDefaults.put("passedOnBlock", "All players stood on the correct block!");
+		msgDefaults.put("passedMLG", "&7All players beat the MLG!");
+		msgDefaults.put("passedOnBlock", "&7All players stood on the correct block!");
 		
 		msgDefaults.put("titleChallengeChange", "&e[CHALLENGE] &7is [STATUS]");
 		msgDefaults.put("titleWithAmountChallengeChange", "&e[CHALLENGE] &7(&a[AMOUNT]&7) is [STATUS]");
@@ -197,6 +203,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("targetNotInChallenge", "&7Der Spieler ''&a[PLAYER]&7'' ist in keiner Challenge.");
 		msgDefaults.put("registeredPosition", "&a[POS]&7 hinzugefügt.");
 		msgDefaults.put("returnPosition", "&7Position: &2&l[X]&7/&2&l[Y]&7/&2&l[Z] &7'&a[POSNAME]&7' in der Welt &2[WORLD]&7.");
+		msgDefaults.put("backpackDisabled", "&7Rucksack ist deaktiviert.");
 		
 		msgDefaults.put("endChallengeReset", "&7Nutze &a/challenge reset &7um die Challenge zu beenden.");
 		msgDefaults.put("endChallengeComplete", "&7Die Challenge wurde in &2&l[TIME] &7gemeistert!");
@@ -220,6 +227,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("bpSyntax", "&7Syntax: &a/bp");
 		msgDefaults.put("settingSyntax", "&7Syntax: &a/settings");
 		
+		msgDefaults.put("guiBackpackName", "&7&lTeam Rucksack");
 		msgDefaults.put("guiDeathName", "&7&lTod");
 		msgDefaults.put("guiFortressSpawnName", "&7&lGarantierter Netherfestungsspawn");
 		msgDefaults.put("guiNoDamageName", "&7&lKein Schaden");
@@ -237,6 +245,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiRandomMLGName", "&7&lZufälliger MLG");
 		msgDefaults.put("guiOnBlockName", "&7&lForceBlock");
 		
+		msgDefaults.put("guiBackpackLore", "&7Ein gemeinsamer Rucksack zum Teilen von Items!");
 		msgDefaults.put("guiDeathLore", "Die Challenge ist vorbei sobald ein Spieler stirbt!");
 		msgDefaults.put("guiFortressSpawnLore", "Du spawnst im Nether immer in der Nähe einer Festung!");
 		msgDefaults.put("guiNoDamageLore", "Die Challenge ist vorbei sobald ein Spieler schaden bekommt!");
@@ -267,12 +276,15 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("punishAllItemsAll", "&7&lAlle Spieler verlieren ihr Inventar");
 		msgDefaults.put("punishChallengeOver", "&7&lDie Challenge ist vorbei");
 		
+		msgDefaults.put("violationNoDamage", "&2[PLAYER] &7hat Schaden genommen (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationBlockPlacing", "&2[PLAYER] &7hat einen Block platziert (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationBlockBreaking", "&2[PLAYER] &7hat einen Block abgebaut (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationCrafting", "&2[PLAYER] &7hat ein item gecraftet (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationSneaking", "&2[PLAYER] &7hat gesneakt (Bestrafung: &2[PUNISHMENT]&7)!");
+		msgDefaults.put("violationMLG", "&2[PLAYER]&7 hat den MLG nicht geschafft (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationOnBlock", "&2[PLAYER] &7stand nicht auf dem Block (Bestrafung: &2[PUNISHMENT]&7!");
 		
+		msgDefaults.put("passedMLG", "&7Alle Spieler haben den MLG geschafft!");
 		msgDefaults.put("passedOnBlock", "Alle Spieler standen auf dem korrekten Block!");
 		
 		msgDefaults.put("titleChallengeChange", "&e[CHALLENGE] &7ist [STATUS]");

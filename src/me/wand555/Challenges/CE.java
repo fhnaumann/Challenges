@@ -14,6 +14,8 @@ import org.bukkit.entity.Wolf;
 
 import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.Positions.Position;
 import me.wand555.Challenges.ChallengeProfile.Positions.PositionManager;
 import me.wand555.Challenges.Config.LanguageMessages;
@@ -175,7 +177,13 @@ public class CE implements CommandExecutor {
 			if(args.length == 0) {
 				if(player.hasPermission("challenge.bp")) {
 					if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
-						gui.createGUI(player, GUIType.BACKPACK);
+						if(ChallengeProfile.getInstance().getBackpack().isEnabled()) {
+							gui.createGUI(player, GUIType.BACKPACK);
+						}
+						else {
+							player.sendMessage(LanguageMessages.backpackDisabled);
+						}
+						
 					}
 					else {
 						player.sendMessage(LanguageMessages.notInChallenge);
@@ -190,31 +198,65 @@ public class CE implements CommandExecutor {
 			if(args.length == 2) {
 				if(player.hasPermission("challenge.hp")) {
 					if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
-						@SuppressWarnings("deprecation")
-						OfflinePlayer offlinetarget = Bukkit.getOfflinePlayer(args[1]);
-						if(offlinetarget.isOnline()) {
-							Player target = (Player) offlinetarget;
-							if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+						if(args[1].equalsIgnoreCase("all")) {
+							ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(p -> {
 								if(StringUtils.isNumeric(args[0])) {
 									double number = Double.valueOf(args[0]);
-									target.setHealth(number < 0 ? 
+									p.setHealth(number < 0 ? 
 											0 : 
-										number > target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() ? 
-												target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() 
+										number > p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() ? 
+												p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() 
 												: number);
+									p.setFoodLevel(22);
 									player.sendMessage(LanguageMessages.setHP);
 								}
 								else {
 									player.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", args[0]));
 								}
-							}
-							else {
-								//target not in challenge
-							}
+							});
 						}
 						else {
-							player.sendMessage(LanguageMessages.playerNotOnline.replace("[PLAYER]", offlinetarget.getName()));
-						}
+							@SuppressWarnings("deprecation")
+							OfflinePlayer offlinetarget = Bukkit.getOfflinePlayer(args[1]);
+							if(offlinetarget.isOnline()) {
+								Player target = (Player) offlinetarget;
+								if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+									if(StringUtils.isNumeric(args[0])) {
+										double number = Double.valueOf(args[0]);
+										if(GenericChallenge.isActive(ChallengeType.SHARED_HEALTH)) {
+											ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(p -> {
+												p.setHealth(number < 0 ? 
+														0 : 
+													number > p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() ? 
+															p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() 
+															: number);
+												p.setFoodLevel(22);
+												player.sendMessage(LanguageMessages.setHP);
+											});
+										}
+										else {
+											target.setHealth(number < 0 ? 
+													0 : 
+												number > target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() ? 
+														target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() 
+														: number);
+											target.setFoodLevel(22);
+										}
+										
+										player.sendMessage(LanguageMessages.setHP);
+									}
+									else {
+										player.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", args[0]));
+									}
+								}
+								else {
+									//target not in challenge
+								}
+							}
+							else {
+								player.sendMessage(LanguageMessages.playerNotOnline.replace("[PLAYER]", offlinetarget.getName()));
+							}
+						}	
 					}
 					else {
 						player.sendMessage(LanguageMessages.notInChallenge);

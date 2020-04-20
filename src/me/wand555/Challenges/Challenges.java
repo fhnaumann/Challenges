@@ -63,9 +63,15 @@ public class Challenges extends JavaPlugin {
 		else LanguageMessages.loadLang(Language.ENGLISH);
 		
 		
-		WorldLinkManager.worlds.add(Bukkit.createWorld(new WorldCreator("ChallengeOverworld").hardcore(true).environment(Environment.NORMAL)));
-		WorldLinkManager.worlds.add(Bukkit.createWorld(new WorldCreator("ChallengeNether").hardcore(true).environment(Environment.NETHER)));
-		WorldLinkManager.worlds.add(Bukkit.createWorld(new WorldCreator("ChallengeEnd").hardcore(true).environment(Environment.THE_END)));
+		World overWorld = Bukkit.createWorld(new WorldCreator("ChallengeOverworld").environment(Environment.NORMAL));
+		overWorld.setDifficulty(Difficulty.HARD);
+		WorldLinkManager.worlds.add(overWorld);
+		World netherWorld = Bukkit.createWorld(new WorldCreator("ChallengeNether").environment(Environment.NETHER));
+		netherWorld.setDifficulty(Difficulty.HARD);
+		WorldLinkManager.worlds.add(netherWorld);
+		World endWorld = Bukkit.createWorld(new WorldCreator("ChallengeEnd").environment(Environment.THE_END));
+		endWorld.setDifficulty(Difficulty.HARD);
+		WorldLinkManager.worlds.add(endWorld);
 		World mlgWorld = new WorldCreator("MLGWorld")
 				.environment(Environment.NORMAL)
 				.type(WorldType.FLAT)

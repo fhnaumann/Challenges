@@ -8,6 +8,8 @@ public interface ReasonNotifiable {
 
 	default String createPassedMessage(ChallengeType cause) {
 		switch(cause) {
+		case MLG:
+			return LanguageMessages.passedMLG;
 		case ON_BLOCK:
 			return LanguageMessages.passedOnBlock;
 		default: return "unknown";
@@ -29,6 +31,9 @@ public interface ReasonNotifiable {
 			GenericChallenge genericChallenge = GenericChallenge.getChallenge(cause);
 			if(!genericChallenge.isActive()) return null;	
 			switch(cause) {
+			case NO_DAMAGE:
+				return LanguageMessages.violationNoDamage.replace("[PLAYER]", causer.getName())
+						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
 			case NO_BLOCK_PLACING:
 				return LanguageMessages.violationBlockPlacing.replace("[PLAYER]", causer.getName())
 						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
@@ -40,6 +45,9 @@ public interface ReasonNotifiable {
 						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
 			case NO_SNEAKING:
 				return LanguageMessages.violationSneaking.replace("[PLAYER]", causer.getName())
+						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));	
+			case MLG:
+				return LanguageMessages.violationMLG.replace("[PLAYER]", causer.getName())
 						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));	
 			case ON_BLOCK:
 				return LanguageMessages.violationOnBlock.replace("[PLAYER]", causer.getName())

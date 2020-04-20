@@ -1,5 +1,6 @@
 package me.wand555.Challenges.Listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,7 +32,9 @@ public class MLGListener implements Listener {
 			if(cProfile.isInChallenge(player.getUniqueId())) {
 				MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
 				if(mlgChallenge.isActive()) {
-					mlgChallenge.onMLGDone(player, false);
+					if(Bukkit.getWorld("MLGWorld").equals(player.getWorld())) {
+						mlgChallenge.onMLGDone(player, false);
+					}			
 				}
 			}
 		}
@@ -44,16 +47,20 @@ public class MLGListener implements Listener {
 			if(cProfile.isInChallenge(event.getPlayer().getUniqueId())) {
 				MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
 				if(mlgChallenge.isActive()) {
-					new BukkitRunnable() {
-						
-						@Override
-						public void run() {
-							if(mlgChallenge.getInMLGWorld().containsKey(event.getPlayer().getUniqueId())) {
-								mlgChallenge.onMLGDone(event.getPlayer(), true);
-								event.getBlock().setType(Material.AIR);
+					if(Bukkit.getWorld("MLGWorld").equals(event.getPlayer().getWorld())) {
+						new BukkitRunnable() {
+							
+							@Override
+							public void run() {
+								if(mlgChallenge.getInMLGWorld().containsKey(event.getPlayer().getUniqueId())) {
+									if(mlgChallenge.getInMLGWorld().get(event.getPlayer().getUniqueId()) == null) {
+										mlgChallenge.onMLGDone(event.getPlayer(), true);
+										event.getBlock().setType(Material.AIR);
+									}	
+								}
 							}
-						}
-					}.runTaskLater(plugin, 20L);
+						}.runTaskLater(plugin, 20L);
+					}		
 				}
 			}
 		}

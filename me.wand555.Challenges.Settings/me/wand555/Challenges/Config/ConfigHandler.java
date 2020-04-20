@@ -77,6 +77,7 @@ public class ConfigHandler extends ConfigUtil {
 		checkOrdner();
 		File file = new File(PLUGIN.getDataFolder()+"", "backpack.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+		ChallengeProfile.getInstance().getBackpack().setEnabled(cfg.getBoolean("Status"));
 		List<?> list = cfg.getList("Content");
 		if(list == null) {
 			ChallengeProfile.getInstance().getBackpack().setContents(new ItemStack[Backpack.BACKPACK_SIZE]);
@@ -87,6 +88,7 @@ public class ConfigHandler extends ConfigUtil {
 		clearFile("backpack.yml");
 		File file = new File(PLUGIN.getDataFolder()+"", "backpack.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+		cfg.set("Status", ChallengeProfile.getInstance().getBackpack().isEnabled());
 		cfg.set("Content", Arrays.asList(ChallengeProfile.getInstance().getBackpack().getContents()));
 		saveCustomYml(cfg, file);
 	}
@@ -130,7 +132,7 @@ public class ConfigHandler extends ConfigUtil {
 		cProfile.isPaused = cProfile.hasStarted ? true : false;
 		new EndOnDeathChallenge().setActive(cfg.getBoolean("endOnDeath"));
 		new NetherFortressSpawnChallenge().setActive(cfg.getBoolean("spawnNearFortress"));
-		new NoDamageChallenge().setActive(cfg.getBoolean("noDamage"));
+		new NoDamageChallenge().setActive(cfg.getBoolean("noDamage.Boolean"));
 		new NoRegenerationChallenge().setActive(cfg.getBoolean("noReg"));
 		new NoRegenerationHardChallenge().setActive(cfg.getBoolean("noRegHard"));
 		new CustomHealthChallenge().setActive(cfg.getBoolean("customHealth"));
@@ -149,6 +151,7 @@ public class ConfigHandler extends ConfigUtil {
 			cProfile.setSecondTimer(new SecondTimer(PLUGIN, cfg.getLong("Timer")));
 			MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
 			if(mlgChallenge.isActive()) {
+				mlgChallenge.setPunishType(PunishType.valueOf(cfg.getString("MLG.Punishment")));
 				mlgChallenge.setEarliest(cfg.getInt("MLG.Earliest"));
 				mlgChallenge.setLatest(cfg.getInt("MLG.Latest"));
 				mlgChallenge.setHeight(cfg.getInt("MLG.Height"));
@@ -159,6 +162,10 @@ public class ConfigHandler extends ConfigUtil {
 			CustomHealthChallenge cHealthChallenge = GenericChallenge.getChallenge(ChallengeType.CUSTOM_HEALTH);
 			if(cHealthChallenge.isActive()) {
 				cHealthChallenge.setAmount(cfg.getDouble("customHealthAmount"));
+			}
+			NoDamageChallenge noDamageChallenge = GenericChallenge.getChallenge(ChallengeType.NO_DAMAGE);
+			if(noDamageChallenge.isActive()) {
+				noDamageChallenge.setPunishType(PunishType.valueOf(cfg.getString("noDamage.Punishment")));
 			}
 			SharedHealthChallenge sHChallenge = GenericChallenge.getChallenge(ChallengeType.SHARED_HEALTH);
 			if(sHChallenge.isActive()) {
@@ -269,7 +276,7 @@ public class ConfigHandler extends ConfigUtil {
 		cfg.set("hasStarted", cProfile.hasStarted);
 		cfg.set("endOnDeath", GenericChallenge.isActive(ChallengeType.END_ON_DEATH));
 		cfg.set("spawnNearFortress", GenericChallenge.isActive(ChallengeType.NETHER_FORTRESS_SPAWN));
-		cfg.set("noDamage", GenericChallenge.isActive(ChallengeType.NO_DAMAGE));
+		cfg.set("noDamage.Boolean", GenericChallenge.isActive(ChallengeType.NO_DAMAGE));
 		cfg.set("noReg", GenericChallenge.isActive(ChallengeType.NO_REG));
 		cfg.set("noRegHard", GenericChallenge.isActive(ChallengeType.NO_REG_HARD));
 		cfg.set("customHealth", GenericChallenge.isActive(ChallengeType.CUSTOM_HEALTH));
@@ -287,7 +294,8 @@ public class ConfigHandler extends ConfigUtil {
 		if(cProfile.hasStarted) {
 			cfg.set("Timer", cProfile.getSecondTimer().getTime());
 			MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
-			if(mlgChallenge.isActive()) {	
+			if(mlgChallenge.isActive()) {
+				cfg.set("MLG.Punishment", mlgChallenge.getPunishType().toString());
 				cfg.set("MLG.Earliest", mlgChallenge.getEarliest());
 				cfg.set("MLG.Latest", mlgChallenge.getLatest());
 				cfg.set("MLG.Height", mlgChallenge.getHeight());
@@ -303,6 +311,10 @@ public class ConfigHandler extends ConfigUtil {
 			SharedHealthChallenge sHChallenge = GenericChallenge.getChallenge(ChallengeType.SHARED_HEALTH);
 			if(sHChallenge.isActive()) {
 				cfg.set("sharedHealthAmount", sHChallenge.getSharedHealth());
+			}
+			NoDamageChallenge noDamageChallenge = GenericChallenge.getChallenge(ChallengeType.NO_DAMAGE);
+			if(noDamageChallenge.isActive()) {
+				cfg.set("noDamage.Punishment", noDamageChallenge.getPunishType().toString());
 			}
 			NoBlockPlacingChallenge nBPChallenge = GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_PLACING);
 			if(nBPChallenge.isActive()) {

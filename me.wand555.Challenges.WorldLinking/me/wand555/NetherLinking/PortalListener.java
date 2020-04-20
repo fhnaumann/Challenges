@@ -3,7 +3,7 @@ package me.wand555.NetherLinking;
 
 import java.util.List;
 
-
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
@@ -54,8 +54,8 @@ public class PortalListener implements Listener {
 			Gate gate = Gate.getGateEnteredFromLoc(event.getFrom().clone());
 			if(gate != null) {
 				Location loc = gate.findOrCreateAndReturnLocPortal(gate, gate.getEnvironment() == Environment.NORMAL ?
-						WorldLinkManager.worlds.stream().filter(w -> w.getEnvironment() == Environment.NETHER).findFirst().get()
-						: WorldLinkManager.worlds.stream().filter(w -> w.getEnvironment() == Environment.NORMAL).findFirst().get(), event.getFrom());
+						Bukkit.getWorld("ChallengeNether")
+						: Bukkit.getWorld("ChallengeOverworld"), event.getFrom());
 				new BukkitRunnable() {
 					
 					@Override
@@ -83,7 +83,8 @@ public class PortalListener implements Listener {
 	@EventHandler
 	public void onPlayerEnterPortal(PlayerPortalEvent event) {	
 		if(WorldLinkManager.worlds.contains(event.getFrom().getWorld())) {
-			event.setCanCreatePortal(false);
+			//if(Bukkit.getServer().getVersion().contains("1.15")) 
+				event.setCanCreatePortal(false);
 			event.setCancelled(true);
 			if(event.getCause() == TeleportCause.NETHER_PORTAL) {
 				Gate gate = Gate.getGateEnteredFromLoc(event.getFrom().clone());
@@ -94,8 +95,8 @@ public class PortalListener implements Listener {
 					}
 					else {
 						Location loc = gate.findOrCreateAndReturnLocPortal(gate, gate.getEnvironment() == Environment.NORMAL ?
-								WorldLinkManager.worlds.stream().filter(w -> w.getEnvironment() == Environment.NETHER).findFirst().get()
-								: WorldLinkManager.worlds.stream().filter(w -> w.getEnvironment() == Environment.NORMAL).findFirst().get(), event.getFrom());
+								Bukkit.getWorld("ChallengeNether")
+								: Bukkit.getWorld("ChallengeOverworld"), event.getFrom());
 						new BukkitRunnable() {
 							
 							@Override
