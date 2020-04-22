@@ -203,7 +203,6 @@ public class OnBlockChallenge extends GenericChallenge implements Punishable, Re
 
 	@Override
 	public void createBossBar(String title, BarColor color) {
-		System.out.println(title);
 		this.bossbar = Bukkit.getServer().createBossBar(title, color, BarStyle.SEGMENTED_20);
 		this.bossbar.setProgress(1d);
 	}

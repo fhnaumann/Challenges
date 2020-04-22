@@ -19,6 +19,7 @@ public class UserConfig extends ConfigUtil {
 		PLUGIN.getConfig().addDefault("Language", "#English - " + Language.ENGLISH.getAbbreviation());
 		PLUGIN.getConfig().addDefault("Language", "#German - " + Language.GERMAN.getAbbreviation());
 		PLUGIN.getConfig().addDefault("Language", "de");
+		PLUGIN.getConfig().addDefault("logDamage", true);
 		PLUGIN.saveConfig();
 	}
 	
@@ -63,6 +64,8 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("registeredPosition", "&7Registered position &a[POS]&7.");
 		msgDefaults.put("returnPosition", "&7Position: &2&l[X]&7/&2&l[Y]&7/&2&l[Z] &7'&a[POSNAME]&7' in the world &2[WORLD]&7.");
 		msgDefaults.put("backpackDisabled", "&7Backpack is disabled.");
+		msgDefaults.put("noRestoreBecauseDesc", "&7Cannot restore a countdown challenge!");
+		msgDefaults.put("posEmpty", "&7No positions exist.");
 		
 		msgDefaults.put("endChallengeReset", "&7Type &a/challenge reset &7to reset the challenge.");
 		msgDefaults.put("endChallengeComplete", "&7The challenge has been completed in &2&l[TIME]&7!");
@@ -74,6 +77,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("endChallengeNoSneaking", "&2[PLAYER] &7sneaked! The challenge ended!");
 		msgDefaults.put("endChallengeFailedMLG", "&2[PLAYER] failed the MLG! The challenge ended!");
 		msgDefaults.put("endChallengeNotOnBlock", "&2[PLAYER] &7failed to stand on the block! The challenge ended!");
+		msgDefaults.put("endChallengeNoTimeLeft", "&7You ran out of time! The challenge ended");
 		
 		msgDefaults.put("timerMessageStart", "&7&l/timer start");
 		msgDefaults.put("timerMessagePause", "&7&lPAUSED &2[TIME] &7- /timer pause");
@@ -85,6 +89,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("positionSyntax", "&7Syntax: &a/pos <Name>");
 		msgDefaults.put("bpSyntax", "&7Syntax: &a/bp");
 		msgDefaults.put("settingSyntax", "&7Syntax: &a/settings");
+		msgDefaults.put("timerStartSyntax", "&7Syntax: &a/timer start asc &7or &a/timer start desc");
 		
 		msgDefaults.put("guiBackpackName", "&7&lTeam Backpack");
 		msgDefaults.put("guiDeathName", "&7&lDeath");
@@ -135,7 +140,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("punishAllItemsAll", "&7&lAll lose all items");
 		msgDefaults.put("punishChallengeOver", "&7&lThe challenge ends");
 		
-		msgDefaults.put("violationNoDamage", "&2[PLAYER] &7took damage (Punishment: &2[PUNISHMENT]&7)!");
+		msgDefaults.put("violationNoDamage", "&2[PLAYER] &7took &e[AMOUNT] &7damage from &a[REASON] &7(Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationBlockPlacing", "&2[PLAYER] &7has placed a block (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationBlockBreaking", "&2[PLAYER] &7has broken a block (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationCrafting", "&2[PLAYER] &7has crafted (Punishment: &2[PUNISHMENT]&7)!");
@@ -146,6 +151,8 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("passedMLG", "&7All players beat the MLG!");
 		msgDefaults.put("passedOnBlock", "&7All players stood on the correct block!");
 		
+		msgDefaults.put("logDamage", "&2[PLAYER] &7took &e[AMOUNT] &7damage (Reason: &a[REASON]&7)!");
+		
 		msgDefaults.put("titleChallengeChange", "&e[CHALLENGE] &7is [STATUS]");
 		msgDefaults.put("titleWithAmountChallengeChange", "&e[CHALLENGE] &7(&a[AMOUNT]&7) is [STATUS]");
 		msgDefaults.put("subtitleChallengeChange", "&2Punishment: &e[PUNISHMENT]");
@@ -155,6 +162,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("mlgSign", "__Order is_Early Late Height");
 		msgDefaults.put("onBlockSign", "__Order is_Earliest Latest");
 		msgDefaults.put("punishmentAmountSign", "_Choose a value_between 1 and 10!_(both inclusive)");
+		msgDefaults.put("timerStartDescSign", "__Format is_HH:MM:SS");
 		
 		msgDefaults.put("signCorrect", "&7Successfully changed settings.");
 		msgDefaults.put("signTooLowWrong", "&7a number entered is too low.");
@@ -204,6 +212,8 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("registeredPosition", "&a[POS]&7 hinzugefügt.");
 		msgDefaults.put("returnPosition", "&7Position: &2&l[X]&7/&2&l[Y]&7/&2&l[Z] &7'&a[POSNAME]&7' in der Welt &2[WORLD]&7.");
 		msgDefaults.put("backpackDisabled", "&7Rucksack ist deaktiviert.");
+		msgDefaults.put("noRestoreBecauseDesc", "&7Kann keine Countdown Challenge wiederherstellen!");
+		msgDefaults.put("posEmpty", "&7Es existieren keine Positions.");
 		
 		msgDefaults.put("endChallengeReset", "&7Nutze &a/challenge reset &7um die Challenge zu beenden.");
 		msgDefaults.put("endChallengeComplete", "&7Die Challenge wurde in &2&l[TIME] &7gemeistert!");
@@ -215,6 +225,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("endChallengeNoSneaking", "&2[PLAYER] &7sneakte! Die Challenge ist vorbei!");
 		msgDefaults.put("endChallengeFailedMLG", "&2[PLAYER] hat den MLG nicht geschafft! Die Challenge ist vorbei!");
 		msgDefaults.put("endChallengeNotOnBlock", "&2[PLAYER] &7stand nicht auf dem Block! Die Challenge ist vorbei!");
+		msgDefaults.put("endChallengeNoTimeLeft", "&7Der Timer ist abgelaufen! Die Challenge ist vorbei!");
 		
 		msgDefaults.put("timerMessageStart", "&7&l/timer start");
 		msgDefaults.put("timerMessagePause", "&7&lPAUSIERT &2[TIME] &7- /timer pause");
@@ -226,6 +237,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("positionSyntax", "&7Syntax: &a/pos <Name>");
 		msgDefaults.put("bpSyntax", "&7Syntax: &a/bp");
 		msgDefaults.put("settingSyntax", "&7Syntax: &a/settings");
+		msgDefaults.put("timerStartSyntax", "&7Syntax: &a/timer start asc &7oder &a/timer start desc");
 		
 		msgDefaults.put("guiBackpackName", "&7&lTeam Rucksack");
 		msgDefaults.put("guiDeathName", "&7&lTod");
@@ -276,7 +288,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("punishAllItemsAll", "&7&lAlle Spieler verlieren ihr Inventar");
 		msgDefaults.put("punishChallengeOver", "&7&lDie Challenge ist vorbei");
 		
-		msgDefaults.put("violationNoDamage", "&2[PLAYER] &7hat Schaden genommen (Bestrafung: &2[PUNISHMENT]&7)!");
+		msgDefaults.put("violationNoDamage", "&2[PLAYER] &7hat durch &a[REASON] &e[AMOUNT] &7Schaden genommen (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationBlockPlacing", "&2[PLAYER] &7hat einen Block platziert (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationBlockBreaking", "&2[PLAYER] &7hat einen Block abgebaut (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationCrafting", "&2[PLAYER] &7hat ein item gecraftet (Bestrafung: &2[PUNISHMENT]&7)!");
@@ -286,15 +298,17 @@ public class UserConfig extends ConfigUtil {
 		
 		msgDefaults.put("passedMLG", "&7Alle Spieler haben den MLG geschafft!");
 		msgDefaults.put("passedOnBlock", "Alle Spieler standen auf dem korrekten Block!");
+		msgDefaults.put("logDamage", "&2[PLAYER] &7hat &e[AMOUNT] &7Schaden genommen (Grund: &a[REASON]&7)!");
 		
 		msgDefaults.put("titleChallengeChange", "&e[CHALLENGE] &7ist [STATUS]");
 		msgDefaults.put("titleWithAmountChallengeChange", "&e[CHALLENGE] &7(&a[AMOUNT]&7) ist [STATUS]");
 		msgDefaults.put("subtitleChallengeChange", "&2Bestrafung: &e[PUNISHMENT]");
 		msgDefaults.put("subtitleWithAmountChallengeChange", "&2Bestrafung: &e[PUNISHMENT]&7(&a[AMOUNT]&7)");
 		msgDefaults.put("customHealthSign", "__Wähle die Anzahl_der Herzen oben!");
-		msgDefaults.put("mlgSign", "__Anordnung ist_frueh spaet Hoehe");
-		msgDefaults.put("onBlockSign", "__Anordnung ist_frueh spaet");
+		msgDefaults.put("mlgSign", "__Anordnung ist_Früh Spät Höhe");
+		msgDefaults.put("onBlockSign", "__Anordnung ist_Früh Spät");
 		msgDefaults.put("punishmentAmountSign", "_Wähle einen Wert_zwischen 1 und 10!_(beide inklusive)");
+		msgDefaults.put("timerStartDescSign", "__Format ist_HH:MM:SS");
 		
 		msgDefaults.put("signCorrect", "&7Einstellungen erfolgreich aktualisiert.");
 		msgDefaults.put("signTooLowWrong", "&7Eine der Zahlen ist zu niedrig.");

@@ -91,7 +91,7 @@ public class OnBlockTimer extends BukkitRunnable {
 					
 				}
 				else {
-					String message = onBlockChallenge.createPassedMessage(onBlockChallenge.getPunishCause());
+					String message = onBlockChallenge.createLogMessage(onBlockChallenge.getPunishCause());
 					ChallengeProfile.getInstance().sendMessageToAllParticipants(message);
 					timeTo = ThreadLocalRandom.current()
 							.nextLong(onBlockChallenge.getEarliestToShow(), (onBlockChallenge.getLatestToShow()+1));

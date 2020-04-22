@@ -6,7 +6,15 @@ import me.wand555.Challenges.Config.LanguageMessages;
 
 public interface ReasonNotifiable {
 
-	default String createPassedMessage(ChallengeType cause) {
+	/**
+	 * Cases:
+	 * MLG: Message when all players passed the MLG
+	 * ON_BLOCK: When all stood on block
+	 * 
+	 * @param cause
+	 * @return
+	 */
+	default String createLogMessage(ChallengeType cause) {
 		switch(cause) {
 		case MLG:
 			return LanguageMessages.passedMLG;
@@ -31,9 +39,9 @@ public interface ReasonNotifiable {
 			GenericChallenge genericChallenge = GenericChallenge.getChallenge(cause);
 			if(!genericChallenge.isActive()) return null;	
 			switch(cause) {
-			case NO_DAMAGE:
-				return LanguageMessages.violationNoDamage.replace("[PLAYER]", causer.getName())
-						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
+			//case NO_DAMAGE:
+			//	return LanguageMessages.violationNoDamage.replace("[PLAYER]", causer.getName())
+			//			.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
 			case NO_BLOCK_PLACING:
 				return LanguageMessages.violationBlockPlacing.replace("[PLAYER]", causer.getName())
 						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));

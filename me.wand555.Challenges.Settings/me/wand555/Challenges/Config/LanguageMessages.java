@@ -50,6 +50,8 @@ public class LanguageMessages extends ConfigUtil {
 	public static String registeredPosition;
 	public static String returnPosition;
 	public static String backpackDisabled;
+	public static String noRestoreBecauseDesc;
+	public static String posEmpty;
 	
 	public static String endChallengeReset;
 	public static String endChallengeComplete;
@@ -61,6 +63,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String endChallengeNoSneaking;
 	public static String endChallengeFailedMLG;
 	public static String endChallengeNotOnBlock;
+	public static String endChallengeNoTimeLeft;
 	
 	public static String timerMessageStart;
 	public static String timerMessagePause;
@@ -72,6 +75,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String positionSyntax;
 	public static String bpSyntax;
 	public static String settingSyntax;
+	public static String timerStartSyntax;
 	
 	public static String guiBackpackName;
 	public static String guiDeathName;
@@ -145,6 +149,11 @@ public class LanguageMessages extends ConfigUtil {
 	public static String passedOnBlock;
 	
 	/**
+	 * Logging messages (when enabled in config)
+	 */
+	public static String logDamage;
+	
+	/**
 	 * Message in title when settings are changed.
 	 */
 	public static String titleChallengeChange;
@@ -159,6 +168,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static ArrayList<String> mlgSign;
 	public static ArrayList<String> onBlockSign;
 	public static ArrayList<String> punishmentAmountSign;	
+	public static ArrayList<String> timerStartDescSign;
 	
 	/**
 	 * When in SignGUI entered wrong. (right, first var here)
@@ -172,6 +182,22 @@ public class LanguageMessages extends ConfigUtil {
 	 */
 	public static String onBlockHidden;
 	public static String onBlockShown;
+	
+	/**
+	 * No Permission messages
+	 */
+	public static String noPermChallengeJoin;
+	public static String noPermChallengeLeave;
+	public static String noPermChallengeReset;
+	public static String noPermChallengeRestore;
+	public static String noPermSettingsView;
+	public static String noPermSettingsModify;
+	public static String noPermTimerStart;
+	public static String noPermTimerPause;
+	public static String noPermChallengeHP;
+	public static String noPermPosAdd;
+	public static String noPermPosView;
+	public static String noPermBp;
 	
 	public static String onlyForPlayers;
 	
@@ -205,6 +231,8 @@ public class LanguageMessages extends ConfigUtil {
 		registeredPosition = format(cfg.getString("registeredPosition"));
 		returnPosition = format(cfg.getString("returnPosition"));
 		backpackDisabled = format(cfg.getString("backpackDisabled"));
+		noRestoreBecauseDesc = format(cfg.getString("noRestoreBecauseDesc"));
+		posEmpty = format(cfg.getString("posEmpty"));
 		
 		endChallengeReset = format(cfg.getString("endChallengeReset"));
 		endChallengeComplete = format(cfg.getString("endChallengeComplete"));
@@ -216,6 +244,7 @@ public class LanguageMessages extends ConfigUtil {
 		endChallengeNoSneaking = format(cfg.getString("endChallengeNoSneaking"));
 		endChallengeFailedMLG = format(cfg.getString("endChallengeFailedMLG"));
 		endChallengeNotOnBlock = format(cfg.getString("endChallengeNotOnBlock"));
+		endChallengeNoTimeLeft = format(cfg.getString("endChallengeNoTimeLeft"));
 		
 		timerMessageStart = formatWithoutPrefix(cfg.getString("timerMessageStart"));
 		timerMessagePause = formatWithoutPrefix(cfg.getString("timerMessagePause"));
@@ -227,6 +256,7 @@ public class LanguageMessages extends ConfigUtil {
 		positionSyntax = format(cfg.getString("positionSyntax"));
 		bpSyntax = format(cfg.getString("bpSyntax"));
 		settingSyntax = format(cfg.getString("settingSyntax"));
+		timerStartSyntax = format(cfg.getString("timerStartSyntax"));
 		
 		guiBackpackName = formatWithoutPrefix(cfg.getString("guiBackpackName"));
 		guiDeathName = formatWithoutPrefix(cfg.getString("guiDeathName"));
@@ -305,10 +335,13 @@ public class LanguageMessages extends ConfigUtil {
 		passedMLG = format(cfg.getString("passedMLG"));
 		passedOnBlock = format(cfg.getString("passedOnBlock"));
 		
+		logDamage = format(cfg.getString("logDamage"));
+		
 		titleChallengeChange = formatWithoutPrefix(cfg.getString("titleChallengeChange"));
 		titleWithAmountChallengeChange = formatWithoutPrefix(cfg.getString("titleWithAmountChallengeChange"));
 		subtitleChallengeChange = formatWithoutPrefix(cfg.getString("subtitleChallengeChange"));
 		subtitleWithAmountChallengeChange = formatWithoutPrefix(cfg.getString("subtitleWithAmountChallengeChange"));
+		
 		customHealthSign = Lists.newArrayList(cfg.getString("customHealthSign").split("_"))
 				.stream().collect(Collectors.toCollection(ArrayList::new));
 		mlgSign = Lists.newArrayList(cfg.getString("mlgSign").split("_"))
@@ -317,7 +350,9 @@ public class LanguageMessages extends ConfigUtil {
 				.stream().collect(Collectors.toCollection(ArrayList::new));
 		punishmentAmountSign = Lists.newArrayList(cfg.getString("punishmentAmountSign").split("_"))
 				.stream().collect(Collectors.toCollection(ArrayList::new));
-	
+		timerStartDescSign = Lists.newArrayList(cfg.getString("timerStartDescSign").split("_"))
+				.stream().collect(Collectors.toCollection(ArrayList::new));
+		
 		signCorrect = format(cfg.getString("signCorrect"));
 		signTooLowWrong = format(cfg.getString("signTooLowWrong"));
 		signLatestLowerThanEarliestWrong = format(cfg.getString("signLatestLowerThanEarliestWrong"));

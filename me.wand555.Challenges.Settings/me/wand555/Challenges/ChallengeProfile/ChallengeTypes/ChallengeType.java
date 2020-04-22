@@ -3,7 +3,7 @@ package me.wand555.Challenges.ChallengeProfile.ChallengeTypes;
 public enum ChallengeType {
 END_ON_DEATH(false, false),
 NETHER_FORTRESS_SPAWN(false, false),
-NO_DAMAGE(false, false),
+NO_DAMAGE(true, false),
 NO_REG(false, false),
 NO_REG_HARD(false, false),
 CUSTOM_HEALTH(false, true),
@@ -15,7 +15,7 @@ NO_SNEAKING(true, false),
 RANDOMIZE_BLOCK_DROPS(false, false),
 RANDOMIZE_MOB_DROPS(false, false),
 RANDOMIZE_CRAFTING(false, false),
-MLG(false, false),
+MLG(true, false),
 ON_BLOCK(true, false)
 ;
 	/**

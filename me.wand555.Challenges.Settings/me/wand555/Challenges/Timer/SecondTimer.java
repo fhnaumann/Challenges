@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.wand555.Challenges.Challenges;
+import me.wand555.Challenges.ChallengeProfile.ChallengeEndReason;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.Config.LanguageMessages;
 import net.md_5.bungee.api.ChatMessageType;
@@ -11,6 +12,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class SecondTimer extends BukkitRunnable {
 
+	private TimerOrder order;
 	private TimerMessage messageType;
 	private long time;
 	
@@ -31,7 +33,11 @@ public class SecondTimer extends BukkitRunnable {
 		if(cProfile.getParticipants().isEmpty()) return;
 		
 		if(cProfile.hasStarted && !cProfile.isPaused) {
-			this.time += 1;
+			if(this.order == TimerOrder.DESC && time <= 0) {
+				cProfile.endChallenge(ChallengeEndReason.NO_TIME_LEFT);
+				return;
+			}
+			this.time = order == TimerOrder.ASC ? this.time+1 : this.time-1;
 			String displayTime = DateUtil.formatDuration(time);
 			TextComponent component = new TextComponent(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + displayTime);
 			cProfile.getParticipantsAsPlayers()
@@ -73,5 +79,19 @@ public class SecondTimer extends BukkitRunnable {
 	
 	public void setMessageType(TimerMessage messageType) {
 		this.messageType = messageType;
+	}
+
+	/**
+	 * @return the order
+	 */
+	public TimerOrder getOrder() {
+		return order;
+	}
+
+	/**
+	 * @param order the order to set
+	 */
+	public void setOrder(TimerOrder order) {
+		this.order = order;
 	}
 }

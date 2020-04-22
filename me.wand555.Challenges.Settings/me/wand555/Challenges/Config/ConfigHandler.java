@@ -44,6 +44,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.SharedHealthChallen
 import me.wand555.Challenges.ChallengeProfile.Positions.Position;
 import me.wand555.Challenges.Timer.SecondTimer;
 import me.wand555.Challenges.Timer.TimerMessage;
+import me.wand555.Challenges.Timer.TimerOrder;
 import me.wand555.EndLinking.ObsidianPlatform;
 import me.wand555.NetherLinking.Gate;
 
@@ -147,10 +148,13 @@ public class ConfigHandler extends ConfigUtil {
 		new MLGChallenge().setActive(cfg.getBoolean("randomMLG"));
 		new OnBlockChallenge().setActive(cfg.getBoolean("onBlock.Boolean"));
 		
-		if(cProfile.hasStarted) {
+		if(cProfile.hasStarted) {	
 			cProfile.setSecondTimer(new SecondTimer(PLUGIN, cfg.getLong("Timer")));
+			cProfile.getSecondTimer().setOrder(TimerOrder.valueOf(cfg.getString("Order")));
+			
 			MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
 			if(mlgChallenge.isActive()) {
+				
 				mlgChallenge.setPunishType(PunishType.valueOf(cfg.getString("MLG.Punishment")));
 				mlgChallenge.setEarliest(cfg.getInt("MLG.Earliest"));
 				mlgChallenge.setLatest(cfg.getInt("MLG.Latest"));
@@ -292,6 +296,7 @@ public class ConfigHandler extends ConfigUtil {
 		cfg.set("onBlock.Boolean", GenericChallenge.isActive(ChallengeType.ON_BLOCK));
 		
 		if(cProfile.hasStarted) {
+			cfg.set("Order", cProfile.getSecondTimer().getOrder().toString());
 			cfg.set("Timer", cProfile.getSecondTimer().getTime());
 			MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
 			if(mlgChallenge.isActive()) {

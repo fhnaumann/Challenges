@@ -56,14 +56,12 @@ public final class SignMenuFactory {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 Player player = event.getPlayer();
-
                 Menu menu = inputReceivers.remove(player);
 
                 if (menu == null) {
                     return;
                 }
                 event.setCancelled(true);
-
                 boolean success = menu.response.test(player, event.getPacket().getStringArrays().read(0));
 
                 if (!success && menu.opensOnFail()) {
@@ -111,7 +109,7 @@ public final class SignMenuFactory {
             this.position = new BlockPosition(location.getBlockX(), location.getBlockY() - 5, location.getBlockZ());
 
             player.sendBlockChange(this.position.toLocation(location.getWorld()), Material.OAK_SIGN.createBlockData());
-
+           
             PacketContainer openSign = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.OPEN_SIGN_EDITOR);
             PacketContainer signData = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.TILE_ENTITY_DATA);
 
@@ -120,7 +118,6 @@ public final class SignMenuFactory {
             NbtCompound signNBT = (NbtCompound) signData.getNbtModifier().read(0);
 
             IntStream.range(0, SIGN_LINES).forEach(line -> signNBT.put("Text" + (line + 1), text.size() > line ? String.format(NBT_FORMAT, color(text.get(line))) : " "));
-
             signNBT.put("x", this.position.getX());
             signNBT.put("y", this.position.getY());
             signNBT.put("z", this.position.getZ());

@@ -1,6 +1,7 @@
 package me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge;
 
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -46,7 +47,7 @@ public class MLGTimer extends BukkitRunnable {
 			timeToMLG = 0;
 			MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
 			//if(ChallengeProfile.getInstance().canTakeEffect()) {
-				mlgChallenge.onMLGPrepare(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+				mlgChallenge.onMLGPrepare(ChallengeProfile.getInstance().getParticipantsAsPlayers().stream().filter(p -> !p.isDead()).collect(Collectors.toSet()));
 			//}
 			this.cancel();
 		}

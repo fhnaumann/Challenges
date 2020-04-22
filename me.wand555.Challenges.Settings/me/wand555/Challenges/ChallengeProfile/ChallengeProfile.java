@@ -1,11 +1,15 @@
 package me.wand555.Challenges.ChallengeProfile;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.OfflinePlayer;
@@ -31,7 +35,10 @@ import me.wand555.Challenges.RestoreProfile.RestoreChallenge;
 import me.wand555.Challenges.Timer.DateUtil;
 import me.wand555.Challenges.Timer.SecondTimer;
 import me.wand555.Challenges.Timer.TimerMessage;
+import me.wand555.Challenges.Timer.TimerOrder;
 import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
+import me.wand555.GUI.GUIType;
+import me.wand555.GUI.SignMenuFactory;
 
 public class ChallengeProfile extends Settings implements TimerOptions, ChallengeOptions {
 
@@ -43,6 +50,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	private RestoreChallenge restoreChallenge;
 	private Backpack backpack;
 	private PositionManager posManager;
+	
 	//private MLG mlg;
 	
 	private ChallengeProfile() {}
@@ -82,9 +90,32 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	public boolean isInChallenge(UUID uuid) {
 		return participants.stream().anyMatch(key -> key.equals(uuid));
 	}
+	
+	public void displayTimerDescendingEnterGUI(SignMenuFactory signMenuFactory, Player p) {	
+		signMenuFactory
+        .newMenu(new ArrayList<String>(LanguageMessages.timerStartDescSign))
+        .reopenIfFail()
+        .response((player, lines) -> {
+        	if(ChallengeProfile.getInstance().canTakeEffect()) return true;
+        	String enteredLine1 = lines[0]; 
+        	long timeEntered = DateUtil.getSecondsFromFormattedDuration(enteredLine1);
+        	if(timeEntered > 0) {
+        		getSecondTimer().setTime(timeEntered);
+        		ChallengeProfile.getInstance().startTimer(TimerOrder.DESC);
+				ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
+        		return true;
+        	}
+        	else {
+        		p.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", enteredLine1));
+        		return false;
+        	}
+        })
+        .open(p);
+	}
 
 	@Override
-	public void startTimer() {
+	public void startTimer(TimerOrder order) {
+		getSecondTimer().setOrder(order);
 		setStarted();
 		checkConditionsAndApply();
 		//initialize first time things
@@ -134,7 +165,9 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 				//System.out.println("Custom HP in Settings: " + cHealthChallenge.getAmount());
 				p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(cHealthChallenge.getAmount());
 				//System.out.println("reached");
-				p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+				
+				//p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+				
 				//System.out.println("Health: " + p.getHealth());
 				//System.out.println("HealthScale before: " + p.getHealthScale());
 				p.setHealthScale(p.getHealth());
@@ -242,6 +275,9 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		case NOT_ON_BLOCK:
 			reasonMessage = LanguageMessages.endChallengeNotOnBlock.replace("[PLAYER]", getMultipleCausers(causer));
 			break;
+		case NO_TIME_LEFT:
+			reasonMessage = LanguageMessages.endChallengeNoTimeLeft;
+			break;
 		default:
 			reasonMessage = "Unknown";
 			break;	
@@ -260,13 +296,17 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 
 	@Override
 	public void resetChallenge() {
-		WorldUtil.deleteChallengeWorldsAndPlayerData();
-		WorldUtil.deletePortalData();
-		WorldUtil.deletePositionData();
-		
-		participants.clear();
-		WorldLinkManager.worlds.clear();
-		super.restoreDefault();
+		isRestarted = true;
+		getParticipantsAsPlayers().forEach(WorldUtil::loadPlayerInformationBeforeChallengeAndApply);
+		Bukkit.getScheduler().runTaskLater(PLUGIN, () -> {
+			WorldUtil.deleteChallengeWorldsAndPlayerData();
+			WorldUtil.deletePortalData();
+			WorldUtil.deletePositionData();
+			
+			participants.clear();
+			WorldLinkManager.worlds.clear();
+			super.restoreDefault();
+		}, 30L);
 	}
 
 	/**
@@ -304,5 +344,12 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	 */
 	public RestoreChallenge getRestoreChallenge() {
 		return restoreChallenge;
+	}
+	
+	public void closeOtherPlayerSettingsGUI() {
+		ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+		.filter(p -> p.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.GREEN + "Settings") 
+				|| p.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.RED + "Punishments"))
+		.forEach(Player::closeInventory);
 	}
 }

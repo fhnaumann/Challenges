@@ -1,13 +1,18 @@
 package me.wand555.Challenges.ChallengeProfile.ChallengeTypes;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import me.wand555.Challenges.Challenges;
+import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
+import me.wand555.Challenges.Config.WorldUtil;
 
 public interface Punishable {
 
@@ -85,11 +90,21 @@ public interface Punishable {
 				}		
 				break;
 			case DEATH_ALL:
-				affected.forEach(p -> {
-					if(!p.isDead()) {
-						p.setHealth(0);
-					}
-				});
+				if(!ChallengeProfile.getInstance().isInMLGRightNow) {
+					affected.forEach(p -> {
+						if(!p.isDead()) {	
+							p.setHealth(0);
+						}
+					});
+				}
+				else {
+					Bukkit.getScheduler().runTaskLater(Challenges.getPlugin(Challenges.class), 
+							() -> affected.forEach(p -> {
+						if(!p.isDead()) {
+							p.setHealth(0);
+						}
+					}), 35L);
+				}	
 				break;
 			case ONE_ITEM:
 			{		
@@ -101,11 +116,18 @@ public interface Punishable {
 				break;
 			}
 			case ONE_ITEM_ALL:
-			{
+			{	
 				affected.forEach(p -> {
-					List<ItemStack> pInv = Stream.of(p.getInventory().getContents()).filter(item -> item != null).collect(Collectors.toList());
-					ItemStack randomItem = pInv.get(ThreadLocalRandom.current().nextInt(0, pInv.size()));
-					causer.getInventory().removeItem(randomItem);
+					if(p.getWorld().equals(Bukkit.getWorld("MLGWorld"))) {
+						WorldUtil.punishmentClearOneItem(p);
+					}
+					else {
+						List<ItemStack> pInv = Stream.of(p.getInventory().getContents()).filter(item -> item != null).collect(Collectors.toList());
+						ItemStack randomItem = pInv.get(ThreadLocalRandom.current().nextInt(0, pInv.size()));
+						HashMap<Integer, ItemStack> test = p.getInventory().removeItem(randomItem);
+						WorldUtil.storeInbetweenPunishment(p);
+					}
+					
 				});
 				break;
 			}
@@ -113,7 +135,23 @@ public interface Punishable {
 				causer.getInventory().clear();
 				break;
 			case ALL_ITEMS_ALL:
-				affected.forEach(p -> p.getInventory().clear());
+				affected.forEach(p -> {
+					if(p.getWorld().equals(Bukkit.getWorld("MLGWorld"))) {
+						WorldUtil.punishmentClearAllItems(p);
+					}
+					else {
+						p.getInventory().clear();	
+						WorldUtil.storeInbetweenPunishment(p);
+					}
+				});
+				
+				
+				if(!ChallengeProfile.getInstance().isInMLGRightNow) {
+					
+				}
+				else {
+					
+				}
 				break;
 			default: break;
 			}

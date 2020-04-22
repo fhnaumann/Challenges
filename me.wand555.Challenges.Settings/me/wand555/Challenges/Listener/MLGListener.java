@@ -52,6 +52,7 @@ public class MLGListener implements Listener {
 							
 							@Override
 							public void run() {
+								event.getBlock().setType(Material.AIR);
 								if(mlgChallenge.getInMLGWorld().containsKey(event.getPlayer().getUniqueId())) {
 									if(mlgChallenge.getInMLGWorld().get(event.getPlayer().getUniqueId()) == null) {
 										mlgChallenge.onMLGDone(event.getPlayer(), true);

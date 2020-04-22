@@ -3,6 +3,7 @@ package me.wand555.Challenges;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
@@ -16,19 +17,24 @@ import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.SharedHealthChallenge.SharedHealthChallenge;
 import me.wand555.Challenges.ChallengeProfile.Positions.Position;
 import me.wand555.Challenges.ChallengeProfile.Positions.PositionManager;
 import me.wand555.Challenges.Config.LanguageMessages;
 import me.wand555.Challenges.Config.WorldUtil;
+import me.wand555.Challenges.Timer.TimerOrder;
 import me.wand555.GUI.GUI;
 import me.wand555.GUI.GUIType;
+import me.wand555.GUI.SignMenuFactory;
 
 public class CE implements CommandExecutor {
 	
 	private GUI gui;
+	private SignMenuFactory signMenuFactory;
 	
-	public CE(GUI gui) {
+	public CE(GUI gui, SignMenuFactory signMenuFactory) {
 		this.gui = gui;
+		this.signMenuFactory = signMenuFactory;
 	}
 	
 	@Override
@@ -46,13 +52,18 @@ public class CE implements CommandExecutor {
 					if(player.hasPermission("challenge.join")) {
 						if(!ChallengeProfile.getInstance().isDone) {
 							if(!ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
-								//load player in challenge information
-								//store normal world information
-								WorldUtil.storePlayerInformationBeforeChallenge(player);
-								WorldUtil.loadPlayerInformationInChallengeAndApply(player);
-								
-								ChallengeProfile.getInstance().addToParticipants(player.getUniqueId());
-								player.sendMessage(LanguageMessages.teleportMsg);
+								if(!ChallengeProfile.getInstance().isRestarted) {
+									//load player in challenge information
+									//store normal world information
+									WorldUtil.storePlayerInformationBeforeChallenge(player);
+									WorldUtil.loadPlayerInformationInChallengeAndApply(player);
+									
+									ChallengeProfile.getInstance().addToParticipants(player.getUniqueId());
+									player.sendMessage(LanguageMessages.teleportMsg);
+								}
+								else {
+									player.sendMessage(LanguageMessages.resetWarning);
+								}
 							}
 							else {
 								player.sendMessage(LanguageMessages.alreadyInChallenge);
@@ -82,7 +93,13 @@ public class CE implements CommandExecutor {
 				else if(args[0].equalsIgnoreCase("restore")) {
 					if(player.hasPermission("challenge.restore")) {
 						if(ChallengeProfile.getInstance().isDone) {
-							ChallengeProfile.getInstance().restoreChallenge();
+							if(ChallengeProfile.getInstance().getSecondTimer().getOrder() == TimerOrder.ASC) {
+								ChallengeProfile.getInstance().restoreChallenge();
+							}
+							else {
+								player.sendMessage(LanguageMessages.noRestoreBecauseDesc);
+							}
+							
 						}
 						else {
 							player.sendMessage(LanguageMessages.noChallengeToRestore);
@@ -92,9 +109,14 @@ public class CE implements CommandExecutor {
 				}
 				else if(args[0].equalsIgnoreCase("reset")) {
 					if(player.hasPermission("challenge.reset")) {
-						ChallengeProfile.getInstance().resetChallenge();
-						player.sendMessage(LanguageMessages.deletedChallengeWorlds);
-						player.sendMessage(LanguageMessages.resetWarning);
+						if(!ChallengeProfile.getInstance().isRestarted) {
+							ChallengeProfile.getInstance().resetChallenge();
+							player.sendMessage(LanguageMessages.deletedChallengeWorlds);
+							player.sendMessage(LanguageMessages.resetWarning);
+						}	
+						else {
+							player.sendMessage(LanguageMessages.resetWarning);
+						}
 					}
 				}
 				else {
@@ -106,12 +128,23 @@ public class CE implements CommandExecutor {
 			}
 		}
 		else if(cmd.getName().equalsIgnoreCase("timer")) {
-			if(args.length == 1) {
+			if(args.length == 2) {
 				if(args[0].equalsIgnoreCase("start")) {
 					if(player.hasPermission("timer.start")) {
 						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
 							if(!ChallengeProfile.getInstance().hasStarted) {
-								ChallengeProfile.getInstance().startTimer();
+								if(args[1].equalsIgnoreCase("asc")) {
+									ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
+									ChallengeProfile.getInstance().startTimer(TimerOrder.ASC);
+									ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
+								}
+								else if(args[1].equalsIgnoreCase("desc")) {
+									ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
+									ChallengeProfile.getInstance().displayTimerDescendingEnterGUI(signMenuFactory, player);	
+								}
+								else {
+									player.sendMessage(LanguageMessages.timerStartSyntax);
+								}	
 							}
 							else {
 								player.sendMessage(LanguageMessages.timerAlreadyStarted);
@@ -122,7 +155,9 @@ public class CE implements CommandExecutor {
 						}
 					}
 				}
-				else if(args[0].equalsIgnoreCase("pause")) {
+			}
+			else if(args.length == 1) {
+				if(args[0].equalsIgnoreCase("pause")) {
 					if(player.hasPermission("timer.pause")) {
 						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
 							if(ChallengeProfile.getInstance().canTakeEffect()) {
@@ -130,6 +165,7 @@ public class CE implements CommandExecutor {
 							}
 							else if(ChallengeProfile.getInstance().isPaused && !ChallengeProfile.getInstance().isDone) {
 								ChallengeProfile.getInstance().resumeTimer();
+								ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
 							}
 							else {
 								player.sendMessage(LanguageMessages.noPauseBecauseNotRunning);
@@ -142,6 +178,7 @@ public class CE implements CommandExecutor {
 				}
 				else {
 					player.sendMessage(LanguageMessages.timerOptionSyntax);
+					player.sendMessage(LanguageMessages.timerStartSyntax);
 				}
 			}
 			else {
@@ -164,8 +201,11 @@ public class CE implements CommandExecutor {
 						player.sendMessage(posManager.displayPosition(posManager.getPositionFromName(args[0])));
 					}
 					else {
-						posManager.addToPositions(new Position(args[0], player.getLocation(), player.getUniqueId(), new Date()));
+						Position pos = new Position(args[0], player.getLocation(), player.getUniqueId(), new Date());
+						posManager.addToPositions(pos);
 						player.sendMessage(LanguageMessages.registeredPosition.replace("[POS]", args[0]));
+						ChallengeProfile.getInstance().getParticipantsAsPlayers()
+							.forEach(p -> p.sendMessage(posManager.displayPosition(pos)));
 					}
 				}
 			}
@@ -214,6 +254,9 @@ public class CE implements CommandExecutor {
 									player.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", args[0]));
 								}
 							});
+							if(GenericChallenge.isActive(ChallengeType.SHARED_HEALTH)) {
+								((SharedHealthChallenge)GenericChallenge.getChallenge(ChallengeType.SHARED_HEALTH)).setSharedHealth(player.getHealth());
+							}
 						}
 						else {
 							@SuppressWarnings("deprecation")
@@ -232,6 +275,9 @@ public class CE implements CommandExecutor {
 															: number);
 												p.setFoodLevel(22);
 												player.sendMessage(LanguageMessages.setHP);
+												if(GenericChallenge.isActive(ChallengeType.SHARED_HEALTH)) {
+													((SharedHealthChallenge)GenericChallenge.getChallenge(ChallengeType.SHARED_HEALTH)).setSharedHealth(p.getHealth());
+												}
 											});
 										}
 										else {

@@ -1,31 +1,72 @@
 package me.wand555.Challenges.Config;
 
 import java.io.File;
-
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
 import me.wand555.EndLinking.EndHelper;
 import me.wand555.NetherLinking.Gate;
 
 public class WorldUtil extends ConfigUtil {
+	
+	public static void storeInbetweenPunishment(Player p) {
+		checkOrdner();
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"PlayerData"+File.separatorChar, p.getUniqueId().toString()+".yml");
+		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+		cfg.set("Challenge.Inventory", Arrays.asList(p.getInventory().getContents()));
+		saveCustomYml(cfg, file);
+	}
+	
+	public static void punishmentClearOneItem(Player p) {
+		checkOrdner();
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"PlayerData"+File.separatorChar, p.getUniqueId().toString()+".yml");
+		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+		@SuppressWarnings("unchecked")
+		ArrayList<ItemStack> inv = (ArrayList<ItemStack>)cfg.getList("Challenge.Inventory");
+		if(inv.size() == 0) return;
+		ArrayList<ItemStack> invNonNull = inv.stream().filter(item -> item != null).collect(Collectors.toCollection(ArrayList::new));
+		ItemStack randomItem = invNonNull.get(ThreadLocalRandom.current().nextInt(0, invNonNull.size()));
+		inv.set(inv.indexOf(randomItem), null);		
+		cfg.set("Challenge.Inventory", inv);
+		saveCustomYml(cfg, file);
+	}
+	
+	public static void punishmentClearAllItems(Player p) {
+		checkOrdner();
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"PlayerData"+File.separatorChar, p.getUniqueId().toString()+".yml");
+		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+		@SuppressWarnings("unchecked")
+		ArrayList<ItemStack> inv = (ArrayList<ItemStack>)cfg.getList("Challenge.Inventory");
+		if(inv.size() == 0) return;
+		for(int i=0; i<inv.size(); i++) {
+			inv.set(i, null);
+		}
+		cfg.set("Challenge.Inventory", inv);
+		saveCustomYml(cfg, file);
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static void loadPlayerInformationInChallengeAndApply(Player player) {
@@ -40,7 +81,9 @@ public class WorldUtil extends ConfigUtil {
 		}
 		player.teleport(deserializeLocationDetailed(cfg.getString("Challenge.Location")));
 		player.setGameMode(GameMode.valueOf(cfg.getString("Challenge.GameMode")));
-		player.setHealth(cfg.getDouble("Challenge.Health"));
+		if(cfg.isSet("Challenge.Health.MaxHealth")) player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(cfg.getDouble("Challenge.Health.MaxHealth"));
+		player.setHealth(cfg.isSet("Challenge.Health.Health") ? cfg.getDouble("Challenge.Health.Health") : player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+		player.setHealthScale(player.getHealth());
 		player.setFoodLevel(cfg.getInt("Challenge.Hunger"));
 		player.setSaturation((float)cfg.getDouble("Challenge.Saturation"));
 		player.setExp((float)cfg.getDouble("Challenge.Experience"));
@@ -71,7 +114,8 @@ public class WorldUtil extends ConfigUtil {
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		cfg.set("Challenge.Location", serializeLocationDetailed(player.getLocation()).replace('.', ','));
 		cfg.set("Challenge.GameMode", player.getGameMode().toString());
-		cfg.set("Challenge.Health", player.getHealth());
+		cfg.set("Challenge.Health.Health", player.getHealth());
+		cfg.set("Challenge.Health.MaxHealth", player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
 		cfg.set("Challenge.Hunger", player.getFoodLevel());
 		cfg.set("Challenge.Saturation", player.getSaturation());
 		cfg.set("Challenge.Experience", player.getExp());
@@ -94,7 +138,9 @@ public class WorldUtil extends ConfigUtil {
 		if(cfg.getString("Normal.Location") == null) return;
 		player.teleport(deserializeLocationDetailed(cfg.getString("Normal.Location")));
 		player.setGameMode(GameMode.valueOf(cfg.getString("Normal.GameMode")));
-		player.setHealth(cfg.getDouble("Normal.Health"));
+		if(cfg.isSet("Normal.Health.MaxHealth")) player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(cfg.getDouble("Normal.Health.MaxHealth"));
+		player.setHealth(cfg.isSet("Normal.Health.Health") ? cfg.getDouble("Normal.Health.Health") : player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+		player.setHealthScale(player.getHealth());
 		player.setFoodLevel(cfg.getInt("Normal.Hunger"));
 		player.setSaturation((float)cfg.getDouble("Normal.Saturation"));
 		player.setExp((float)cfg.getDouble("Normal.Experience"));
@@ -120,7 +166,8 @@ public class WorldUtil extends ConfigUtil {
 		cfg.set("Normal.Location", serializeLocationDetailed(player.getLocation()).replace('.', ','));
 		cfg.set("Normal.GameMode", player.getGameMode().toString());
 		//player.setGameMode(GameMode.SURVIVAL);
-		cfg.set("Normal.Health", player.getHealth());
+		cfg.set("Normal.Health.Health", player.getHealth());
+		cfg.set("Normal.Health.MaxHealth", player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
 		//player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
 		cfg.set("Normal.Hunger", player.getFoodLevel());
 		//player.setFoodLevel(20);
@@ -143,14 +190,14 @@ public class WorldUtil extends ConfigUtil {
 		
 	}
 	
-	
+	/*
 	private static void removePlayersFromChallengeWorlds() {
 		World mainWorld = Bukkit.getWorlds().get(0);
 		ChallengeProfile.getInstance().getParticipantsAsPlayers().stream().forEach(p -> p.teleport(mainWorld.getSpawnLocation(), TeleportCause.PLUGIN));
-	}
+	}*/
 	
 	private static void unloadChallengeWorlds() {
-		removePlayersFromChallengeWorlds();
+		//removePlayersFromChallengeWorlds();
 		WorldLinkManager.worlds.stream().forEach(w -> Bukkit.unloadWorld(w, false));
 	}
 	
@@ -162,14 +209,34 @@ public class WorldUtil extends ConfigUtil {
 	public static void deletePortalData() {
 		Gate.getGates().clear();
 		EndHelper.reset();
-		new File(PLUGIN.getDataFolder()+"", "netherportals.yml").delete();
-		new File(PLUGIN.getDataFolder()+"", "endportals.yml").delete();
+		boolean b = new File(PLUGIN.getDataFolder()+"", "netherportals.yml").delete();
+		boolean b2 = new File(PLUGIN.getDataFolder()+"", "endportals.yml").delete();
 	}
 	
 	private static void deletePlayerData() {
-		ChallengeProfile.getInstance().getParticipantsAsPlayers().stream().forEach(uuid -> {
-			new File(PLUGIN.getDataFolder()+"playerData"+File.separatorChar+"", uuid+".yml").delete();
-		});
+		new File(PLUGIN.getDataFolder()+"", "backpack.yml").delete();
+		
+		try {
+			FileUtils.deleteDirectory(new File(PLUGIN.getDataFolder()+""+File.separatorChar+"PlayerData"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
+		ChallengeProfile.getInstance().getParticipantsAsPlayers().stream().forEach(p -> {
+			System.out.println("Deleting player: " + p.getUniqueId().toString());
+			File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"PlayerData"+File.separatorChar, p.getUniqueId().toString()+".yml");
+			System.out.println(file.getPath());
+			//YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+			//cfg.getKeys(false).forEach(s -> {
+			//	System.out.println(s);
+			//	cfg.set(s, null);
+			//});
+			//saveCustomYml(cfg, file);
+			boolean b = file.delete();
+			System.out.println(b);
+		});*/
+		new File(PLUGIN.getDataFolder()+"", "profilesAndTimers.yml").delete();
 	}
 	
 	private static void deleteWorld(File path) {
@@ -188,8 +255,9 @@ public class WorldUtil extends ConfigUtil {
 		return;
 	}
 	
-	public static void deleteChallengeWorldsAndPlayerData() {
+	public static void deleteChallengeWorldsAndPlayerData() {	
 		deletePlayerData();
+		//GenericChallenge.clearAllChallenges();
 		unloadChallengeWorlds();
 		for(World w : WorldLinkManager.worlds) {
 			File path = new File(w.getWorldFolder(), "");

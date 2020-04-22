@@ -1,5 +1,12 @@
 package me.wand555.Challenges;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.Random;
 
 
@@ -77,6 +84,8 @@ public class Challenges extends JavaPlugin {
 				.type(WorldType.FLAT)
 				.generateStructures(false)
 				.createWorld();
+		mlgWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+		mlgWorld.setGameRule(GameRule.DO_MOB_SPAWNING, false);
 		mlgWorld.setDifficulty(Difficulty.PEACEFUL);
 		mlgWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
 		WorldLinkManager.worlds.add(mlgWorld);
@@ -96,7 +105,7 @@ public class Challenges extends JavaPlugin {
 		gui = new GUI(this);
 		signMenuFactory = new SignMenuFactory(this);
 		
-		myCE = new CE(gui);
+		myCE = new CE(gui, signMenuFactory);
 		this.getCommand("challenge").setExecutor(myCE);
 		this.getCommand("timer").setExecutor(myCE);
 		this.getCommand("pos").setExecutor(myCE);
@@ -104,7 +113,7 @@ public class Challenges extends JavaPlugin {
 		this.getCommand("hp").setExecutor(myCE);
 		this.getCommand("settings").setExecutor(myCE);
 		
-		registerListeners();
+		registerListeners();	
 	}
 	
 	public void onDisable() {

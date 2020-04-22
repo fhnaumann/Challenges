@@ -1,5 +1,6 @@
 package me.wand555.Challenges.Listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
@@ -8,8 +9,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 import me.wand555.Challenges.Challenges;
@@ -83,6 +86,7 @@ public class SharedHealthPlayerChangeLifeListener implements Listener {
 								if(sHChallenge.getSharedHealth() < player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) {
 									ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
 									.filter(p -> p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
+									.filter(p -> !p.isDead())
 									.forEach(p -> {
 										p.setHealth(sHChallenge.getSharedHealth());
 										p.setAbsorptionAmount(player.getAbsorptionAmount());
@@ -91,9 +95,10 @@ public class SharedHealthPlayerChangeLifeListener implements Listener {
 								else {
 									ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
 									.filter(p -> p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
+									.filter(p -> !p.isDead())
 									.forEach(p -> {
 										p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
-										p.setAbsorptionAmount(player.getAbsorptionAmount());
+										//p.setAbsorptionAmount(player.getAbsorptionAmount());
 									});
 									sHChallenge.setSharedHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
 								}
@@ -103,5 +108,51 @@ public class SharedHealthPlayerChangeLifeListener implements Listener {
 				}
 			}
 		}		
+	}
+	
+	@EventHandler (priority = EventPriority.HIGHEST)
+	public void onSharedHealthPlayerGainAbsorbtionEvent(EntityPotionEffectEvent event) {
+		if(event.getNewEffect() != null) {
+			if(event.getNewEffect().getType().getName().equals(PotionEffectType.ABSORPTION.getName())) {
+				if(event.getEntity() instanceof Player) {
+					
+					if(GenericChallenge.isActive(ChallengeType.SHARED_HEALTH)) {
+						Player player = (Player) event.getEntity();
+						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+							
+							//event.setCancelled(true);
+							Bukkit.getScheduler().runTaskLater(plugin, () -> {
+								ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+								.filter(p -> !p.hasPotionEffect(PotionEffectType.ABSORPTION))
+								.forEach(p -> {
+									boolean b = p.addPotionEffect(event.getNewEffect());
+								});
+							}, 2L);
+							
+						}
+					}
+				}
+			}	
+		}
+		else {
+			if(event.getOldEffect().getType().getName().equals(PotionEffectType.ABSORPTION.getName())) {
+				if(event.getEntity() instanceof Player) {
+					if(GenericChallenge.isActive(ChallengeType.SHARED_HEALTH)) {
+						Player player = (Player) event.getEntity();
+						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+							//event.setCancelled(true);
+							Bukkit.getScheduler().runTaskLater(plugin, () -> {
+								ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+								.filter(p -> !p.hasPotionEffect(PotionEffectType.ABSORPTION))
+								.forEach(p -> {
+									p.removePotionEffect(event.getOldEffect().getType());
+								});
+							}, 2L);
+							
+						}
+					}
+				}
+			}
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package me.wand555.Challenges.ChallengeProfile.AssignRoleListener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
@@ -12,7 +13,9 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.CustomHealthChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
+import me.wand555.Challenges.Config.WorldUtil;
 import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
 
 public class PlayerJoinListener implements Listener {
@@ -48,12 +51,20 @@ public class PlayerJoinListener implements Listener {
 					p.setHealthScale(p.getHealth());
 					p.damage(0);
 					//p.kickPlayer("Custom HP were changed. Please join back now.");
-				}
+				}		
 				
 				if(onBlockChallenge.isActive()) {
 					onBlockChallenge.addPlayerToBossBar(p);
 				}
 			}
+			
+			if(ChallengeProfile.getInstance().isInMLGRightNow) {
+				if(event.getPlayer().getWorld().equals(Bukkit.getWorld("MLGWorld"))) {
+					WorldUtil.loadPlayerInformationInChallengeAndApply(event.getPlayer());
+					MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
+					mlgChallenge.getInMLGWorld().remove(event.getPlayer().getUniqueId());
+				}
+			}		
 		}
 	}
 }

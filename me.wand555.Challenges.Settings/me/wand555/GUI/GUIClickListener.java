@@ -116,6 +116,7 @@ public class GUIClickListener implements Listener {
 						            .newMenu(new ArrayList<String>(LanguageMessages.customHealthSign))
 						            .reopenIfFail()
 						            .response((player, lines) -> {
+						            	if(ChallengeProfile.getInstance().canTakeEffect()) return true;
 						            	String enteredLine1 = lines[0];         	
 						            	if(StringUtils.isNumericSpace(enteredLine1) && !enteredLine1.isEmpty()) {
 						            		int amount = Integer.valueOf(enteredLine1);
@@ -356,7 +357,6 @@ public class GUIClickListener implements Listener {
 							            		if(earliestToShown > 0 && latestToShown > 0 
 							            				&& earliestOnBlock > 0 && latestOnBlock > 0) {
 							            			if(earliestToShown <= latestToShown || earliestOnBlock <= latestOnBlock) {
-							            				System.out.println(onBlockChallenge);
 							            				
 							            				//onBlockChallenge.setAround();
 							            				onBlockChallenge.setEarliestToShow(earliestToShown);
@@ -365,7 +365,6 @@ public class GUIClickListener implements Listener {
 							            				onBlockChallenge.setLatestOnBlock(latestOnBlock);
 							            				reloadOtherPlayerInvs(gui, p);
 							            				p.sendMessage(LanguageMessages.signCorrect);
-							            				System.out.println(onBlockChallenge.isActive());
 							            				//onBlockChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
 							            				Bukkit.getScheduler().runTaskLater(plugin, () -> {
 							            					gui.createGUI(p, GUIType.PUNISHMENT, onBlockChallenge.getPunishCause());
@@ -393,7 +392,6 @@ public class GUIClickListener implements Listener {
 						            .open(p);
 								}
 								else {
-									System.out.println("turned again");
 									onBlockChallenge.setAround();
 									onBlockChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
 									gui.createGUI(p, GUIType.OVERVIEW);
@@ -445,7 +443,6 @@ public class GUIClickListener implements Listener {
 				            .reopenIfFail()
 				            .response((player, lines) -> {
 				            	String enteredLine1 = lines[0];   
-				            	System.out.println(enteredLine1);
 				            	if(StringUtils.isNumeric(enteredLine1) && !enteredLine1.isEmpty()) {
 				            		int number = Integer.valueOf(enteredLine1);
 				            		switch(number) {

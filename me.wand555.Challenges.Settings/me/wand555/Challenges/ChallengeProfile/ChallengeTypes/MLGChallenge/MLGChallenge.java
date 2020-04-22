@@ -63,10 +63,15 @@ public class MLGChallenge extends GenericChallenge implements Punishable, Reason
 	}
 	
 	public void onMLGPrepare(Set<Player> players) {
-		if(players.size() == 0) return;
+		inMLGWorld.clear();
+		if(players.size() == 0) {
+			this.setTimer(new MLGTimer(Challenges.getPlugin(Challenges.class), this));
+			return;
+		}
 		ChallengeProfile.getInstance().setInMLGRightNow();
 		double factor = 0.5;
 		for(Player p : players) {
+			if(p.isDead()) continue;
 			WorldUtil.storePlayerInformationInChallenge(p);
 			p.getInventory().clear();
 			p.getInventory().setItemInMainHand(new ItemStack(Material.WATER_BUCKET));
@@ -83,14 +88,23 @@ public class MLGChallenge extends GenericChallenge implements Punishable, Reason
 			WorldUtil.loadPlayerInformationInChallengeAndApply(p);
 			inMLGWorld.put(p.getUniqueId(), true);
 			//inMLGWorld.remove(p.getUniqueId());
-			//wenn leer, oder jeder Spieler einen bestimmten Wert zugeordnet hat
-			if(inMLGWorld.isEmpty() || inMLGWorld.entrySet().stream().allMatch(entry -> entry.getValue() != null)) {
+			//wenn leer, oder jeder Spieler einen bestimmten Wert zugeordnet hat		
+			
+			if(inMLGWorld.entrySet().stream().allMatch(entry -> entry.getValue() != null && entry.getValue())) {
 				System.out.println("was empty");
-				String message = createPassedMessage(getPunishCause());
+				String message = createLogMessage(getPunishCause());
 				ChallengeProfile.getInstance().sendMessageToAllParticipants(message);
 				this.setTimer(new MLGTimer(Challenges.getPlugin(Challenges.class), this));
 				ChallengeProfile.getInstance().setInMLGRightNow();
-				inMLGWorld.clear();
+				//inMLGWorld.clear();
+				return;
+			}
+			
+			if(inMLGWorld.entrySet().stream().allMatch(entry -> entry.getValue() != null)) {
+				this.setTimer(new MLGTimer(Challenges.getPlugin(Challenges.class), this));
+				ChallengeProfile.getInstance().setInMLGRightNow();
+				//inMLGWorld.clear();
+				return;
 			}
 		}
 		else {
@@ -106,11 +120,19 @@ public class MLGChallenge extends GenericChallenge implements Punishable, Reason
 			}
 			else {
 				inMLGWorld.put(p.getUniqueId(), false);
+				//inMLGWorld.remove(p.getUniqueId());
 				WorldUtil.loadPlayerInformationInChallengeAndApply(p);
 				enforcePunishment(punishType, ChallengeProfile.getInstance().getParticipantsAsPlayers(), p);
 				String message = createReasonMessage(getPunishCause(), getPunishType(), p);
 				ChallengeProfile.getInstance().sendMessageToAllParticipants(message);
 				System.out.println("SIZE BEFORE: " + inMLGWorld.size());
+				if(inMLGWorld.entrySet().stream().allMatch(entry -> entry.getValue() != null)) {	
+					this.setTimer(new MLGTimer(Challenges.getPlugin(Challenges.class), this));
+					ChallengeProfile.getInstance().setInMLGRightNow();
+					//inMLGWorld.clear();
+					//Bukkit.getScheduler().runTaskLater(Challenges.getPlugin(Challenges.class), () -> inMLGWorld.clear(), 30L);
+				}
+				/*
 				if(inMLGWorld.isEmpty() || inMLGWorld.entrySet().stream().allMatch(entry -> entry.getValue() == null || entry.getValue() == false)) {	
 					String messagePassed = createPassedMessage(getPunishCause());
 					ChallengeProfile.getInstance().sendMessageToAllParticipants(messagePassed);		
@@ -118,6 +140,7 @@ public class MLGChallenge extends GenericChallenge implements Punishable, Reason
 					ChallengeProfile.getInstance().setInMLGRightNow();
 					Bukkit.getScheduler().runTaskLater(Challenges.getPlugin(Challenges.class), () -> inMLGWorld.clear(), 5L);
 				}
+				*/
 			}
 			
 			

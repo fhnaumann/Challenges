@@ -1,6 +1,9 @@
 package me.wand555.Challenges.ChallengeProfile;
 
+import me.wand555.Challenges.Challenges;
+
 public class Settings {
+	public boolean isRestarted = false;
 	public  boolean hasStarted = false;
 	public  void setStarted() {hasStarted = !hasStarted;}
 	public  boolean isPaused = false;
@@ -72,8 +75,10 @@ public class Settings {
 	public  boolean isInMLGRightNow = false;
 	public  void setInMLGRightNow() {isInMLGRightNow = !isInMLGRightNow;}
 	
+	public boolean logDamage = Challenges.getPlugin(Challenges.class).getConfig().getBoolean("logDamage");
 	
 	public  void restoreDefault() {
+		//isRestarted = false;
 		hasStarted = false;
 		isPaused = false;
 		isDone = false;

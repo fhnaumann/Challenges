@@ -1,24 +1,24 @@
 package me.wand555.Challenges.ChallengeProfile.ChallengeTypes;
 
 import java.util.Collection;
-
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.SharedHealthChallenge.SharedHealthChallenge;
 import me.wand555.Challenges.Config.LanguageMessages;
 
 public abstract class GenericChallenge implements ItemDisplayCreator {
 
-	protected static HashMap<ChallengeType, GenericChallenge> activeChallenges = new HashMap<>();
+	protected static EnumMap<ChallengeType, GenericChallenge> activeChallenges = new EnumMap<>(ChallengeType.class);
 	
 	protected boolean active;
 	protected ChallengeType type;
 	
-	protected GenericChallenge(ChallengeType type) {
+	protected <T extends GenericChallenge> GenericChallenge(ChallengeType type) {
 		this.type = type;
 	}
 	
@@ -66,7 +66,7 @@ public abstract class GenericChallenge implements ItemDisplayCreator {
 		}
 	}
 	
-	private String getFittingPunishmentMessage2(PunishType punishment) {
+	public String getFittingPunishmentMessage2(PunishType punishment) {
 		System.out.println("PUNISHMENT: " + punishment);
 		switch(punishment) {
 		case NOTHING: return LanguageMessages.punishNothing;
@@ -143,5 +143,9 @@ public abstract class GenericChallenge implements ItemDisplayCreator {
 	@Deprecated
 	public static void removeFromActiveChallenges(ChallengeType type) {
 		activeChallenges.remove(type);
+	}
+	
+	public static void clearAllChallenges() {
+		activeChallenges.clear();
 	}
 }
