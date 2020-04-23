@@ -93,12 +93,7 @@ public class CE implements CommandExecutor {
 				else if(args[0].equalsIgnoreCase("restore")) {
 					if(player.hasPermission("challenge.restore")) {
 						if(ChallengeProfile.getInstance().isDone) {
-							if(ChallengeProfile.getInstance().getSecondTimer().getOrder() == TimerOrder.ASC) {
-								ChallengeProfile.getInstance().restoreChallenge();
-							}
-							else {
-								player.sendMessage(LanguageMessages.noRestoreBecauseDesc);
-							}
+							ChallengeProfile.getInstance().restoreChallenge();
 							
 						}
 						else {

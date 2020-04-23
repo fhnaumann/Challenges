@@ -83,7 +83,7 @@ public class WorldUtil extends ConfigUtil {
 		player.setGameMode(GameMode.valueOf(cfg.getString("Challenge.GameMode")));
 		if(cfg.isSet("Challenge.Health.MaxHealth")) player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(cfg.getDouble("Challenge.Health.MaxHealth"));
 		player.setHealth(cfg.isSet("Challenge.Health.Health") ? cfg.getDouble("Challenge.Health.Health") : player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
-		player.setHealthScale(player.getHealth());
+		player.setHealthScale(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
 		player.setFoodLevel(cfg.getInt("Challenge.Hunger"));
 		player.setSaturation((float)cfg.getDouble("Challenge.Saturation"));
 		player.setExp((float)cfg.getDouble("Challenge.Experience"));
@@ -94,6 +94,7 @@ public class WorldUtil extends ConfigUtil {
 		else {
 			player.getInventory().clear();
 		}
+		player.getActivePotionEffects().forEach(pot -> player.removePotionEffect(pot.getType()));
 		player.addPotionEffects(deserializePotionEffects(cfg.getStringList("Challenge.PotionEffects")));
 		
 		Object vehicle = cfg.get("Challenge.Vehicle.Location");
@@ -140,12 +141,13 @@ public class WorldUtil extends ConfigUtil {
 		player.setGameMode(GameMode.valueOf(cfg.getString("Normal.GameMode")));
 		if(cfg.isSet("Normal.Health.MaxHealth")) player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(cfg.getDouble("Normal.Health.MaxHealth"));
 		player.setHealth(cfg.isSet("Normal.Health.Health") ? cfg.getDouble("Normal.Health.Health") : player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
-		player.setHealthScale(player.getHealth());
+		player.setHealthScale(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
 		player.setFoodLevel(cfg.getInt("Normal.Hunger"));
 		player.setSaturation((float)cfg.getDouble("Normal.Saturation"));
 		player.setExp((float)cfg.getDouble("Normal.Experience"));
 		player.setRemainingAir(cfg.getInt("Normal.Air"));
 		player.getInventory().setContents(((ArrayList<ItemStack>)cfg.getList("Normal.Inventory")).stream().toArray(ItemStack[]::new));
+		player.getActivePotionEffects().forEach(pot -> player.removePotionEffect(pot.getType()));
 		player.addPotionEffects(deserializePotionEffects(cfg.getStringList("Normal.PotionEffects")));
 		
 		Object vehicle = cfg.get("Normal.Vehicle.Location");

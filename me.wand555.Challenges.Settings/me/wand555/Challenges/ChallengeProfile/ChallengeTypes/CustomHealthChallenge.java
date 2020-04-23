@@ -20,10 +20,11 @@ public class CustomHealthChallenge extends GenericChallenge implements Amountabl
 
 	@Override
 	public ItemStack getDisplayItem() {
-		return createItemHealthLore(Material.COMMAND_BLOCK, 
+		return createItemHealthWithAmount(Material.COMMAND_BLOCK, 
 				LanguageMessages.guiCustomHealthName, 
 				new ArrayList<String>(LanguageMessages.guiCustomHealthLore), 
-				customHP,
+				LanguageMessages.guiCustomHealthAmount,
+				customHP, 
 				super.active);
 	}
 

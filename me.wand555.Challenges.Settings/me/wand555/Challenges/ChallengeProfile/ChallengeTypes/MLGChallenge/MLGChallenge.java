@@ -91,7 +91,6 @@ public class MLGChallenge extends GenericChallenge implements Punishable, Reason
 			//wenn leer, oder jeder Spieler einen bestimmten Wert zugeordnet hat		
 			
 			if(inMLGWorld.entrySet().stream().allMatch(entry -> entry.getValue() != null && entry.getValue())) {
-				System.out.println("was empty");
 				String message = createLogMessage(getPunishCause());
 				ChallengeProfile.getInstance().sendMessageToAllParticipants(message);
 				this.setTimer(new MLGTimer(Challenges.getPlugin(Challenges.class), this));
@@ -125,7 +124,6 @@ public class MLGChallenge extends GenericChallenge implements Punishable, Reason
 				enforcePunishment(punishType, ChallengeProfile.getInstance().getParticipantsAsPlayers(), p);
 				String message = createReasonMessage(getPunishCause(), getPunishType(), p);
 				ChallengeProfile.getInstance().sendMessageToAllParticipants(message);
-				System.out.println("SIZE BEFORE: " + inMLGWorld.size());
 				if(inMLGWorld.entrySet().stream().allMatch(entry -> entry.getValue() != null)) {	
 					this.setTimer(new MLGTimer(Challenges.getPlugin(Challenges.class), this));
 					ChallengeProfile.getInstance().setInMLGRightNow();

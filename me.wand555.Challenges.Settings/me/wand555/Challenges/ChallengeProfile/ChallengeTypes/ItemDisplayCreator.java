@@ -41,14 +41,14 @@ public interface ItemDisplayCreator {
 		return item;
 	}
 	
-	default ItemStack createItemHealthLore(Material mat, String name, ArrayList<String> lore, double amount, boolean enabled) {
+	default ItemStack createItemHealthWithAmount(Material mat, String name, ArrayList<String> lore, String translation, double amount, boolean enabled) {
 		ItemStack item = new ItemStack(mat);
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(name);
 		if(enabled) {
 			meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
 			meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-			lore.add(LanguageMessages.guiCustomHealthAmount.replace("[AMOUNT]", Integer.toString((int)amount)));
+			lore.add(translation.replace("[AMOUNT]", Integer.toString((int)amount)));
 			//lore.add(ChatColor.GRAY + "Max HP: " + ChatColor.GREEN + ChallengeProfile.getInstance().customHP);
 		}
 		lore.add(LanguageMessages.status.replace("[STATUS]", enabled ? LanguageMessages.enabled : LanguageMessages.disabled));

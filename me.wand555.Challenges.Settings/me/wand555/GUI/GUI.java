@@ -83,7 +83,9 @@ public class GUI implements ItemDisplayCreator {
 				case 15:
 					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.ON_BLOCK).getDisplayItem());
 					break;
-				
+				case 16:
+					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL).getDisplayItem());
+					break;
 				case 26:
 					gui.setItem(i, createItem(Material.CHEST, 
 							LanguageMessages.guiBackpackName, 

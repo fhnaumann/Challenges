@@ -16,7 +16,9 @@ RANDOMIZE_BLOCK_DROPS(false, false),
 RANDOMIZE_MOB_DROPS(false, false),
 RANDOMIZE_CRAFTING(false, false),
 MLG(true, false),
-ON_BLOCK(true, false)
+ON_BLOCK(true, false),
+ITEM_LIMIT_GLOBAL(false, true),
+ITEM_LIMIT_LOCAL(false, true)
 ;
 	/**
 	 * If the challenge is punishable

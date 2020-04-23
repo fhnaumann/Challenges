@@ -1,10 +1,19 @@
 package me.wand555.Challenges.ChallengeProfile;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
-
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,6 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -23,6 +33,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.CustomHealthChallen
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoRegenerationChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
@@ -96,7 +107,10 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
         .newMenu(new ArrayList<String>(LanguageMessages.timerStartDescSign))
         .reopenIfFail()
         .response((player, lines) -> {
-        	if(ChallengeProfile.getInstance().canTakeEffect()) return true;
+        	if(canTakeEffect()) {
+        		p.sendMessage(LanguageMessages.signNoEffect);
+        		return true;
+        	}
         	String enteredLine1 = lines[0]; 
         	long timeEntered = DateUtil.getSecondsFromFormattedDuration(enteredLine1);
         	if(timeEntered > 0) {
@@ -170,7 +184,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 				
 				//System.out.println("Health: " + p.getHealth());
 				//System.out.println("HealthScale before: " + p.getHealthScale());
-				p.setHealthScale(p.getHealth());
+				p.setHealthScale(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
 				//System.out.println("HealthScale after: " + p.getHealthScale());
 				//p.setHealthScaled(true);
 			});
@@ -183,7 +197,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 				maxHealth.setBaseValue(maxHealth.getDefaultValue());
 				p.setHealthScale(p.getHealth());
 				maxHealth.setBaseValue(maxHealth.getDefaultValue());
-				p.setHealthScale(p.getHealth());
+				p.setHealthScale(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
 				//p.damage(0.0001d);
 				//p.setHealth(maxHealth.getDefaultValue());		
 				//p.kickPlayer("Custom HP were changed. Please join back now.");
@@ -247,9 +261,13 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		setDone();
 		getSecondTimer().setMessageType(TimerMessage.TIMER_FINISHED);
 		String reasonMessage;
+		LinkedHashMap<UUID, Integer> sorted = new LinkedHashMap<UUID, Integer>();
 		switch(reason) {
 		case FINISHED:
 			reasonMessage = LanguageMessages.endChallengeComplete.replace("[TIME]", DateUtil.formatDuration(secondTimer.getTime()));
+			if(GenericChallenge.isActive(ChallengeType.ITEM_LIMIT_GLOBAL)) {
+				sorted = ((ItemCollectionLimitGlobalChallenge)GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL)).displayReadyStats();
+			}
 			break;
 		case NATURAL_DEATH:
 			reasonMessage = LanguageMessages.endChallengeNaturalDeath.replace("[PLAYER]", causer[0].getName());
@@ -278,15 +296,27 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		case NO_TIME_LEFT:
 			reasonMessage = LanguageMessages.endChallengeNoTimeLeft;
 			break;
+		case TOO_MANY_ITEMS_GLOBAL:
+			reasonMessage = LanguageMessages.endChallengeTooManyItemsGlobal.replace("[PLAYER]", causer[0].getName());	
+			sorted = ((ItemCollectionLimitGlobalChallenge)GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL)).displayReadyStats();
+			break;
 		default:
 			reasonMessage = "Unknown";
 			break;	
 		}
 		
-		getParticipantsAsPlayers().forEach(p -> {
+		for(Player p : getParticipantsAsPlayers()) {
 			p.sendMessage(reasonMessage);
 			p.setGameMode(GameMode.SPECTATOR);
-		});
+			if(!sorted.isEmpty()) {
+				int place = 0;
+				for(Map.Entry<UUID, Integer> entry : sorted.entrySet()) {
+					String toSend = ChatColor.GRAY + "" + (++place) + ": " + ChatColor.DARK_GREEN
+							+ Bukkit.getOfflinePlayer(entry.getKey()).getName() + " " + ChatColor.YELLOW + entry.getValue() + ChatColor.GRAY + " Items!";
+					p.sendMessage(toSend);
+				}
+			}
+		}		
 	}
 
 	@Override

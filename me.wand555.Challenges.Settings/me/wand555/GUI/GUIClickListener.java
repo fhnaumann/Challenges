@@ -29,6 +29,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoSneakingChallenge
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
 import me.wand555.Challenges.Config.LanguageMessages;
@@ -116,7 +117,10 @@ public class GUIClickListener implements Listener {
 						            .newMenu(new ArrayList<String>(LanguageMessages.customHealthSign))
 						            .reopenIfFail()
 						            .response((player, lines) -> {
-						            	if(ChallengeProfile.getInstance().canTakeEffect()) return true;
+						            	if(ChallengeProfile.getInstance().canTakeEffect()) {
+						            		p.sendMessage(LanguageMessages.signNoEffect);
+						            		return true;
+						            	}
 						            	String enteredLine1 = lines[0];         	
 						            	if(StringUtils.isNumericSpace(enteredLine1) && !enteredLine1.isEmpty()) {
 						            		int amount = Integer.valueOf(enteredLine1);
@@ -270,7 +274,10 @@ public class GUIClickListener implements Listener {
 						            .newMenu(new ArrayList<String>(LanguageMessages.mlgSign))
 						            .reopenIfFail()
 						            .response((player, lines) -> {
-						            	
+						            	if(ChallengeProfile.getInstance().canTakeEffect()) {
+						            		p.sendMessage(LanguageMessages.signNoEffect);
+						            		return true;
+						            	}
 						            	String[] entered = lines[0].split(" ");
 						            	if(entered.length == 3) {
 						            		String enteredLine2 = entered[0];
@@ -338,7 +345,10 @@ public class GUIClickListener implements Listener {
 						            .newMenu(new ArrayList<String>(LanguageMessages.onBlockSign))
 						            .reopenIfFail()
 						            .response((player, lines) -> {
-						            	
+						            	if(ChallengeProfile.getInstance().canTakeEffect()) {
+						            		p.sendMessage(LanguageMessages.signNoEffect);
+						            		return true;
+						            	}
 						            	String[] entered = lines[0].split(" ");
 						            	if(entered.length == 4) {
 						            		String enteredLine2 = entered[0];
@@ -412,7 +422,50 @@ public class GUIClickListener implements Listener {
 								
 								break;
 							}
-							
+							case 16:
+							{
+								ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
+								if(!iCLGChallenge.isActive()) {
+									signMenuFactory
+						            .newMenu(new ArrayList<String>(LanguageMessages.itemCollectionLimitGlobalSign))
+						            .reopenIfFail()
+						            .response((player, lines) -> {
+						            	if(ChallengeProfile.getInstance().canTakeEffect()) {
+						            		p.sendMessage(LanguageMessages.signNoEffect);
+						            		return true;
+						            	}
+						            	if(StringUtils.isNumeric(lines[0])) {
+						            		int limit = (int) ((double) Double.valueOf(lines[0]));
+						            		if(limit > 0) {
+						            			iCLGChallenge.setAround();
+						            			iCLGChallenge.setLimit(limit);
+						            			p.sendMessage(LanguageMessages.signCorrect);
+						            			iCLGChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+						            			return true;
+						            		}
+						            		else {
+						            			p.sendMessage(LanguageMessages.signTooLowWrong);
+						            		}
+						            	}
+						            	else {
+						            		p.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", lines[0]));
+						            	}	
+						                return false; // failure. becaues reopenIfFail was called, menu will reopen when closed.
+						            })
+						            .open(p);
+								}
+								else {
+									iCLGChallenge.setAround();
+									iCLGChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+									gui.createGUI(p, GUIType.OVERVIEW);
+									iCLGChallenge.setCurrentAmount(0);
+									iCLGChallenge.setLimit(0);
+									iCLGChallenge.getUniqueItems().clear();
+									
+								}
+								reloadOtherPlayerInvs(gui, p);
+								break;
+							}
 							case 26:
 								ChallengeProfile.getInstance().getBackpack().setEnabled(!ChallengeProfile.getInstance().getBackpack().isEnabled());
 								gui.createGUI(p, GUIType.OVERVIEW);
@@ -442,6 +495,10 @@ public class GUIClickListener implements Listener {
 							.newMenu(new ArrayList<String>(LanguageMessages.punishmentAmountSign))
 				            .reopenIfFail()
 				            .response((player, lines) -> {
+				            	if(ChallengeProfile.getInstance().canTakeEffect()) {
+				            		p.sendMessage(LanguageMessages.signNoEffect);
+				            		return true;
+				            	}
 				            	String enteredLine1 = lines[0];   
 				            	if(StringUtils.isNumeric(enteredLine1) && !enteredLine1.isEmpty()) {
 				            		int number = Integer.valueOf(enteredLine1);
@@ -496,6 +553,10 @@ public class GUIClickListener implements Listener {
 				            .newMenu(new ArrayList<String>(LanguageMessages.punishmentAmountSign))
 				            .reopenIfFail()
 				            .response((player, lines) -> {
+				            	if(ChallengeProfile.getInstance().canTakeEffect()) {
+				            		p.sendMessage(LanguageMessages.signNoEffect);
+				            		return true;
+				            	}
 				            	String enteredLine1 = lines[0];        	
 				            	if(StringUtils.isNumericSpace(enteredLine1) && !enteredLine1.isEmpty()) {
 				            		int number = Integer.valueOf(enteredLine1);

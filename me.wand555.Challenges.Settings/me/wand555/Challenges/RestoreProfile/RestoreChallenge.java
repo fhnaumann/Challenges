@@ -62,30 +62,37 @@ public class RestoreChallenge {
 	
 	public void restoreChallenge() {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
-		cProfile.setDone();
-		cProfile.resumeTimer();
-		cProfile.getSecondTimer().setTime(OLD_TIME);
-		/*
-		MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
-		if(TIME_TO_MLG <= 0) {
-			System.out.println("restored1");
-			mlgChallenge.setTimer(new MLGTimer(PLUGIN, mlgChallenge));
+		if(reason.isRestorable()) {
+			cProfile.setDone();
+			cProfile.resumeTimer();
+			cProfile.getSecondTimer().setTime(OLD_TIME);
+			/*
+			MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
+			if(TIME_TO_MLG <= 0) {
+				System.out.println("restored1");
+				mlgChallenge.setTimer(new MLGTimer(PLUGIN, mlgChallenge));
+			}
+			else {
+				System.out.println("restored2");
+				mlgChallenge.setTimer(new MLGTimer(PLUGIN, TOTAL_TIME_TO_MLG, TIME_TO_MLG));
+			}
+			*/
+			
+			playerData.forEach(rpd -> {
+				Player p = Bukkit.getPlayer(rpd.getUuid());
+				if(p == null) return;
+				if(!WorldLinkManager.worlds.contains(p.getWorld())) return;
+				p.teleport(rpd.getPlayerLoc());
+				p.setGameMode(rpd.getGameMode());
+				p.getInventory().setContents(rpd.getInvContent().toArray(new ItemStack[rpd.getInvContent().size()]));
+				p.sendMessage(LanguageMessages.challengeRestored);
+			});
+			playerData.clear();
 		}
 		else {
-			System.out.println("restored2");
-			mlgChallenge.setTimer(new MLGTimer(PLUGIN, TOTAL_TIME_TO_MLG, TIME_TO_MLG));
+			cProfile.sendMessageToAllParticipants(LanguageMessages.notRestorable);
 		}
-		*/
 		
-		playerData.forEach(rpd -> {
-			Player p = Bukkit.getPlayer(rpd.getUuid());
-			if(p == null) return;
-			if(!WorldLinkManager.worlds.contains(p.getWorld())) return;
-			p.teleport(rpd.getPlayerLoc());
-			p.setGameMode(rpd.getGameMode());
-			p.getInventory().setContents(rpd.getInvContent().toArray(new ItemStack[rpd.getInvContent().size()]));
-			p.sendMessage(LanguageMessages.challengeRestored);
-		});
-		playerData.clear();
+		
 	}
 }

@@ -41,14 +41,14 @@ public class PlayerJoinListener implements Listener {
 				if(cHealthChallenge.isActive()) {			
 					p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(cHealthChallenge.getAmount());
 					p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
-					p.setHealthScale(p.getHealth());
+					p.setHealthScale(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
 				}
 				else {
 					AttributeInstance maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH);
 					maxHealth.setBaseValue(maxHealth.getDefaultValue());
 					p.setHealthScale(p.getHealth());
 					maxHealth.setBaseValue(maxHealth.getDefaultValue());
-					p.setHealthScale(p.getHealth());
+					p.setHealthScale(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
 					p.damage(0);
 					//p.kickPlayer("Custom HP were changed. Please join back now.");
 				}		

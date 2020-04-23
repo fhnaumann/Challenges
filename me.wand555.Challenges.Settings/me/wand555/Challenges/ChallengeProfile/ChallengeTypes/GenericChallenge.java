@@ -119,7 +119,7 @@ public abstract class GenericChallenge implements ItemDisplayCreator {
 		case RANDOMIZE_CRAFTING: return LanguageMessages.guiRandomCraftingName;
 		case MLG: return LanguageMessages.guiRandomMLGName;
 		case ON_BLOCK: return LanguageMessages.guiOnBlockName;
-		default: return "";
+		default: return LanguageMessages.guiItemCollectionLimitGlobalName;
 		}
 	}
 	

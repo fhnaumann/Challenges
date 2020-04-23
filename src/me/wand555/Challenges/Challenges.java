@@ -34,6 +34,7 @@ import me.wand555.Challenges.Config.Language;
 import me.wand555.Challenges.Config.LanguageMessages;
 import me.wand555.Challenges.Config.UserConfig;
 import me.wand555.Challenges.Listener.BackpackListener;
+import me.wand555.Challenges.Listener.ItemCollectionLimitListener;
 import me.wand555.Challenges.Listener.MLGListener;
 import me.wand555.Challenges.Listener.NoBlockBreakingListener;
 import me.wand555.Challenges.Listener.NoBlockPlacingListener;
@@ -136,6 +137,7 @@ public class Challenges extends JavaPlugin {
 		new NoSneakingListener(this);
 		new RandomizeListener(this);
 		new MLGListener(this);
+		new ItemCollectionLimitListener(this);
 		
 		new BackpackListener(this);
 	}

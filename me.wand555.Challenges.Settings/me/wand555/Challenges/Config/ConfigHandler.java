@@ -35,6 +35,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomizedBlockDropsChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomizedCraftingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomizedMobDropsChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
@@ -147,6 +148,7 @@ public class ConfigHandler extends ConfigUtil {
 		new RandomizedCraftingChallenge().setActive(cfg.getBoolean("randomizedCrafting"));	
 		new MLGChallenge().setActive(cfg.getBoolean("randomMLG"));
 		new OnBlockChallenge().setActive(cfg.getBoolean("onBlock.Boolean"));
+		new ItemCollectionLimitGlobalChallenge().setActive(cfg.getBoolean("itemCollectionLimitGlobal.Boolean"));
 		
 		if(cProfile.hasStarted) {	
 			cProfile.setSecondTimer(new SecondTimer(PLUGIN, cfg.getLong("Timer")));
@@ -218,6 +220,20 @@ public class ConfigHandler extends ConfigUtil {
 							cfg.getLong("onBlock.TotalTimeTo"), 
 							cfg.getLong("onBlock.TimeTo")));
 				}
+			}
+			ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
+			if(iCLGChallenge.isActive()) {
+				iCLGChallenge.setCurrentAmount(cfg.getInt("itemCollectionLimitGlobal.currentAmount"));
+				iCLGChallenge.setLimit(cfg.getInt("itemCollectionLimitGlobal.Limit"));
+				if(cfg.isList("itemCollectionLimitGlobal.uniqueItems")) {
+					iCLGChallenge.setUniqueItems(cfg.getStringList("itemCollectionLimitGlobal.uniqueItems").stream()
+							.filter(obj -> obj != null)
+							.collect(Collectors.toMap(
+									string -> Material.valueOf(((String) string).split(",")[0]), 
+									string -> UUID.fromString(string.trim()),
+									(v1, v2) -> v2,
+									HashMap::new)));
+				}		
 			}
 		}
 		else {
@@ -294,6 +310,7 @@ public class ConfigHandler extends ConfigUtil {
 		cfg.set("randomizedCrafting", GenericChallenge.isActive(ChallengeType.RANDOMIZE_CRAFTING));		
 		cfg.set("randomMLG", GenericChallenge.isActive(ChallengeType.MLG));
 		cfg.set("onBlock.Boolean", GenericChallenge.isActive(ChallengeType.ON_BLOCK));
+		cfg.set("itemCollectionLimitGlobal.Boolean", GenericChallenge.isActive(ChallengeType.ITEM_LIMIT_GLOBAL));
 		
 		if(cProfile.hasStarted) {
 			cfg.set("Order", cProfile.getSecondTimer().getOrder().toString());
@@ -359,6 +376,14 @@ public class ConfigHandler extends ConfigUtil {
 					cfg.set("onBlock.TimeTo", onBlockChallenge.getTimer().getTimeTo());
 					cfg.set("onBlock.TotalTimeTo", onBlockChallenge.getTimer().getTotalTimeTo());
 				}
+			}
+			ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
+			if(iCLGChallenge.isActive()) {
+				cfg.set("itemCollectionLimitGlobal.currentAmount", iCLGChallenge.getCurrentAmount());
+				cfg.set("itemCollectionLimitGlobal.Limit", iCLGChallenge.getLimit());
+				cfg.set("itemCollectionLimitGlobal.uniqueItems", iCLGChallenge.getUniqueItems().entrySet().stream()
+						.map(entry -> entry.getKey().toString() + "," + entry.getValue().toString())
+						.collect(Collectors.toList()));
 			}
 		}
 		saveCustomYml(cfg, file);

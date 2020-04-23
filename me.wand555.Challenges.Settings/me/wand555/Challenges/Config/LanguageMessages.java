@@ -52,6 +52,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String backpackDisabled;
 	public static String noRestoreBecauseDesc;
 	public static String posEmpty;
+	public static String notRestorable;
 	
 	public static String endChallengeReset;
 	public static String endChallengeComplete;
@@ -64,6 +65,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String endChallengeFailedMLG;
 	public static String endChallengeNotOnBlock;
 	public static String endChallengeNoTimeLeft;
+	public static String endChallengeTooManyItemsGlobal;
 	
 	public static String timerMessageStart;
 	public static String timerMessagePause;
@@ -94,6 +96,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String guiRandomCraftingName;
 	public static String guiRandomMLGName;
 	public static String guiOnBlockName;
+	public static String guiItemCollectionLimitGlobalName;
 	
 	public static ArrayList<String> guiBackpackLore;
 	public static ArrayList<String> guiDeathLore;
@@ -112,8 +115,10 @@ public class LanguageMessages extends ConfigUtil {
 	public static ArrayList<String> guiRandomCraftingLore;
 	public static ArrayList<String> guiMLGLore;
 	public static ArrayList<String> guiOnBlockLore;
+	public static ArrayList<String> guiItemCollectionLimitGlobalLore;
 	
 	public static String guiCustomHealthAmount;
+	public static String guiItemCollectionLimit;
 	/**
 	 * Holds String which is displayed in the GUI when a challenge is active. Contains the punishment ready to be set in the lore.
 	 */
@@ -149,9 +154,10 @@ public class LanguageMessages extends ConfigUtil {
 	public static String passedOnBlock;
 	
 	/**
-	 * Logging messages (when enabled in config)
+	 * Logging messages (logDamage can be turned off in config)
 	 */
 	public static String logDamage;
+	public static String logItemPickUp;
 	
 	/**
 	 * Message in title when settings are changed.
@@ -169,6 +175,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static ArrayList<String> onBlockSign;
 	public static ArrayList<String> punishmentAmountSign;	
 	public static ArrayList<String> timerStartDescSign;
+	public static ArrayList<String> itemCollectionLimitGlobalSign;
 	
 	/**
 	 * When in SignGUI entered wrong. (right, first var here)
@@ -177,6 +184,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String signTooLowWrong;
 	public static String signLatestLowerThanEarliestWrong;
 	public static String signNoNumberInRange;
+	public static String signNoEffect;
 	/**
 	 * The title on the bossbar depending on the status of the OnBlock/ForceBlock Challenge
 	 */
@@ -233,6 +241,7 @@ public class LanguageMessages extends ConfigUtil {
 		backpackDisabled = format(cfg.getString("backpackDisabled"));
 		noRestoreBecauseDesc = format(cfg.getString("noRestoreBecauseDesc"));
 		posEmpty = format(cfg.getString("posEmpty"));
+		notRestorable = format(cfg.getString("notRestorable"));
 		
 		endChallengeReset = format(cfg.getString("endChallengeReset"));
 		endChallengeComplete = format(cfg.getString("endChallengeComplete"));
@@ -245,6 +254,7 @@ public class LanguageMessages extends ConfigUtil {
 		endChallengeFailedMLG = format(cfg.getString("endChallengeFailedMLG"));
 		endChallengeNotOnBlock = format(cfg.getString("endChallengeNotOnBlock"));
 		endChallengeNoTimeLeft = format(cfg.getString("endChallengeNoTimeLeft"));
+		endChallengeTooManyItemsGlobal = format(cfg.getString("endChallengeTooManyItemsGlobal"));
 		
 		timerMessageStart = formatWithoutPrefix(cfg.getString("timerMessageStart"));
 		timerMessagePause = formatWithoutPrefix(cfg.getString("timerMessagePause"));
@@ -275,6 +285,7 @@ public class LanguageMessages extends ConfigUtil {
 		guiRandomCraftingName = formatWithoutPrefix(cfg.getString("guiRandomCraftingName"));
 		guiRandomMLGName = formatWithoutPrefix(cfg.getString("guiRandomMLGName"));
 		guiOnBlockName = formatWithoutPrefix(cfg.getString("guiOnBlockName"));
+		guiItemCollectionLimitGlobalName = formatWithoutPrefix(cfg.getString("guiItemCollectionLimitGlobalName"));
 		
 		guiDeathLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiDeathLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
@@ -310,8 +321,12 @@ public class LanguageMessages extends ConfigUtil {
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		guiBackpackLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiBackpackLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
+		guiItemCollectionLimitGlobalLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiItemCollectionLimitGlobalLore")), 20, "_", true).split("_"))
+				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		
 		guiCustomHealthAmount = formatWithoutPrefix(cfg.getString("guiCustomHealthAmount"));
+		guiItemCollectionLimit = formatWithoutPrefix(cfg.getString("guiItemCollectionLimit"));
+		
 		punishItemDisplay = formatWithoutPrefix(cfg.getString("punishItemDisplay"));
 		punishNothing = formatWithoutPrefix(cfg.getString("punishNothing"));
 		punishHealth = formatWithoutPrefix(cfg.getString("punishHealth"));
@@ -336,6 +351,7 @@ public class LanguageMessages extends ConfigUtil {
 		passedOnBlock = format(cfg.getString("passedOnBlock"));
 		
 		logDamage = format(cfg.getString("logDamage"));
+		logItemPickUp = format(cfg.getString("logItemPickUp"));
 		
 		titleChallengeChange = formatWithoutPrefix(cfg.getString("titleChallengeChange"));
 		titleWithAmountChallengeChange = formatWithoutPrefix(cfg.getString("titleWithAmountChallengeChange"));
@@ -352,11 +368,14 @@ public class LanguageMessages extends ConfigUtil {
 				.stream().collect(Collectors.toCollection(ArrayList::new));
 		timerStartDescSign = Lists.newArrayList(cfg.getString("timerStartDescSign").split("_"))
 				.stream().collect(Collectors.toCollection(ArrayList::new));
+		itemCollectionLimitGlobalSign = Lists.newArrayList(cfg.getString("itemCollectionLimitGlobalSign").split("_"))
+				.stream().collect(Collectors.toCollection(ArrayList::new));
 		
 		signCorrect = format(cfg.getString("signCorrect"));
 		signTooLowWrong = format(cfg.getString("signTooLowWrong"));
 		signLatestLowerThanEarliestWrong = format(cfg.getString("signLatestLowerThanEarliestWrong"));
 		signNoNumberInRange = format(cfg.getString("signNoNumberInRange"));
+		signNoEffect = format(cfg.getString("signNoEffect"));
 		
 		onBlockHidden = formatWithoutPrefix(cfg.getString("onBlockHidden"));
 		onBlockShown = formatWithoutPrefix(cfg.getString("onBlockShown"));
