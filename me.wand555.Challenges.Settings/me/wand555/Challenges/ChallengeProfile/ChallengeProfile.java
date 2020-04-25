@@ -17,6 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -34,6 +35,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoRegenerationChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionSameItemLimitChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
@@ -299,6 +301,12 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		case TOO_MANY_ITEMS_GLOBAL:
 			reasonMessage = LanguageMessages.endChallengeTooManyItemsGlobal.replace("[PLAYER]", causer[0].getName());	
 			sorted = ((ItemCollectionLimitGlobalChallenge)GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL)).displayReadyStats();
+			break;
+		case SAME_ITEM_IN_INVENTORY:
+			reasonMessage = LanguageMessages.endChallengeSameItemInInventory
+				.replace("[PLAYER]", causer[0].getName())
+				.replace("[MATERIAL]", WordUtils.capitalize(((ItemCollectionSameItemLimitChallenge)GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM))
+						.getLatestAdded().toString().replace('_', ' ').toLowerCase()));
 			break;
 		default:
 			reasonMessage = "Unknown";

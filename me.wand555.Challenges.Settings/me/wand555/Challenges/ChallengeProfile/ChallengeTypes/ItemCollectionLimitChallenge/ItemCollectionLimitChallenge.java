@@ -5,7 +5,8 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 
 /**
- * This only means unique items. 3 Stacks of STONE counts as 1 "item" in this challenge
+ * An abstract class holding the base information regarding some sort of limitations in player / team inventories.
+ * This only means unique items. 3 Stacks of STONE counts as 1 "item" in this challenge.
  * @author Felix
  *
  */

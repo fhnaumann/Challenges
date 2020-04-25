@@ -36,6 +36,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomizedBlockDrop
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomizedCraftingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomizedMobDropsChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionSameItemLimitChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
@@ -149,6 +150,7 @@ public class ConfigHandler extends ConfigUtil {
 		new MLGChallenge().setActive(cfg.getBoolean("randomMLG"));
 		new OnBlockChallenge().setActive(cfg.getBoolean("onBlock.Boolean"));
 		new ItemCollectionLimitGlobalChallenge().setActive(cfg.getBoolean("itemCollectionLimitGlobal.Boolean"));
+		new ItemCollectionSameItemLimitChallenge().setActive(cfg.getBoolean("noSameItem.Boolean"));
 		
 		if(cProfile.hasStarted) {	
 			cProfile.setSecondTimer(new SecondTimer(PLUGIN, cfg.getLong("Timer")));
@@ -230,10 +232,14 @@ public class ConfigHandler extends ConfigUtil {
 							.filter(obj -> obj != null)
 							.collect(Collectors.toMap(
 									string -> Material.valueOf(((String) string).split(",")[0]), 
-									string -> UUID.fromString(string.trim()),
+									string -> UUID.fromString(((String) string).split(",")[1].trim()),
 									(v1, v2) -> v2,
 									HashMap::new)));
 				}		
+			}
+			ItemCollectionSameItemLimitChallenge iCSILChallenge = GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM);
+			if(iCSILChallenge.isActive()) {
+				iCSILChallenge.setPunishType(PunishType.valueOf(cfg.getString("noSameItem.Punishment")));
 			}
 		}
 		else {
@@ -311,6 +317,7 @@ public class ConfigHandler extends ConfigUtil {
 		cfg.set("randomMLG", GenericChallenge.isActive(ChallengeType.MLG));
 		cfg.set("onBlock.Boolean", GenericChallenge.isActive(ChallengeType.ON_BLOCK));
 		cfg.set("itemCollectionLimitGlobal.Boolean", GenericChallenge.isActive(ChallengeType.ITEM_LIMIT_GLOBAL));
+		cfg.set("noSameItem.Boolean", GenericChallenge.isActive(ChallengeType.NO_SAME_ITEM));
 		
 		if(cProfile.hasStarted) {
 			cfg.set("Order", cProfile.getSecondTimer().getOrder().toString());
@@ -384,6 +391,10 @@ public class ConfigHandler extends ConfigUtil {
 				cfg.set("itemCollectionLimitGlobal.uniqueItems", iCLGChallenge.getUniqueItems().entrySet().stream()
 						.map(entry -> entry.getKey().toString() + "," + entry.getValue().toString())
 						.collect(Collectors.toList()));
+			}
+			ItemCollectionSameItemLimitChallenge iCSILChallenge = GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM);
+			if(iCSILChallenge.isActive()) {
+				cfg.set("noSameItem.Punishment", iCSILChallenge.getPunishType().toString());
 			}
 		}
 		saveCustomYml(cfg, file);

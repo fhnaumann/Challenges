@@ -17,6 +17,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemDisplayCreator;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
 import me.wand555.Challenges.Config.LanguageMessages;
 
 public class GUI implements ItemDisplayCreator {
@@ -86,12 +87,15 @@ public class GUI implements ItemDisplayCreator {
 				case 16:
 					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL).getDisplayItem());
 					break;
+				//case 17:
+					//gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM).getDisplayItem());
+					//break;
 				case 26:
 					gui.setItem(i, createItem(Material.CHEST, 
 							LanguageMessages.guiBackpackName, 
 							new ArrayList<String>(LanguageMessages.guiBackpackLore), 
 							ChallengeProfile.getInstance().getBackpack().isEnabled()));
-					break;
+					break;		
 				default:	
 					gui.setItem(i, createGlass());
 				}
@@ -150,6 +154,27 @@ public class GUI implements ItemDisplayCreator {
 				}
 			}
 			punishmentChallengeTypeOpenGUI.put(p.getUniqueId(), challengeType[0]);
+		}
+		else if(type == GUIType.COLLECTED_ITEMS_LIST) {
+			gui = plugin.getServer().createInventory(null, ItemCollectionLimitGlobalChallenge.GUI_PAGE_SIZE+9, ChatColor.DARK_GREEN + "Collected Items");
+			ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
+			int endIndex = iCLGChallenge.placeItemsAlreadyCollected(gui, p.getUniqueId());
+			System.out.println(endIndex);
+			for(int i=endIndex<0?0:endIndex; i<gui.getSize(); i++) {
+				if(i == 45) {
+					gui.setItem(i, createPageItem(false));
+				}
+				else if(i == 47) {
+					gui.setItem(i, iCLGChallenge.getDisplayItem());
+				}
+				else if(i == 49) {
+					gui.setItem(i, createGoBack(type));
+				}
+				else if(i == 53) {
+					gui.setItem(i, createPageItem(true));
+				}
+				else gui.setItem(i, createGlass());
+			}
 		}
 		else if(type == GUIType.BACKPACK) {
 			gui = plugin.getServer().createInventory(null, Backpack.BACKPACK_SIZE, ChatColor.GREEN + "Backpack");

@@ -1,7 +1,9 @@
 package me.wand555.Challenges.ChallengeProfile.ChallengeTypes;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.entity.Player;
 
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionSameItemLimitChallenge;
 import me.wand555.Challenges.Config.LanguageMessages;
 
 public interface ReasonNotifiable {
@@ -59,6 +61,11 @@ public interface ReasonNotifiable {
 						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));	
 			case ON_BLOCK:
 				return LanguageMessages.violationOnBlock.replace("[PLAYER]", causer.getName())
+						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
+			case NO_SAME_ITEM:
+				return LanguageMessages.violationNoSameItemInInventory.replace("[PLAYER]", causer.getName())
+						.replace("[MATERIAL]", WordUtils.capitalize(((ItemCollectionSameItemLimitChallenge)GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM))
+								.getLatestAdded().toString().replace('_', ' ').toLowerCase()))
 						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
 			default:
 				return causer.getName() + " has failed a challenge (unknown reason) (" + getFittingPunishmentMessage(punishment) + ")!";

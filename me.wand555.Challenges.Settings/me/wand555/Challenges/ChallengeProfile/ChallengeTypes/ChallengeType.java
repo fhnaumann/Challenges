@@ -18,7 +18,7 @@ RANDOMIZE_CRAFTING(false, false),
 MLG(true, false),
 ON_BLOCK(true, false),
 ITEM_LIMIT_GLOBAL(false, true),
-ITEM_LIMIT_LOCAL(false, true)
+NO_SAME_ITEM(true, false)
 ;
 	/**
 	 * If the challenge is punishable
@@ -26,7 +26,7 @@ ITEM_LIMIT_LOCAL(false, true)
 	private final boolean punishable;
 	/**
 	 * If the challenge holds any numbers/values to be displayed in the GUI.
-	 * Hence that's why MLG is false, despite having numbers interally.
+	 * Hence that's why MLG/ForceBlock is false, despite having numbers interally.
 	 */
 	private final boolean amountable;
 	

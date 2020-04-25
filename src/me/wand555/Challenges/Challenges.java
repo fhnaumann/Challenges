@@ -18,6 +18,7 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.World.Environment;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
@@ -34,13 +35,14 @@ import me.wand555.Challenges.Config.Language;
 import me.wand555.Challenges.Config.LanguageMessages;
 import me.wand555.Challenges.Config.UserConfig;
 import me.wand555.Challenges.Listener.BackpackListener;
-import me.wand555.Challenges.Listener.ItemCollectionLimitListener;
+import me.wand555.Challenges.Listener.ItemCollectionLimitGlobalListener;
 import me.wand555.Challenges.Listener.MLGListener;
 import me.wand555.Challenges.Listener.NoBlockBreakingListener;
 import me.wand555.Challenges.Listener.NoBlockPlacingListener;
 import me.wand555.Challenges.Listener.NoCraftingListener;
 import me.wand555.Challenges.Listener.NoDamageListener;
 import me.wand555.Challenges.Listener.NoRegListener;
+import me.wand555.Challenges.Listener.NoSameItemListener;
 import me.wand555.Challenges.Listener.NoSneakingListener;
 import me.wand555.Challenges.Listener.PlayerDeathListener;
 import me.wand555.Challenges.Listener.RandomizeListener;
@@ -137,8 +139,13 @@ public class Challenges extends JavaPlugin {
 		new NoSneakingListener(this);
 		new RandomizeListener(this);
 		new MLGListener(this);
-		new ItemCollectionLimitListener(this);
+		new ItemCollectionLimitGlobalListener(this);
+		//new NoSameItemListener(this);
 		
 		new BackpackListener(this);
 	}
+	
+	public static boolean hasClickedTop(InventoryClickEvent event) {
+        return event.getRawSlot() == event.getSlot();
+    }
 }

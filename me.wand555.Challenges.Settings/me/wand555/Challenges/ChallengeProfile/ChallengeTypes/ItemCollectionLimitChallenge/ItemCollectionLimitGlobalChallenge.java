@@ -6,20 +6,29 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Pageable;
 import me.wand555.Challenges.Config.LanguageMessages;
 
-public class ItemCollectionLimitGlobalChallenge extends ItemCollectionLimitChallenge {
+public class ItemCollectionLimitGlobalChallenge extends ItemCollectionLimitChallenge implements Pageable {
 
+	public static final int GUI_PAGE_SIZE = 45;
+	
+	private HashMap<UUID, Integer> pageMap = new HashMap<UUID, Integer>();
+	
 	private HashMap<Material, UUID> uniqueItems = new HashMap<>();
 	
 	public ItemCollectionLimitGlobalChallenge() {
@@ -36,7 +45,21 @@ public class ItemCollectionLimitGlobalChallenge extends ItemCollectionLimitChall
 				super.limit, 
 				super.active);
 	}
-
+	
+	@Override
+	public int placeItemsAlreadyCollected(Inventory gui, UUID uuid) {
+		List<Material> collectedItems = new ArrayList<Material>(getUniqueItems().keySet());
+		int page = getPageCurrentlyOn(uuid);
+		int index = page * GUI_PAGE_SIZE - GUI_PAGE_SIZE;
+		int endIndex = (index >= currentAmount) ? currentAmount - 1 : index + GUI_PAGE_SIZE;
+		for(; index < endIndex; index++) {
+			if(index < currentAmount) {
+				gui.setItem(index%GUI_PAGE_SIZE, new ItemStack(collectedItems.get(index)));
+			}
+		}
+		return gui.firstEmpty();
+	}
+	
 	public LinkedHashMap<UUID, Integer> displayReadyStats() {
 		ArrayList<UUID> uuids = new ArrayList<UUID>(getUniqueItems().values());
 		return uuids.stream()
@@ -84,5 +107,20 @@ public class ItemCollectionLimitGlobalChallenge extends ItemCollectionLimitChall
 	 */
 	public void setUniqueItems(HashMap<Material, UUID> uniqueItems) {
 		this.uniqueItems = uniqueItems;
+	}
+
+	@Override
+	public HashMap<UUID, Integer> getPageMap() {
+		return pageMap;
+	}
+
+	@Override
+	public int getPageCurrentlyOn(UUID uuid) {
+		return getPageMap().getOrDefault(uuid, 1);
+	}
+
+	@Override
+	public boolean nextPageExists(int page) {
+		return page * GUI_PAGE_SIZE < currentAmount;
 	}
 }

@@ -11,7 +11,8 @@ public enum ChallengeEndReason {
 	NO_SNEAKING(true),
 	FAILED_MLG(true), 
 	NOT_ON_BLOCK(true), 
-	TOO_MANY_ITEMS_GLOBAL(false)
+	TOO_MANY_ITEMS_GLOBAL(false),
+	SAME_ITEM_IN_INVENTORY(true)
 	;
 	
 	private final boolean restorable;

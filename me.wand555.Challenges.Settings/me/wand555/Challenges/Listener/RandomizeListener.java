@@ -40,6 +40,7 @@ public class RandomizeListener implements Listener {
 					Material random = rBDChallenge.getRandomizedMaterial(block.getType());
 					if(random.isAir()) return;
 					event.setCancelled(true);
+					event.getBlock().setType(Material.AIR);
 					block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(random));
 				}
 			}

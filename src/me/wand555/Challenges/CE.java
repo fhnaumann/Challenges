@@ -312,13 +312,13 @@ public class CE implements CommandExecutor {
 			if(args.length == 0) {
 				if(player.hasPermission("challenge.settings.view")) {
 					if(cProfile.isInChallenge(player.getUniqueId())) {
-						if(cProfile.isPaused || !cProfile.hasStarted) {
+						//if(cProfile.isPaused || !cProfile.hasStarted) {
 							//create settings gui
 							gui.createGUI(player, GUIType.OVERVIEW);
-						}
-						else {
-							player.sendMessage(LanguageMessages.noSettingsHasToBePaused);
-						}
+						//}
+						//else {
+						//	player.sendMessage(LanguageMessages.noSettingsHasToBePaused);
+						//}
 					}
 					else {
 						player.sendMessage(LanguageMessages.notInChallenge);

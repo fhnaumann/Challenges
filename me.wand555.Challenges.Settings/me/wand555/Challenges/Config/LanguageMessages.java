@@ -66,6 +66,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String endChallengeNotOnBlock;
 	public static String endChallengeNoTimeLeft;
 	public static String endChallengeTooManyItemsGlobal;
+	public static String endChallengeSameItemInInventory;
 	
 	public static String timerMessageStart;
 	public static String timerMessagePause;
@@ -79,6 +80,12 @@ public class LanguageMessages extends ConfigUtil {
 	public static String settingSyntax;
 	public static String timerStartSyntax;
 	
+	public static String noPreviousPage;
+	public static String noNextPage;
+	
+	public static String guiPagePrevious;
+	public static String guiPageNext;
+	public static String guiBackTo;
 	public static String guiBackpackName;
 	public static String guiDeathName;
 	public static String guiFortressSpawnName;
@@ -146,6 +153,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String violationSneaking;
 	public static String violationMLG;
 	public static String violationOnBlock;
+	public static String violationNoSameItemInInventory;
 	
 	/**
 	 * Message in chat when (mostly everyone) passed a certain challenge. Not all challenges notify in chat.
@@ -190,6 +198,8 @@ public class LanguageMessages extends ConfigUtil {
 	 */
 	public static String onBlockHidden;
 	public static String onBlockShown;
+	
+	public static String itemOnGroundAlreadyCollectedName;
 	
 	/**
 	 * No Permission messages
@@ -255,6 +265,7 @@ public class LanguageMessages extends ConfigUtil {
 		endChallengeNotOnBlock = format(cfg.getString("endChallengeNotOnBlock"));
 		endChallengeNoTimeLeft = format(cfg.getString("endChallengeNoTimeLeft"));
 		endChallengeTooManyItemsGlobal = format(cfg.getString("endChallengeTooManyItemsGlobal"));
+		endChallengeSameItemInInventory = format(cfg.getString("endChallengeSameItemInInventory"));
 		
 		timerMessageStart = formatWithoutPrefix(cfg.getString("timerMessageStart"));
 		timerMessagePause = formatWithoutPrefix(cfg.getString("timerMessagePause"));
@@ -268,6 +279,12 @@ public class LanguageMessages extends ConfigUtil {
 		settingSyntax = format(cfg.getString("settingSyntax"));
 		timerStartSyntax = format(cfg.getString("timerStartSyntax"));
 		
+		noPreviousPage = format(cfg.getString("noPreviousPage"));
+		noNextPage = format(cfg.getString("noNextPage"));
+		
+		guiPagePrevious = formatWithoutPrefix(cfg.getString("guiPagePrevious"));
+		guiPageNext = formatWithoutPrefix(cfg.getString("guiPageNext"));
+		guiBackTo = formatWithoutPrefix(cfg.getString("guiBackTo"));
 		guiBackpackName = formatWithoutPrefix(cfg.getString("guiBackpackName"));
 		guiDeathName = formatWithoutPrefix(cfg.getString("guiDeathName"));
 		guiFortressSpawnName = formatWithoutPrefix(cfg.getString("guiFortressSpawnName"));
@@ -346,6 +363,7 @@ public class LanguageMessages extends ConfigUtil {
 		violationSneaking = format(cfg.getString("violationSneaking"));
 		violationMLG = format(cfg.getString("violationMLG"));
 		violationOnBlock = format(cfg.getString("violationOnBlock"));
+		violationNoSameItemInInventory = format(cfg.getString("violationNoSameItemInInventory"));
 		
 		passedMLG = format(cfg.getString("passedMLG"));
 		passedOnBlock = format(cfg.getString("passedOnBlock"));
@@ -379,6 +397,8 @@ public class LanguageMessages extends ConfigUtil {
 		
 		onBlockHidden = formatWithoutPrefix(cfg.getString("onBlockHidden"));
 		onBlockShown = formatWithoutPrefix(cfg.getString("onBlockShown"));
+		
+		itemOnGroundAlreadyCollectedName = formatWithoutPrefix(cfg.getString("itemOnGroundAlreadyCollectedName"));
 	}
 	
 	public static String format(String msg) {

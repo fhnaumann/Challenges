@@ -30,6 +30,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionSameItemLimitChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
 import me.wand555.Challenges.Config.LanguageMessages;
@@ -58,6 +59,14 @@ public class GUIClickListener implements Listener {
 						int slot = event.getRawSlot();
 						if(slot <= 26) event.setCancelled(true);
 						if(p.hasPermission("challenge.settings.modify")) {
+							ChallengeProfile cProfile = ChallengeProfile.getInstance();
+							//Slot 16 == Global Item Limit -> GUI darf sich öffnen
+							if(slot != 16) {
+								if(cProfile.canTakeEffect()) {
+									p.sendMessage(LanguageMessages.noSettingsHasToBePaused);
+									return;
+								}
+							}
 							switch(slot) {
 							case 0:
 							{
@@ -426,6 +435,10 @@ public class GUIClickListener implements Listener {
 							{
 								ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
 								if(!iCLGChallenge.isActive()) {
+									if(cProfile.canTakeEffect()) {
+										p.sendMessage(LanguageMessages.noSettingsHasToBePaused);
+										return;
+									}
 									signMenuFactory
 						            .newMenu(new ArrayList<String>(LanguageMessages.itemCollectionLimitGlobalSign))
 						            .reopenIfFail()
@@ -441,6 +454,9 @@ public class GUIClickListener implements Listener {
 						            			iCLGChallenge.setLimit(limit);
 						            			p.sendMessage(LanguageMessages.signCorrect);
 						            			iCLGChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+						            			Bukkit.getScheduler().runTaskLater(plugin, () -> {
+					            					gui.createGUI(p, GUIType.OVERVIEW);
+					            				}, 1L);
 						            			return true;
 						            		}
 						            		else {
@@ -455,17 +471,26 @@ public class GUIClickListener implements Listener {
 						            .open(p);
 								}
 								else {
-									iCLGChallenge.setAround();
-									iCLGChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
-									gui.createGUI(p, GUIType.OVERVIEW);
-									iCLGChallenge.setCurrentAmount(0);
-									iCLGChallenge.setLimit(0);
-									iCLGChallenge.getUniqueItems().clear();
-									
+									iCLGChallenge.getPageMap().put(p.getUniqueId(), 1);
+									gui.createGUI(p, GUIType.COLLECTED_ITEMS_LIST);								
 								}
 								reloadOtherPlayerInvs(gui, p);
 								break;
 							}
+							/*case 17:
+							{
+								ItemCollectionSameItemLimitChallenge iCSILChallenge = GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM);
+								if(!iCSILChallenge.isActive()) {
+									gui.createGUI(p, GUIType.PUNISHMENT, iCSILChallenge.getPunishCause());
+								}
+								else {
+									iCSILChallenge.setAround();
+									gui.createGUI(p, GUIType.OVERVIEW);
+									reloadOtherPlayerInvs(gui, p);
+									iCSILChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+								}
+								break;
+							}*/
 							case 26:
 								ChallengeProfile.getInstance().getBackpack().setEnabled(!ChallengeProfile.getInstance().getBackpack().isEnabled());
 								gui.createGUI(p, GUIType.OVERVIEW);
@@ -600,7 +625,7 @@ public class GUIClickListener implements Listener {
 				            		return true;
 				            	}
 				            	else {
-				            		p.sendMessage(LanguageMessages.notANumber);
+				            		p.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", enteredLine1));
 				            	}
 				                return false; // failure. becaues reopenIfFail was called, menu will reopen when closed.
 				            })
@@ -655,6 +680,48 @@ public class GUIClickListener implements Listener {
 							break;
 						}
 						reloadOtherPlayerInvs(gui, p);
+					}
+					else if(event.getView().getTitle().equalsIgnoreCase(ChatColor.DARK_GREEN + "Collected Items")) {
+						Player p = (Player) event.getWhoClicked();
+						int slot = event.getRawSlot();
+						event.setCancelled(true);
+						ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
+						if(slot == 45) {
+							int page = iCLGChallenge.getPageCurrentlyOn(p.getUniqueId());
+							if(page != 1) {
+								iCLGChallenge.getPageMap().put(p.getUniqueId(), page-1);
+								gui.createGUI(p, GUIType.COLLECTED_ITEMS_LIST);
+							}
+							else {
+								p.sendMessage(LanguageMessages.noPreviousPage);
+							}
+						}
+						else if(slot == 47) {
+							if(ChallengeProfile.getInstance().canTakeEffect()) {
+								p.sendMessage(LanguageMessages.noSettingsHasToBePaused);
+								return;
+							}
+							//disable
+							iCLGChallenge.setActive(false);
+							iCLGChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+							gui.createGUI(p, GUIType.OVERVIEW);
+							iCLGChallenge.setCurrentAmount(0);
+							iCLGChallenge.setLimit(0);
+							iCLGChallenge.getUniqueItems().clear();
+						}
+						else if(slot == 49) {
+							gui.createGUI(p, GUIType.COLLECTED_ITEMS_LIST.getGoBack());
+						}
+						else if(slot == 53) {
+							int page = iCLGChallenge.getPageCurrentlyOn(p.getUniqueId());
+							if(iCLGChallenge.nextPageExists(page)) {
+								iCLGChallenge.getPageMap().put(p.getUniqueId(), page+1);
+								gui.createGUI(p, GUIType.COLLECTED_ITEMS_LIST);
+							}
+							else {
+								p.sendMessage(LanguageMessages.noNextPage);
+							}
+						}
 					}
 				}
 			}

@@ -80,6 +80,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("endChallengeNotOnBlock", "&2[PLAYER] &7failed to stand on the block! The challenge ended!");
 		msgDefaults.put("endChallengeNoTimeLeft", "&7You ran out of time! The challenge ended");
 		msgDefaults.put("endChallengeTooManyItemsGlobal", "&2[PLAYER] &7reached the item limit. The challenge ended!");
+		msgDefaults.put("endChallengeSameItemInInventory", "&2[PLAYER] &7collected &e[MATERIAL]&7, which was already in someone's inventory! The challenge ended!");
 		
 		msgDefaults.put("timerMessageStart", "&7&l/timer start");
 		msgDefaults.put("timerMessagePause", "&7&lPAUSED &2[TIME] &7- /timer pause");
@@ -112,6 +113,12 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiOnBlockName", "&7&lForceBlock");
 		msgDefaults.put("guiItemCollectionLimitGlobalName", "&7&lGlobal Item Limit");
 		
+		msgDefaults.put("noPreviousPage", "&7You're on the first page.");
+		msgDefaults.put("noNextPage", "&7You're on the last page.");
+		
+		msgDefaults.put("guiPagePrevious", "&6&lPrevious Page");
+		msgDefaults.put("guiPageNext", "&6&lNext Page");
+		msgDefaults.put("guiBackTo", "&7Back to [TO]");
 		msgDefaults.put("guiBackpackLore", "&7&A backpack all challenge participants share!");
 		msgDefaults.put("guiDeathLore", "The challenge ends when a player dies!");
 		msgDefaults.put("guiFortressSpawnLore", "You will always spawn near a nether fortress!");
@@ -153,6 +160,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("violationSneaking", "&2[PLAYER] &7has sneaked (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationMLG", "&2[PLAYER] &7failed the MLG (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationOnBlock", "&2[PLAYER] &7failed to stand on the block (Punishment: &2[PUNISHMENT]&7!");
+		msgDefaults.put("violationNoSameItemInInventory", "&2[PLAYER] &7collected &e[MATERIAL]&7, which is already in someone's inventory (Punishment: &2[PUNISHMENT]&7)!");
 		
 		msgDefaults.put("passedMLG", "&7All players beat the MLG!");
 		msgDefaults.put("passedOnBlock", "&7All players stood on the correct block!");
@@ -168,7 +176,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("customHealthSign", "__Write the amount_of hearts above!");
 		msgDefaults.put("mlgSign", "__Order is_Early Late Height");
 		msgDefaults.put("onBlockSign", "__Order is_Earliest Latest");
-		msgDefaults.put("punishmentAmountSign", "_Choose a value_between 1 and 10!_(both inclusive)");
+		msgDefaults.put("punishmentAmountSign", "_Choose a value_between 1 and 10_(both inclusive)");
 		msgDefaults.put("timerStartDescSign", "__Format is_HH:MM:SS");
 		msgDefaults.put("itemCollectionLimitGlobalSign", "__Choose amount_of unique items");
 		
@@ -180,6 +188,8 @@ public class UserConfig extends ConfigUtil {
 		
 		msgDefaults.put("onBlockHidden", "&7Waiting for block...");
 		msgDefaults.put("onBlockShown", "&7Stand on &e[BLOCK] &7in &2[TIME]&7!");
+		
+		msgDefaults.put("itemOnGroundAlreadyCollectedName", "&7Registered");
 		
 		msgDefaults.keySet().stream()
 			.filter(key -> !cfg.isSet(key))
@@ -237,6 +247,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("endChallengeNotOnBlock", "&2[PLAYER] &7stand nicht auf dem Block! Die Challenge ist vorbei!");
 		msgDefaults.put("endChallengeNoTimeLeft", "&7Der Timer ist abgelaufen! Die Challenge ist vorbei!");
 		msgDefaults.put("endChallengeTooManyItemsGlobal", "&2[PLAYER] &7hat das Item-Limit überschritten! Die Challenge ist vorbei!");
+		msgDefaults.put("endChallengeSameItemInInventory", "&2[PLAYER] &7hat &e[MATERIAL] &7aufgesammelt, was bereits jemand im Inventar hatte! Die Challenge ist vorbei!");	
 		
 		msgDefaults.put("timerMessageStart", "&7&l/timer start");
 		msgDefaults.put("timerMessagePause", "&7&lPAUSIERT &2[TIME] &7- /timer pause");
@@ -250,6 +261,12 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("settingSyntax", "&7Syntax: &a/settings");
 		msgDefaults.put("timerStartSyntax", "&7Syntax: &a/timer start asc &7oder &a/timer start desc");
 		
+		msgDefaults.put("noPreviousPage", "&7Du bist auf der 1. Seite.");
+		msgDefaults.put("noNextPage", "&7Du bist auf der letzten Seite.");
+		
+		msgDefaults.put("guiPagePrevious", "&6&lVorherige Seite");
+		msgDefaults.put("guiPageNext", "&6&lNächste Seite");
+		msgDefaults.put("guiBackTo", "&7Zurück zu [TO]");
 		msgDefaults.put("guiBackpackName", "&7&lTeam Rucksack");
 		msgDefaults.put("guiDeathName", "&7&lTod");
 		msgDefaults.put("guiFortressSpawnName", "&7&lGarantierter Netherfestungsspawn");
@@ -310,6 +327,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("violationSneaking", "&2[PLAYER] &7hat gesneakt (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationMLG", "&2[PLAYER]&7 hat den MLG nicht geschafft (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationOnBlock", "&2[PLAYER] &7stand nicht auf dem Block (Bestrafung: &2[PUNISHMENT]&7!");
+		msgDefaults.put("violationNoSameItemInInventory", "&2[PLAYER] &7hat &e[MATERIAL] &7aufgesammelt, was bereits jemand im Inventar hatte (Bestrafung: &2[PUNISHMENT]&7)!");
 		
 		msgDefaults.put("passedMLG", "&7Alle Spieler haben den MLG geschafft!");
 		msgDefaults.put("passedOnBlock", "Alle Spieler standen auf dem korrekten Block!");
@@ -324,7 +342,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("customHealthSign", "__Wähle die Anzahl_der Herzen oben!");
 		msgDefaults.put("mlgSign", "__Anordnung ist_Früh Spät Höhe");
 		msgDefaults.put("onBlockSign", "__Anordnung ist_Früh Spät");
-		msgDefaults.put("punishmentAmountSign", "_Wähle einen Wert_zwischen 1 und 10!_(beide inklusive)");
+		msgDefaults.put("punishmentAmountSign", "_Wähle einen Wert_zw. 1 und 10_(beide inklusive)");
 		msgDefaults.put("timerStartDescSign", "__Format ist_HH:MM:SS");
 		msgDefaults.put("itemCollectionLimitGlobalSign", "__Wähle die max._Anzahl an Items");
 		
@@ -336,6 +354,8 @@ public class UserConfig extends ConfigUtil {
 		
 		msgDefaults.put("onBlockHidden", "&7Waiting for block...");
 		msgDefaults.put("onBlockShown", "&7Stand on &e[BLOCK] &7in &2[TIME]&7!");
+		
+		msgDefaults.put("itemOnGroundAlreadyCollectedName", "&7Registriert");
 		
 		msgDefaults.keySet().stream()
 		.filter(key -> !cfg.isSet(key))

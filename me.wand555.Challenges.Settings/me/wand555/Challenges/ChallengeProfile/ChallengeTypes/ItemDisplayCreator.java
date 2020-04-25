@@ -192,9 +192,19 @@ public interface ItemDisplayCreator {
 		ItemStack item = new ItemStack(Material.BARRIER);
 		ItemMeta meta = item.getItemMeta();
 		switch(currentlyIn) {
-		case PUNISHMENT: meta.setDisplayName("Back to challenge settings");
+		case PUNISHMENT: meta.setDisplayName(LanguageMessages.guiBackTo.replace("[TO]", "Overview"));
+		case COLLECTED_ITEMS_LIST: meta.setDisplayName(LanguageMessages.guiBackTo.replace("[TO]", "Overview"));
 		default: break;
 		}
+		item.setItemMeta(meta);
+		return item;
+	}
+	
+	default ItemStack createPageItem(boolean right) {
+		ItemStack item = new ItemStack(Material.NETHER_STAR);
+		ItemMeta meta = item.getItemMeta();
+		if(right) meta.setDisplayName(LanguageMessages.guiPageNext);
+		else meta.setDisplayName(LanguageMessages.guiPagePrevious);	
 		item.setItemMeta(meta);
 		return item;
 	}
