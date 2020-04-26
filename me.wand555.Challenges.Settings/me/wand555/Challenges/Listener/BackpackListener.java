@@ -21,6 +21,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
+import me.wand555.Challenges.ChallengeProfile.Events.SettingsChange.ChallengeStatusSwitchEvent;
+import me.wand555.Challenges.ChallengeProfile.Events.SettingsChange.PunishableChallengeStatusSwitchEvent;
 
 public class BackpackListener implements Listener {
 
@@ -29,6 +32,14 @@ public class BackpackListener implements Listener {
 	public BackpackListener(Challenges plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		this.plugin = plugin;
+	}
+	
+	@EventHandler
+	public <T> void test(PunishableChallengeStatusSwitchEvent<T> event) {
+		if(event.getPunishType() == PunishType.HEALTH_ALL_10) {
+			event.setPunishType(PunishType.ALL_ITEMS);
+			event.setOverrideMessage("overriden");
+		}
 	}
 	
 	@EventHandler

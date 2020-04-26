@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
+import me.wand555.Challenges.ChallengeProfile.InventoryManager;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemDisplayCreator;
@@ -33,7 +34,7 @@ public class GUI implements ItemDisplayCreator {
 	public void createGUI(Player p, GUIType type, ChallengeType...challengeType) {
 		Inventory gui = null;
 		if(type == GUIType.OVERVIEW) {
-			gui = plugin.getServer().createInventory(null, 27, ChatColor.GREEN + "Settings");
+			gui = ChallengeProfile.getInstance().getInventoryManager().getSettingsGUI();
 			for(int i=0; i<gui.getSize(); i++) {
 				switch(i) {
 				case 0:
@@ -99,11 +100,12 @@ public class GUI implements ItemDisplayCreator {
 				default:	
 					gui.setItem(i, createGlass());
 				}
-			}
+			}	
+			ChallengeProfile.getInstance().getInventoryManager().setSettingsGUI(gui);
 		}
 		else if(type == GUIType.PUNISHMENT) {
 			//make a small method the get a more convient challenge type name
-			gui = plugin.getServer().createInventory(null, 36, ChatColor.RED + "Punishments");
+			gui = ChallengeProfile.getInstance().getInventoryManager().getPunishmentGUI();
 			for(int i=0; i<gui.getSize(); i++) {
 				switch(i) {
 				case 0:
@@ -153,13 +155,13 @@ public class GUI implements ItemDisplayCreator {
 					gui.setItem(i, createGlass());
 				}
 			}
+			ChallengeProfile.getInstance().getInventoryManager().setPunishmentGUI(gui);
 			punishmentChallengeTypeOpenGUI.put(p.getUniqueId(), challengeType[0]);
 		}
 		else if(type == GUIType.COLLECTED_ITEMS_LIST) {
-			gui = plugin.getServer().createInventory(null, ItemCollectionLimitGlobalChallenge.GUI_PAGE_SIZE+9, ChatColor.DARK_GREEN + "Collected Items");
+			gui = ChallengeProfile.getInstance().getInventoryManager().getAlreadyCollectedGUI();
 			ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
 			int endIndex = iCLGChallenge.placeItemsAlreadyCollected(gui, p.getUniqueId());
-			System.out.println(endIndex);
 			for(int i=endIndex<0?0:endIndex; i<gui.getSize(); i++) {
 				if(i == 45) {
 					gui.setItem(i, createPageItem(false));
@@ -175,6 +177,7 @@ public class GUI implements ItemDisplayCreator {
 				}
 				else gui.setItem(i, createGlass());
 			}
+			ChallengeProfile.getInstance().getInventoryManager().setAlreadyCollectedGUI(gui);
 		}
 		else if(type == GUIType.BACKPACK) {
 			gui = plugin.getServer().createInventory(null, Backpack.BACKPACK_SIZE, ChatColor.GREEN + "Backpack");

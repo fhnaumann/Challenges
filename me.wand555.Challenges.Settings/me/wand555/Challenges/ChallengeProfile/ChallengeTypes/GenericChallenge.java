@@ -34,11 +34,15 @@ public abstract class GenericChallenge implements ItemDisplayCreator {
 		return active;
 	}
 	
+	public ChallengeType getChallengeType() {
+		return type;
+	}
+	
 	public abstract ItemStack getDisplayItem();
 	
 	public void sendTitleChangeMessage(Collection<Player> players) {
 		String title;
-		String subtitle = null;
+		String subtitle = "";
 		if(type.isAmountable()) {
 			Amountable amountable = getChallenge(type);
 			title = LanguageMessages.titleWithAmountChallengeChange
@@ -61,13 +65,13 @@ public abstract class GenericChallenge implements ItemDisplayCreator {
 						.replace("[PUNISHMENT]", getFittingPunishmentMessage2(punishable.getPunishType()));
 			}
 		}
+		System.out.println(subtitle);
 		for(Player p : players) {
 			p.sendTitle(title, subtitle, 10, 60, 10);
 		}
 	}
 	
 	public String getFittingPunishmentMessage2(PunishType punishment) {
-		System.out.println("PUNISHMENT: " + punishment);
 		switch(punishment) {
 		case NOTHING: return LanguageMessages.punishNothing;
 		case HEALTH_1: return LanguageMessages.punishHealth.replace("[AMOUNT]", "1");
@@ -128,11 +132,11 @@ public abstract class GenericChallenge implements ItemDisplayCreator {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends GenericChallenge> T getChallenge(ChallengeType type) {
+	public static <T extends GenericChallenge> T getChallenge(ChallengeType type) {	
 		return (T) activeChallenges.entrySet().stream()
-			.filter(entry -> entry.getKey() == type)
-			.map(Map.Entry::getValue)
-			.findFirst().orElse(null);
+				.filter(entry -> entry.getKey() == type)
+				.map(Map.Entry::getValue)
+				.findFirst().orElse(null);
 	}
 	
 	public static boolean isActive(ChallengeType type) {

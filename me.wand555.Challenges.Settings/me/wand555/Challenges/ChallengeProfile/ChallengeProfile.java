@@ -27,6 +27,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
@@ -63,6 +64,8 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	private RestoreChallenge restoreChallenge;
 	private Backpack backpack;
 	private PositionManager posManager;
+	
+	private InventoryManager invManager;
 	
 	//private MLG mlg;
 	
@@ -389,5 +392,10 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		.filter(p -> p.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.GREEN + "Settings") 
 				|| p.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.RED + "Punishments"))
 		.forEach(Player::closeInventory);
+	}
+	
+	public InventoryManager getInventoryManager() {
+		if(invManager == null) invManager = new InventoryManager();
+		return invManager;
 	}
 }
