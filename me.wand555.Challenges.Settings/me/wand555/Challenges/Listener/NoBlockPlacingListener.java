@@ -14,9 +14,10 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoBlockPlacingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 
-public class NoBlockPlacingListener implements Listener {
+public class NoBlockPlacingListener extends CoreListener {
 
 	public NoBlockPlacingListener(Challenges plugin) {
+		super(plugin);
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 	
@@ -32,14 +33,13 @@ public class NoBlockPlacingListener implements Listener {
 							&& mat != Material.END_PORTAL_FRAME
 							&& !(mat == Material.FIRE 
 								&& event.getBlock().getRelative(BlockFace.DOWN).getType() == Material.OBSIDIAN)) {
-						NoBlockPlacingChallenge nBPChallenge = GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_PLACING);
+						NoBlockPlacingChallenge nBPChallenge = GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_PLACING);					
 						if(nBPChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-							cProfile.endChallenge(ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());
+							cProfile.endChallenge(nBPChallenge, ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());
 						}
 						else {
-							nBPChallenge.enforcePunishment(nBPChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), event.getPlayer());
 							String message = nBPChallenge.createReasonMessage(nBPChallenge.getPunishCause(), nBPChallenge.getPunishType(), event.getPlayer());
-							cProfile.sendMessageToAllParticipants(message);
+							callViolationPunishmentEventAndActUpon(nBPChallenge, message, event.getPlayer());
 						}
 						if(nBPChallenge.getPunishType() == PunishType.NOTHING) {
 							event.setCancelled(true);

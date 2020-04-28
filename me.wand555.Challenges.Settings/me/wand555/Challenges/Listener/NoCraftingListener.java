@@ -15,9 +15,10 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoCraftingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 
-public class NoCraftingListener implements Listener {
+public class NoCraftingListener extends CoreListener {
 
 	public NoCraftingListener(Challenges plugin) {
+		super(plugin);
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 	
@@ -35,12 +36,11 @@ public class NoCraftingListener implements Listener {
 									if(event.getCurrentItem().getType() != Material.AIR) {
 										NoCraftingChallenge nCChallenge = GenericChallenge.getChallenge(ChallengeType.NO_CRAFTING);
 										if(nCChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-											cProfile.endChallenge(ChallengeEndReason.NO_BLOCK_PLACE, player);
+											cProfile.endChallenge(nCChallenge, ChallengeEndReason.NO_BLOCK_PLACE, player);
 										}
-										else {
-											nCChallenge.enforcePunishment(nCChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), player);
+										else {		
 											String message = nCChallenge.createReasonMessage(nCChallenge.getPunishCause(), nCChallenge.getPunishType(), player);
-											cProfile.sendMessageToAllParticipants(message);
+											callViolationPunishmentEventAndActUpon(nCChallenge, message, player);
 										}
 										if(nCChallenge.getPunishType() == PunishType.NOTHING) {
 											event.setCancelled(true);

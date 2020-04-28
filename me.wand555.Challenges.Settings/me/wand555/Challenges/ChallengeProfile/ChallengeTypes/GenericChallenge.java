@@ -2,38 +2,44 @@ package me.wand555.Challenges.ChallengeProfile.ChallengeTypes;
 
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import me.wand555.Challenges.ChallengeProfile.Challenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.SharedHealthChallenge.SharedHealthChallenge;
 import me.wand555.Challenges.Config.LanguageMessages;
 
-public abstract class GenericChallenge implements ItemDisplayCreator {
+public abstract class GenericChallenge implements Challenge, ItemDisplayCreator {
 
 	protected static EnumMap<ChallengeType, GenericChallenge> activeChallenges = new EnumMap<>(ChallengeType.class);
 	
 	protected boolean active;
 	protected ChallengeType type;
 	
-	protected <T extends GenericChallenge> GenericChallenge(ChallengeType type) {
+	protected GenericChallenge(ChallengeType type) {
 		this.type = type;
 	}
 	
+	@Override
 	public void setActive(boolean active) {
 		this.active = active;
 	}
 	
+	@Override
 	public void setAround() {
 		active = !active;
 	}
 	
+	@Override
 	public boolean isActive() {
 		return active;
 	}
 	
+	@Override
 	public ChallengeType getChallengeType() {
 		return type;
 	}

@@ -1,4 +1,4 @@
-package me.wand555.Challenges.ChallengeProfile.Events.SettingsChange;
+package me.wand555.Challenges.API.Events.SettingsChange;
 
 import org.bukkit.entity.Player;
 
@@ -6,6 +6,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import me.wand555.Challenges.API.Events.ModifiedCancellable;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
@@ -21,7 +22,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
  *
  * @param <T> The challenge this was called with (T extends GenericChallenge).
  */
-public class ChallengeStatusSwitchEvent<T> extends Event implements Cancellable {
+public class ChallengeStatusSwitchEvent<T extends GenericChallenge> extends Event implements ModifiedCancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 	
@@ -76,28 +77,17 @@ public class ChallengeStatusSwitchEvent<T> extends Event implements Cancellable 
 		return challenge instanceof Punishable;
 	}
 	
-	/**
-	 * Gets the message that will be send to the player if the event is cancelled. 
-	 * If no message is specified, the event will still cancel and the player won't be notified.
-	 * @return The message if the event is cancelled or null.
-	 */
+	@Override
 	public String getDeniedMessage() {
 		return this.deniedMessage;
 	}
 	
-	/**
-	 * Sets the message that will be send to the player if the event is cancelled.
-	 * If no message is specified, the event will still cancel and the player won't be notified.
-	 * @param deniedMessage The message for the player.
-	 */
+	@Override
 	public void setDeniedMessage(String deniedMessage) {
 		this.deniedMessage = deniedMessage;
 	}
-	
-	/**
-	 * Checks if a message has been set. Mostly for internal use.
-	 * @return if a message has been set.
-	 */
+		
+	@Override
 	public boolean hasDeniedMessage() {
 		return this.deniedMessage != null && !this.deniedMessage.isEmpty();
 	}

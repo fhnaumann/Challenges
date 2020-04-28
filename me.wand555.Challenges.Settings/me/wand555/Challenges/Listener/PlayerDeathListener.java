@@ -15,11 +15,10 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
 
-public class PlayerDeathListener implements Listener {
-
-	private Challenges plugin;
+public class PlayerDeathListener extends CoreListener {
 	
 	public PlayerDeathListener(Challenges plugin) {
+		super(plugin);
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		this.plugin = plugin;
 	}
@@ -32,7 +31,7 @@ public class PlayerDeathListener implements Listener {
 			if(cProfile.isInChallenge(player.getUniqueId())) {
 				if(cProfile.canTakeEffect()) {
 					event.getDrops().clear();
-					cProfile.endChallenge(ChallengeEndReason.NATURAL_DEATH, player);
+					cProfile.endChallenge(GenericChallenge.getChallenge(ChallengeType.END_ON_DEATH), ChallengeEndReason.NATURAL_DEATH, player);
 					player.spigot().respawn();	
 				}
 			}

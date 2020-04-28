@@ -34,7 +34,7 @@ public class SecondTimer extends BukkitRunnable {
 		
 		if(cProfile.hasStarted && !cProfile.isPaused) {
 			if(this.order == TimerOrder.DESC && time <= 0) {
-				cProfile.endChallenge(ChallengeEndReason.NO_TIME_LEFT);
+				cProfile.endChallenge(null, ChallengeEndReason.NO_TIME_LEFT);
 				return;
 			}
 			this.time = order == TimerOrder.ASC ? this.time+1 : this.time-1;

@@ -38,7 +38,7 @@ public class MLGTimer extends BukkitRunnable {
 	public void run() {
 		if(ChallengeProfile.getInstance().getParticipants().size() == 0) return;
 		if(!ChallengeProfile.getInstance().canTakeEffect()) {
-			this.cancel();
+			//this.cancel();
 			return;
 		}
 		System.out.println(timeToMLG);

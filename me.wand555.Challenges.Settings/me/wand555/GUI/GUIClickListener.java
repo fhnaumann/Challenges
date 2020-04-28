@@ -1,17 +1,30 @@
 package me.wand555.GUI;
 
 import java.util.ArrayList;
-
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import com.google.common.collect.Maps;
+
 import me.wand555.Challenges.Challenges;
+import me.wand555.Challenges.API.Events.SettingsChange.CallSettingsChangeEvents;
+import me.wand555.Challenges.API.Events.SettingsChange.ChallengeStatusSwitchEvent;
+import me.wand555.Challenges.API.Events.SettingsChange.CustomHealthChallengeStatusSwitchEvent;
+import me.wand555.Challenges.API.Events.SettingsChange.ForceBlockChallengeStatusSwitchEvent;
+import me.wand555.Challenges.API.Events.SettingsChange.ItemCollectionLimitGlobalChallengeStatusSwitchEvent;
+import me.wand555.Challenges.API.Events.SettingsChange.MLGChallengeStatusSwitchEvent;
+import me.wand555.Challenges.API.Events.SettingsChange.PunishableChallengeStatusSwitchEvent;
+import me.wand555.Challenges.API.Events.SettingsChange.RandomChallengeStatusSwitchEvent;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.CustomHealthChallenge;
@@ -28,13 +41,12 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
-import me.wand555.Challenges.ChallengeProfile.Events.SettingsChange.ChallengeStatusSwitchEvent;
-import me.wand555.Challenges.ChallengeProfile.Events.SettingsChange.CustomHealthChallengeStatusSwitchEvent;
-import me.wand555.Challenges.ChallengeProfile.Events.SettingsChange.PunishableChallengeStatusSwitchEvent;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockTimer;
 import me.wand555.Challenges.Config.LanguageMessages;
 
-public class GUIClickListener implements Listener {
+public class GUIClickListener implements Listener, CallSettingsChangeEvents {
 
 	private GUI gui;
 	private SignMenuFactory signMenuFactory;
@@ -48,7 +60,172 @@ public class GUIClickListener implements Listener {
 	}
 	
 	@EventHandler
-	public <T> void onGUIClickEvent(InventoryClickEvent event) {
+	public <T extends GenericChallenge & Punishable> void onGUIPunishableChallengeClickEvent(InventoryClickEvent event) {
+		if(event.getClickedInventory() != null) {
+			if(event.getCurrentItem() != null) {
+				if(event.getWhoClicked() instanceof Player) {
+					if(event.getView().getTitle().equalsIgnoreCase(ChatColor.RED + "Punishments")) {
+						Player p = (Player) event.getWhoClicked();
+						int slot = event.getRawSlot();
+						if(slot <= 35) event.setCancelled(true);
+						
+						ChallengeType challengeType = gui.punishmentChallengeTypeOpenGUI.get(p.getUniqueId());
+						@SuppressWarnings("unchecked")
+						T rawType = (T) GenericChallenge.getChallenge(challengeType);
+						GenericChallenge genericChallenge = (GenericChallenge) rawType;
+						//gui.punishmentChallengeTypeOpenGUI.remove(p.getUniqueId());	
+						
+						switch(slot) {
+						case 0:
+							callSettingsChangePunishableEventAndActUpon((T) rawType, PunishType.NOTHING, p, gui, plugin); 
+							break;
+						case 2:	
+							signMenuFactory
+							.newMenu(new ArrayList<String>(LanguageMessages.punishmentAmountSign))
+				            .reopenIfFail()
+				            .response((player, lines) -> {
+				            	if(ChallengeProfile.getInstance().canTakeEffect()) {
+				            		p.sendMessage(LanguageMessages.signNoEffect);
+				            		return true;
+				            	}
+				            	String enteredLine1 = lines[0];   
+				            	if(StringUtils.isNumeric(enteredLine1) && !enteredLine1.isEmpty()) {
+				            		int number = Integer.valueOf(enteredLine1);
+				            		switch(number) {
+				            		case 1:
+				            			Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_1, p, gui, plugin));
+				            			break;
+				            		case 2:
+				            			Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_2, p, gui, plugin));
+				            			break;
+				            		case 3:
+				            			Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_3, p, gui, plugin));
+				            			break;
+									case 4:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_4, p, gui, plugin));		            			
+										break;
+									case 5:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_5, p, gui, plugin));
+										break;
+									case 6:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_6, p, gui, plugin));
+										break;
+									case 7:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_7, p, gui, plugin));
+										break;
+									case 8:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_8, p, gui, plugin));
+										break;
+									case 9:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_9, p, gui, plugin));
+										break;
+									case 10:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_10, p, gui, plugin));
+										break;
+									default:	
+										p.sendMessage(LanguageMessages.signNoNumberInRange);
+										return false;
+				            		}				            		
+				            		return true;
+				            	}
+				            	else {
+				            		p.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", enteredLine1));
+				            	}
+				                return false; // failure. becaues reopenIfFail was called, menu will reopen when closed.
+				            })
+				            .open(p);
+							break;
+						case 4:
+							signMenuFactory
+				            .newMenu(new ArrayList<String>(LanguageMessages.punishmentAmountSign))
+				            .reopenIfFail()
+				            .response((player, lines) -> {
+				            	if(ChallengeProfile.getInstance().canTakeEffect()) {
+				            		p.sendMessage(LanguageMessages.signNoEffect);
+				            		return true;
+				            	}
+				            	String enteredLine1 = lines[0];        	
+				            	if(StringUtils.isNumericSpace(enteredLine1) && !enteredLine1.isEmpty()) {
+				            		int number = Integer.valueOf(enteredLine1);
+				            		switch(number) {
+				            		case 1:
+				            			Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_1, p, gui, plugin));
+				            			break;
+				            		case 2:
+				            			Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_2, p, gui, plugin));
+				            			break;
+				            		case 3:
+				            			Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_3, p, gui, plugin));
+				            			break;
+									case 4:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_4, p, gui, plugin));			            			
+										break;
+									case 5:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_5, p, gui, plugin));
+										break;
+									case 6:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_6, p, gui, plugin));
+										break;
+									case 7:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_7, p, gui, plugin));
+										break;
+									case 8:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_8, p, gui, plugin));
+										break;
+									case 9:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_9, p, gui, plugin));
+										break;
+									case 10:
+										Bukkit.getScheduler().runTask(plugin, () -> callSettingsChangePunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_10, p, gui, plugin));
+										break;
+									default:	
+										p.sendMessage(LanguageMessages.signNoNumberInRange);
+										return false;
+				            		}
+				            		return true;
+				            	}
+				            	else {
+				            		p.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", enteredLine1));
+				            	}
+				                return false; // failure. becaues reopenIfFail was called, menu will reopen when closed.
+				            })
+				            .open(p);
+							break;
+						case 6:
+							callSettingsChangePunishableEventAndActUpon(rawType, PunishType.DEATH, p, gui, plugin); 
+							break;
+						case 8:
+							callSettingsChangePunishableEventAndActUpon(rawType, PunishType.DEATH_ALL, p, gui, plugin);
+							break;
+						case 18:
+							callSettingsChangePunishableEventAndActUpon(rawType, PunishType.ONE_ITEM, p, gui, plugin);
+							break;
+						case 20:
+							callSettingsChangePunishableEventAndActUpon(rawType, PunishType.ONE_ITEM_ALL, p, gui, plugin);
+							break;
+						case 22:
+							callSettingsChangePunishableEventAndActUpon(rawType, PunishType.ALL_ITEMS, p, gui, plugin);
+							break;
+						case 24:
+							callSettingsChangePunishableEventAndActUpon(rawType, PunishType.ALL_ITEMS_ALL, p, gui, plugin);
+							break;
+						case 26:
+							callSettingsChangePunishableEventAndActUpon(rawType, PunishType.CHALLENGE_OVER, p, gui, plugin);
+							break;
+						case 31:
+							gui.createGUI(p, GUIType.PUNISHMENT.getGoBack());
+							break;
+						default:
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public <T extends GenericChallenge> void onGUIGenericChallengeClickEvent(InventoryClickEvent event) {
 		if(event.getClickedInventory() != null) {
 			if(event.getCurrentItem() != null) {
 				if(event.getWhoClicked() instanceof Player) {
@@ -68,12 +245,12 @@ public class GUIClickListener implements Listener {
 							switch(slot) {
 							case 0:
 							{
-								callNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.END_ON_DEATH), p);
+								callSettingsChangeNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.END_ON_DEATH), p, gui);
 								break;
 							}
 							case 1:
 							{
-								callNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NETHER_FORTRESS_SPAWN), p);
+								callSettingsChangeNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NETHER_FORTRESS_SPAWN), p, gui);
 								break;
 							}	
 							case 2:
@@ -83,18 +260,18 @@ public class GUIClickListener implements Listener {
 									gui.createGUI(p, GUIType.PUNISHMENT, noDamageChallenge.getPunishCause());
 								}
 								else {
-									callPunishableEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_PLACING), noDamageChallenge.getPunishType(), p);
+									callSettingsChangePunishableEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_DAMAGE), noDamageChallenge.getPunishType(), p, gui, plugin);
 								}
 								break;		
 							}			
 							case 3:
 							{
-								callNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_REG), p);
+								callSettingsChangeNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_REG), p, gui);
 								break;
 							}	
 							case 4:
 							{
-								callNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_REG_HARD), p);
+								callSettingsChangeNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_REG_HARD), p, gui);
 								break;
 							}	
 							case 5:
@@ -114,7 +291,7 @@ public class GUIClickListener implements Listener {
 						            		double amount = Double.valueOf(enteredLine1);
 						            		if(amount > 0) {
 						            			Bukkit.getServer().getScheduler().runTask(plugin, () -> 
-						            				callCustomHealthEventAndActUpon(cHealthChallenge, (int)amount, p));
+						            				callSettingsChangeCustomHealthEventAndActUpon(cHealthChallenge, (int)amount, p, gui));
 						            			p.sendMessage(LanguageMessages.signCorrect);
 						            			return true;
 						            		}
@@ -130,13 +307,13 @@ public class GUIClickListener implements Listener {
 						            .open(p);
 								}
 								else {
-									callNormalEventAndActUpon(cHealthChallenge, p);
+									callSettingsChangeNormalEventAndActUpon(cHealthChallenge, p, gui);
 								}
 								break;
 							}		
 							case 6:
 							{
-								callNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.SHARED_HEALTH), p);
+								callSettingsChangeNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.SHARED_HEALTH), p, gui);
 								break;
 							}				
 							case 7:
@@ -147,7 +324,7 @@ public class GUIClickListener implements Listener {
 									gui.createGUI(p, GUIType.PUNISHMENT, nBPChallenge.getPunishCause());
 								}
 								else {
-									callPunishableEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_PLACING), nBPChallenge.getPunishType(), p);
+									callSettingsChangePunishableEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_PLACING), nBPChallenge.getPunishType(), p, gui, plugin);
 								}
 								break;
 							}		
@@ -158,7 +335,7 @@ public class GUIClickListener implements Listener {
 									gui.createGUI(p, GUIType.PUNISHMENT, nBBChallenge.getPunishCause());
 								}
 								else {
-									callNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_BREAKING), p);
+									callSettingsChangeNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_BREAKING), p, gui);
 								}
 								break;
 							}			
@@ -169,7 +346,7 @@ public class GUIClickListener implements Listener {
 									gui.createGUI(p, GUIType.PUNISHMENT, nCChallenge.getPunishCause());
 								}
 								else {
-									callNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_CRAFTING), p);
+									callSettingsChangeNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_CRAFTING), p, gui);
 								}
 								break;
 							}			
@@ -180,58 +357,29 @@ public class GUIClickListener implements Listener {
 									gui.createGUI(p, GUIType.PUNISHMENT, nSChallenge.getPunishCause());
 								}
 								else {
-									callNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_SNEAKING), p);
+									callSettingsChangeNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_SNEAKING), p, gui);
 								}
 								break;
 							}
 							case 11:
-							{
-								callNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_BLOCK_DROPS), p);
-								RandomChallenge randomChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_BLOCK_DROPS);
-								if(randomChallenge.isActive()) {
-									randomChallenge.setAround();
-									RandomChallenge.clearRandomizationIfCase();
-								}
-								else {
-									randomChallenge.setAround();
-									randomChallenge.randomizeItems();
-								}
-								
-								gui.createGUI(p, GUIType.OVERVIEW);
-								reloadOtherPlayerInvs(gui, p);
-								randomChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());	
+							{			
+								RandomChallenge randomChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_BLOCK_DROPS);			
+								callSettingsChangeRandomChallengeEventAndActUpon(randomChallenge,
+										randomChallenge.isRandomized() ? randomChallenge.getRandomizeMapped() : randomChallenge.randomizeItems(), p, gui);	
 								break;
 							}
 							case 12:
 							{
-								RandomChallenge randomChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_MOB_DROPS);
-								if(randomChallenge.isActive()) {
-									randomChallenge.setAround();
-									RandomChallenge.clearRandomizationIfCase();
-								}
-								else {
-									randomChallenge.setAround();
-									randomChallenge.randomizeItems();
-								}
-								gui.createGUI(p, GUIType.OVERVIEW);
-								reloadOtherPlayerInvs(gui, p);
-								randomChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());	
+								RandomChallenge randomChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_MOB_DROPS);			
+								callSettingsChangeRandomChallengeEventAndActUpon(randomChallenge,
+										randomChallenge.isRandomized() ? randomChallenge.getRandomizeMapped() : randomChallenge.randomizeItems(), p, gui);	
 								break;
 							}
 							case 13:
 							{
-								RandomChallenge randomChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_CRAFTING);
-								if(randomChallenge.isActive()) {
-									randomChallenge.setAround();
-									RandomChallenge.clearRandomizationIfCase();
-								}
-								else {
-									randomChallenge.setAround();
-									randomChallenge.randomizeItems();
-								}
-								gui.createGUI(p, GUIType.OVERVIEW);
-								reloadOtherPlayerInvs(gui, p);
-								randomChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());	
+								RandomChallenge randomChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_CRAFTING);			
+								callSettingsChangeRandomChallengeEventAndActUpon(randomChallenge,
+										randomChallenge.isRandomized() ? randomChallenge.getRandomizeMapped() : randomChallenge.randomizeItems(), p, gui);	
 								break;
 							}
 							case 14:
@@ -263,12 +411,11 @@ public class GUIClickListener implements Listener {
 							            				mlgChallenge.setEarliest(earliest);
 							            				mlgChallenge.setLatest(latest);
 							            				mlgChallenge.setHeight(height);
-							            				reloadOtherPlayerInvs(gui, p);
 							            				p.sendMessage(LanguageMessages.signCorrect);
 							            				//mlgChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
 							            				Bukkit.getScheduler().runTaskLater(plugin, () -> {
 							            					gui.createGUI(p, GUIType.PUNISHMENT, mlgChallenge.getPunishCause());
-							            				}, 1L);
+							            				}, 0L);
 							            				return true;
 							            			}
 							            			else {
@@ -291,18 +438,8 @@ public class GUIClickListener implements Listener {
 						            .open(p);
 								}
 								else {
-									mlgChallenge.setAround();
-									mlgChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
-									if(mlgChallenge.getTimer() != null) {
-										mlgChallenge.getTimer().cancel();
-										mlgChallenge.setTimer(null);
-									}
-									gui.createGUI(p, GUIType.OVERVIEW);
+									callSettingsChangeNormalEventAndActUpon(mlgChallenge, p, gui);
 								}
-								
-								
-								reloadOtherPlayerInvs(gui, p);
-								
 								break;
 							}	
 							case 15:
@@ -335,18 +472,14 @@ public class GUIClickListener implements Listener {
 							            		if(earliestToShown > 0 && latestToShown > 0 
 							            				&& earliestOnBlock > 0 && latestOnBlock > 0) {
 							            			if(earliestToShown <= latestToShown || earliestOnBlock <= latestOnBlock) {
-							            				
-							            				//onBlockChallenge.setAround();
 							            				onBlockChallenge.setEarliestToShow(earliestToShown);
 							            				onBlockChallenge.setLatestToShow(latestToShown);
 							            				onBlockChallenge.setEarliestOnBlock(earliestOnBlock);
 							            				onBlockChallenge.setLatestOnBlock(latestOnBlock);
-							            				reloadOtherPlayerInvs(gui, p);
 							            				p.sendMessage(LanguageMessages.signCorrect);
-							            				//onBlockChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
 							            				Bukkit.getScheduler().runTaskLater(plugin, () -> {
 							            					gui.createGUI(p, GUIType.PUNISHMENT, onBlockChallenge.getPunishCause());
-							            				}, 1L);
+							            				}, 0L);
 							            				
 							            				return true;
 							            			}
@@ -370,24 +503,9 @@ public class GUIClickListener implements Listener {
 						            .open(p);
 								}
 								else {
-									onBlockChallenge.setAround();
-									onBlockChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
-									gui.createGUI(p, GUIType.OVERVIEW);
-									if(onBlockChallenge.getTimer() != null) {
-										onBlockChallenge.getTimer().cancel();
-									}
-									onBlockChallenge.setEarliestToShow(0);
-									onBlockChallenge.setLatestToShow(0);
-									onBlockChallenge.setEarliestOnBlock(0);
-									onBlockChallenge.setLatestOnBlock(0);
-									onBlockChallenge.setTimer(null);
+									callSettingsChangeNormalEventAndActUpon(onBlockChallenge, p, gui);
 									//onBlockChallenge.setBossBar(null);
-								}
-								
-								
-								reloadOtherPlayerInvs(gui, p);
-								
-								
+								}					
 								break;
 							}
 							case 16:
@@ -409,13 +527,12 @@ public class GUIClickListener implements Listener {
 						            	if(StringUtils.isNumeric(lines[0])) {
 						            		int limit = (int) ((double) Double.valueOf(lines[0]));
 						            		if(limit > 0) {
-						            			iCLGChallenge.setAround();
-						            			iCLGChallenge.setLimit(limit);
 						            			p.sendMessage(LanguageMessages.signCorrect);
-						            			iCLGChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+						            			
 						            			Bukkit.getScheduler().runTaskLater(plugin, () -> {
-					            					gui.createGUI(p, GUIType.OVERVIEW);
-					            				}, 1L);
+						            				callSettingsChangeItemCollectionLimitGlobalChallengeEventAndActUpon(iCLGChallenge, limit, p, gui);	
+						            				gui.createGUI(p, GUIType.OVERVIEW);
+						            			}, 0L);
 						            			return true;
 						            		}
 						            		else {
@@ -433,23 +550,8 @@ public class GUIClickListener implements Listener {
 									iCLGChallenge.getPageMap().put(p.getUniqueId(), 1);
 									gui.createGUI(p, GUIType.COLLECTED_ITEMS_LIST);								
 								}
-								reloadOtherPlayerInvs(gui, p);
 								break;
 							}
-							/*case 17:
-							{
-								ItemCollectionSameItemLimitChallenge iCSILChallenge = GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM);
-								if(!iCSILChallenge.isActive()) {
-									gui.createGUI(p, GUIType.PUNISHMENT, iCSILChallenge.getPunishCause());
-								}
-								else {
-									iCSILChallenge.setAround();
-									gui.createGUI(p, GUIType.OVERVIEW);
-									reloadOtherPlayerInvs(gui, p);
-									iCSILChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
-								}
-								break;
-							}*/
 							case 26:
 								ChallengeProfile.getInstance().getBackpack().setEnabled(!ChallengeProfile.getInstance().getBackpack().isEnabled());
 								gui.createGUI(p, GUIType.OVERVIEW);
@@ -460,164 +562,7 @@ public class GUIClickListener implements Listener {
 							}
 						}
 					}
-					else if(event.getView().getTitle().equalsIgnoreCase(ChatColor.RED + "Punishments")) {
-						Player p = (Player) event.getWhoClicked();
-						int slot = event.getRawSlot();
-						if(slot <= 35) event.setCancelled(true);
-						
-						ChallengeType challengeType = gui.punishmentChallengeTypeOpenGUI.get(p.getUniqueId());
-						@SuppressWarnings("unchecked")
-						T rawType = (T) GenericChallenge.getChallenge(challengeType);
-						GenericChallenge genericChallenge = (GenericChallenge) rawType;
-						//gui.punishmentChallengeTypeOpenGUI.remove(p.getUniqueId());	
-						
-						switch(slot) {
-						case 0:
-							callPunishableEventAndActUpon(rawType, PunishType.NOTHING, p); 
-							break;
-						case 2:	
-							signMenuFactory
-							.newMenu(new ArrayList<String>(LanguageMessages.punishmentAmountSign))
-				            .reopenIfFail()
-				            .response((player, lines) -> {
-				            	if(ChallengeProfile.getInstance().canTakeEffect()) {
-				            		p.sendMessage(LanguageMessages.signNoEffect);
-				            		return true;
-				            	}
-				            	String enteredLine1 = lines[0];   
-				            	if(StringUtils.isNumeric(enteredLine1) && !enteredLine1.isEmpty()) {
-				            		int number = Integer.valueOf(enteredLine1);
-				            		switch(number) {
-				            		case 1:
-				            			Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_1, p));
-				            			break;
-				            		case 2:
-				            			Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_2, p));
-				            			break;
-				            		case 3:
-				            			Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_3, p));
-				            			break;
-									case 4:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_4, p));		            			
-										break;
-									case 5:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_5, p));
-										break;
-									case 6:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_6, p));
-										break;
-									case 7:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_7, p));
-										break;
-									case 8:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_8, p));
-										break;
-									case 9:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_9, p));
-										break;
-									case 10:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_10, p));
-										break;
-									default:	
-										p.sendMessage(LanguageMessages.signNoNumberInRange);
-										return false;
-				            		}				            		
-				            		genericChallenge.setAround();
-				            		genericChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
-				            		return true;
-				            	}
-				            	else {
-				            		p.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", enteredLine1));
-				            	}
-				                return false; // failure. becaues reopenIfFail was called, menu will reopen when closed.
-				            })
-				            .open(p);
-							break;
-						case 4:
-							signMenuFactory
-				            .newMenu(new ArrayList<String>(LanguageMessages.punishmentAmountSign))
-				            .reopenIfFail()
-				            .response((player, lines) -> {
-				            	if(ChallengeProfile.getInstance().canTakeEffect()) {
-				            		p.sendMessage(LanguageMessages.signNoEffect);
-				            		return true;
-				            	}
-				            	String enteredLine1 = lines[0];        	
-				            	if(StringUtils.isNumericSpace(enteredLine1) && !enteredLine1.isEmpty()) {
-				            		int number = Integer.valueOf(enteredLine1);
-				            		switch(number) {
-				            		case 1:
-				            			Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_1, p));
-				            			break;
-				            		case 2:
-				            			Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_2, p));
-				            			break;
-				            		case 3:
-				            			Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_3, p));
-				            			break;
-									case 4:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_4, p));			            			
-										break;
-									case 5:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_5, p));
-										break;
-									case 6:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_6, p));
-										break;
-									case 7:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_7, p));
-										break;
-									case 8:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_8, p));
-										break;
-									case 9:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_9, p));
-										break;
-									case 10:
-										Bukkit.getScheduler().runTask(plugin, () -> callPunishableEventAndActUpon(rawType, PunishType.HEALTH_ALL_10, p));;
-										break;
-									default:	
-										p.sendMessage(LanguageMessages.signNoNumberInRange);
-										return false;
-				            		}
-				            		return true;
-				            	}
-				            	else {
-				            		p.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", enteredLine1));
-				            	}
-				                return false; // failure. becaues reopenIfFail was called, menu will reopen when closed.
-				            })
-				            .open(p);
-							break;
-						case 6:
-							callPunishableEventAndActUpon(rawType, PunishType.DEATH, p); 
-							break;
-						case 8:
-							callPunishableEventAndActUpon(rawType, PunishType.DEATH_ALL, p);
-							break;
-						case 18:
-							callPunishableEventAndActUpon(rawType, PunishType.ONE_ITEM, p);
-							break;
-						case 20:
-							callPunishableEventAndActUpon(rawType, PunishType.ONE_ITEM_ALL, p);
-							break;
-						case 22:
-							callPunishableEventAndActUpon(rawType, PunishType.ALL_ITEMS, p);
-							break;
-						case 24:
-							callPunishableEventAndActUpon(rawType, PunishType.ALL_ITEMS_ALL, p);
-							break;
-						case 26:
-							callPunishableEventAndActUpon(rawType, PunishType.CHALLENGE_OVER, p);
-							break;
-						case 31:
-							gui.createGUI(p, GUIType.PUNISHMENT.getGoBack());
-							break;
-						default:
-							break;
-						}	
-						reloadOtherPlayerInvs(gui, p);
-					}
+					
 					else if(event.getView().getTitle().equalsIgnoreCase(ChatColor.DARK_GREEN + "Collected Items")) {
 						Player p = (Player) event.getWhoClicked();
 						int slot = event.getRawSlot();
@@ -639,12 +584,7 @@ public class GUIClickListener implements Listener {
 								return;
 							}
 							//disable
-							iCLGChallenge.setActive(false);
-							iCLGChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
-							gui.createGUI(p, GUIType.OVERVIEW);
-							iCLGChallenge.setCurrentAmount(0);
-							iCLGChallenge.setLimit(0);
-							iCLGChallenge.getUniqueItems().clear();
+							callSettingsChangeNormalEventAndActUpon(iCLGChallenge, p, gui);
 						}
 						else if(slot == 49) {
 							gui.createGUI(p, GUIType.COLLECTED_ITEMS_LIST.getGoBack());
@@ -665,79 +605,7 @@ public class GUIClickListener implements Listener {
  		}
 	}
 	
-	private <T> void callNormalEventAndActUpon(T rawType, Player p) {
-		GenericChallenge genericChallenge = (GenericChallenge) rawType;
-		
-		if(rawType.getClass().equals(CustomHealthChallenge.class)) {
-			
-		}
-		else if(rawType instanceof RandomChallenge) {
-			
-		}
-		else if(rawType.getClass().equals(MLGChallenge.class)) {
-			
-		}
-		else if(rawType.getClass().equals(OnBlockChallenge.class)) {
-			
-		}
-		else if(rawType.getClass().equals(ItemCollectionLimitGlobalChallenge.class)) {
-			
-		}
-		else {
-			ChallengeStatusSwitchEvent<T> switchEvent = new ChallengeStatusSwitchEvent<T>(rawType, p);
-			Bukkit.getServer().getPluginManager().callEvent(switchEvent);
-			if(!switchEvent.isCancelled()) {
-				genericChallenge.setAround();	
-				genericChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());	
-			}
-			else {
-				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());
-			}
-			gui.createGUI(p, GUIType.OVERVIEW);
-		}	
-	}
-	
-	private void callCustomHealthEventAndActUpon(CustomHealthChallenge customHealthChallenge, int amount, Player p) {
-		CustomHealthChallengeStatusSwitchEvent switchEvent = new CustomHealthChallengeStatusSwitchEvent(customHealthChallenge, amount, p);
-		Bukkit.getServer().getPluginManager().callEvent(switchEvent);
-		if(!switchEvent.isCancelled()) {
-			customHealthChallenge.setAround();
-			customHealthChallenge.setAmount(switchEvent.getCustomHP());
-			customHealthChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
-		}
-		else {
-			if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());
-		}
-		gui.createGUI(p, GUIType.OVERVIEW);
-	}
-	
-	private <T> void callPunishableEventAndActUpon(T rawType, PunishType type, Player p) {
-		GenericChallenge genericChallenge = (GenericChallenge) rawType;
-		
-		if(rawType.getClass().equals(MLGChallenge.class)) {
-			
-		}
-		else if(rawType.getClass().equals(OnBlockChallenge.class)) {
-			RandomChallenge randomChallenge = (RandomChallenge) rawType;
-			
-		}
-		else {
-			PunishableChallengeStatusSwitchEvent<T> switchEvent = new PunishableChallengeStatusSwitchEvent<T>(rawType, type, p);
-			Bukkit.getServer().getPluginManager().callEvent(switchEvent);
-			if(!switchEvent.isCancelled()) {
-				Punishable punishable = (Punishable) rawType;	
-				punishable.setPunishType(switchEvent.getPunishType());
-				genericChallenge.setAround();
-				genericChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
-			}
-			else {
-				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());			
-			}
-			if(switchEvent.hasOverrideMessage()) p.sendMessage(switchEvent.getOverrideMessage());
-		}
-		gui.createGUI(p, GUIType.PUNISHMENT.getGoBack());
-	}
-	
+	@Deprecated
 	private void reloadOtherPlayerInvs(GUI gui, Player changer) {
 		ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
 			.filter(p -> !p.getUniqueId().equals(changer.getUniqueId()))

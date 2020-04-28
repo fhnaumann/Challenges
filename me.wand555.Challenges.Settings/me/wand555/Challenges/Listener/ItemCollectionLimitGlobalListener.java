@@ -1,5 +1,6 @@
 package me.wand555.Challenges.Listener;
 
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,7 +34,7 @@ public class ItemCollectionLimitGlobalListener implements Listener {
 					boolean added = iCLGChallenge.addToUniqueItems(event.getItem().getItemStack().getType(), player.getUniqueId());
 					if(added) {
 						if(iCLGChallenge.isOverLimit()) {
-							cProfile.endChallenge(ChallengeEndReason.TOO_MANY_ITEMS_GLOBAL, player);
+							cProfile.endChallenge(iCLGChallenge, ChallengeEndReason.TOO_MANY_ITEMS_GLOBAL, player);
 						}
 						else {
 							String message = iCLGChallenge.createItemCollectLogMessage(player.getName(), event.getItem().getItemStack().getType());
@@ -66,7 +67,7 @@ public class ItemCollectionLimitGlobalListener implements Listener {
 				boolean added = iCLGChallenge.addToUniqueItems(event.getCurrentItem().getType(), player.getUniqueId());
 				if(added) {
 					if(iCLGChallenge.isOverLimit()) {
-						cProfile.endChallenge(ChallengeEndReason.TOO_MANY_ITEMS_GLOBAL, player);
+						cProfile.endChallenge(iCLGChallenge, ChallengeEndReason.TOO_MANY_ITEMS_GLOBAL, player);
 					}
 					else {
 						String message = iCLGChallenge.createItemCollectLogMessage(player.getName(), event.getCurrentItem().getType());

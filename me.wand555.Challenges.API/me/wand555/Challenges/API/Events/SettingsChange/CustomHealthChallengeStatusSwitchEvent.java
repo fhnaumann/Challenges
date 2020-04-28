@@ -1,12 +1,12 @@
-package me.wand555.Challenges.ChallengeProfile.Events.SettingsChange;
+package me.wand555.Challenges.API.Events.SettingsChange;
 
 import org.bukkit.entity.Player;
 
+import me.wand555.Challenges.API.Events.Overridable;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.CustomHealthChallenge;
-import me.wand555.Challenges.ChallengeProfile.Events.Overridable;
 
 /**
- * Called when a player activates the custom Health Challenge.
+ * Called when a player enables the custom Health Challenge.
  * @author wand555
  *
  */

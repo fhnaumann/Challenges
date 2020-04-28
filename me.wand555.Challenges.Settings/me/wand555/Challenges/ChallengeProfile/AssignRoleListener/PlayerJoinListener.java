@@ -64,7 +64,12 @@ public class PlayerJoinListener implements Listener {
 					MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
 					mlgChallenge.getInMLGWorld().remove(event.getPlayer().getUniqueId());
 				}
-			}		
+			}	
+			
+			if(onBlockChallenge.isActive()) {
+				System.out.println("added player");
+				onBlockChallenge.addPlayerToBossBar(p);
+			}
 		}
 	}
 }

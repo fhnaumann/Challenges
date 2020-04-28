@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="me.wand555.Challenges.Settings"/>
 	<classpathentry kind="src" path="me.wand555.Challenges.WorldLinking"/>
+	<classpathentry kind="src" path="me.wand555.Challenges.API"/>
 	<classpathentry kind="lib" path="D:/Minecraft Bukkit/Servers/1.15.2 Server/spigot-1.15.2.jar"/>
 	<classpathentry kind="lib" path="D:/Minecraft Bukkit/Eclipse API Reference/ProtocolLib.jar"/>
 	<classpathentry kind="output" path="bin"/>

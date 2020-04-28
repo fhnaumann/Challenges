@@ -180,7 +180,7 @@ public class GUI implements ItemDisplayCreator {
 			ChallengeProfile.getInstance().getInventoryManager().setAlreadyCollectedGUI(gui);
 		}
 		else if(type == GUIType.BACKPACK) {
-			gui = plugin.getServer().createInventory(null, Backpack.BACKPACK_SIZE, ChatColor.GREEN + "Backpack");
+			gui = ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI();
 			
 		}
 		p.openInventory(gui);

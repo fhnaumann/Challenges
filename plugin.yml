@@ -1,7 +1,9 @@
 main: me.wand555.Challenges.Challenges
 name: Challenges
-version: 1.0.0
+prefix: Challenges
+version: 1.0.5
 description: A Challenge plugin to customize vanilla experience!
+depend: [ProtocolLib]
 api-version: 1.13
 author: wand555
 commands:

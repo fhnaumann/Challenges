@@ -12,12 +12,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.wand555.Challenges.Challenges;
+import me.wand555.Challenges.API.Events.Violation.CallViolationEvent;
 import me.wand555.Challenges.ChallengeProfile.ChallengeEndReason;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 import me.wand555.Challenges.Config.LanguageMessages;
 
-public class OnBlockTimer extends BukkitRunnable {
+public class OnBlockTimer extends BukkitRunnable implements CallViolationEvent {
 	
 	private long totalTimeTo;
 	private long timeTo;
@@ -38,14 +39,20 @@ public class OnBlockTimer extends BukkitRunnable {
 		onBlockChallenge.setDefaults();
 	}
 	
-	public OnBlockTimer(Challenges plugin, OnBlockChallenge onBlockChallenge, long totalTimeTo, long timeTo) {
+	public OnBlockTimer(Challenges plugin, OnBlockChallenge onBlockChallenge, long totalTimeTo, long timeTo, boolean firstCreation) {
 		this.totalTimeTo = totalTimeTo;
 		this.timeTo = timeTo;
 		this.onBlockChallenge = onBlockChallenge;
-		if(onBlockChallenge.getStatus() == OnBlockChallengeStatus.SHOWN) {
-			onBlockChallenge.setBossBarMessageShown(LanguageMessages.onBlockShown
-					.replace("[BLOCK]", WordUtils.capitalize(onBlockChallenge.getToStayOn().toString().toLowerCase().replace('_', ' '))));
+		if(firstCreation) {
+			onBlockChallenge.setDefaults();
 		}
+		else {
+			if(onBlockChallenge.getStatus() == OnBlockChallengeStatus.SHOWN) {
+				onBlockChallenge.setBossBarMessageShown(LanguageMessages.onBlockShown
+						.replace("[BLOCK]", WordUtils.capitalize(onBlockChallenge.getToStayOn().toString().toLowerCase().replace('_', ' '))));
+			}
+		}
+		
 		this.runTaskTimer(plugin, 0L, 20L);
 	}
 	
@@ -53,11 +60,11 @@ public class OnBlockTimer extends BukkitRunnable {
 	public void run() {
 		if(ChallengeProfile.getInstance().getParticipants().size() == 0) return;
 		if(!ChallengeProfile.getInstance().canTakeEffect()) {
-			ChallengeProfile.getInstance().getParticipantsAsPlayers().stream().forEach(p -> onBlockChallenge.removePlayerFromBossBar(p));
-			this.cancel();
+			//ChallengeProfile.getInstance().getParticipantsAsPlayers().stream().forEach(p -> onBlockChallenge.removePlayerFromBossBar(p));
+			//this.cancel();
 			return;
 		}
-		//System.out.println(timeTo);
+		System.out.println(timeTo);
 		if(timeTo <= 0) {
 			//System.out.println(onBlockChallenge.getStatus());
 			if(onBlockChallenge.getStatus() == OnBlockChallengeStatus.HIDDEN) {
@@ -74,14 +81,13 @@ public class OnBlockTimer extends BukkitRunnable {
 				if(notStandingOnBlock.size() != 0) {
 					if(onBlockChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
 						ChallengeProfile.getInstance()
-							.endChallenge(ChallengeEndReason.NOT_ON_BLOCK, notStandingOnBlock.toArray(new Player[notStandingOnBlock.size()]));
+							.endChallenge(onBlockChallenge, ChallengeEndReason.NOT_ON_BLOCK, notStandingOnBlock.toArray(new Player[notStandingOnBlock.size()]));
 					}
 					else {
-						onBlockChallenge.enforcePunishment(onBlockChallenge.getPunishType(), 
-								ChallengeProfile.getInstance().getParticipantsAsPlayers(), notStandingOnBlock.toArray(new Player[notStandingOnBlock.size()]));
+						Player[] causers = notStandingOnBlock.toArray(new Player[notStandingOnBlock.size()]);
 						String message = onBlockChallenge.createReasonMessage(onBlockChallenge.getPunishCause(),
-								onBlockChallenge.getPunishType(), notStandingOnBlock.toArray(new Player[notStandingOnBlock.size()]));
-						ChallengeProfile.getInstance().sendMessageToAllParticipants(message);
+								onBlockChallenge.getPunishType(), causers);
+						callForceBlockEventAndActUpon(onBlockChallenge, message, onBlockChallenge.getToStayOn(), causers);
 						
 						timeTo = ThreadLocalRandom.current()
 								.nextLong(onBlockChallenge.getEarliestToShow(), (onBlockChallenge.getLatestToShow()+1));

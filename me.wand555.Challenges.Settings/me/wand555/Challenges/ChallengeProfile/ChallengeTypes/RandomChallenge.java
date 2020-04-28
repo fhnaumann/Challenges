@@ -19,16 +19,17 @@ public abstract class RandomChallenge extends GenericChallenge implements Random
 	}
 	
 	@Override
-	public void randomizeItems() {
+	public HashMap<Material, Material> randomizeItems() {
 		if(!isRandomized()) {
-			randomizeMapped = Lists.newArrayList(NORMAL_MATERIALS).stream()
+			return Lists.newArrayList(NORMAL_MATERIALS).stream()
 					.filter(mat -> !mat.isAir())
 					.filter(Material::isItem)
 					.collect(Collectors.toMap(Function.identity(), 
 							mat -> NORMAL_MATERIALS[ThreadLocalRandom.current().nextInt(0, NORMAL_MATERIALS.length)], 
 							(v1, v2) -> v1, 
-							LinkedHashMap::new));
+							HashMap::new));
 		}
+		return null;
 	}
 	
 	@Override

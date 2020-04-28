@@ -11,10 +11,12 @@ public class InventoryManager {
 	private Inventory settingsGUI;
 	private Inventory punishmentGUI;
 	private Inventory alreadyCollectedGUI;
+	private Inventory backpackGUI;
 	
 	public static final int SETTINGS_GUI_SIZE = 27;
 	public static final int PUNISHMENT_GUI_SIZE = 36;
 	public static final int ALREADY_COLLECTED_GUI_SIZE = 54;
+	public static final int BACKPACK_GUI_SIZE = 27;
 	
 	InventoryManager() {}
 	
@@ -64,5 +66,21 @@ public class InventoryManager {
 	 */
 	public void setSettingsGUI(Inventory settingsGUI) {
 		this.settingsGUI = settingsGUI;
+	}
+
+	/**
+	 * @return the backpackGUI
+	 */
+	public Inventory getBackpackGUI() {
+		if(backpackGUI == null)
+			backpackGUI = Bukkit.getServer().createInventory(null, BACKPACK_GUI_SIZE, ChatColor.GREEN + "Team Backpack");
+		return backpackGUI;
+	}
+
+	/**
+	 * @param backpackGUI the backpackGUI to set
+	 */
+	public void setBackpackGUI(Inventory backpackGUI) {
+		this.backpackGUI = backpackGUI;
 	}
 }

@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
+import me.wand555.Challenges.ChallengeProfile.InventoryManager;
 import me.wand555.Challenges.ChallengeProfile.Settings;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.CustomHealthChallenge;
@@ -44,6 +45,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.On
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.SharedHealthChallenge.SharedHealthChallenge;
 import me.wand555.Challenges.ChallengeProfile.Positions.Position;
+import me.wand555.Challenges.Timer.DateUtil;
 import me.wand555.Challenges.Timer.SecondTimer;
 import me.wand555.Challenges.Timer.TimerMessage;
 import me.wand555.Challenges.Timer.TimerOrder;
@@ -83,7 +85,7 @@ public class ConfigHandler extends ConfigUtil {
 		ChallengeProfile.getInstance().getBackpack().setEnabled(cfg.getBoolean("Status"));
 		List<?> list = cfg.getList("Content");
 		if(list == null) {
-			ChallengeProfile.getInstance().getBackpack().setContents(new ItemStack[Backpack.BACKPACK_SIZE]);
+			ChallengeProfile.getInstance().getBackpack().setContents(new ItemStack[InventoryManager.BACKPACK_GUI_SIZE]);
 		} else ChallengeProfile.getInstance().getBackpack().setContents(list.toArray(new ItemStack[list.size()]));
 	}
 	
@@ -207,6 +209,7 @@ public class ConfigHandler extends ConfigUtil {
 			}
 			OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);
 			if(onBlockChallenge.isActive()) {
+				onBlockChallenge.setPunishType(PunishType.valueOf(cfg.getString("onBlock.Punishment")));
 				onBlockChallenge.setEarliestToShow(cfg.getInt("onBlock.EarliestToShow"));
 				onBlockChallenge.setLatestToShow(cfg.getInt("onBlock.LatestToShow"));
 				onBlockChallenge.setEarliestOnBlock(cfg.getInt("onBlock.EarliestOnBlock"));
@@ -215,13 +218,17 @@ public class ConfigHandler extends ConfigUtil {
 				if(cfg.isSet("onBlock.ToStayOn")) onBlockChallenge.setToStayOn(Material.valueOf(cfg.getString("onBlock.ToStayOn")));
 				//message will be constructed in Timer constructor		
 				if(cfg.isSet("onBlock.TimeTo")) {
-					//not really necessary, the boss bar just cannot be null
-					onBlockChallenge.createBossBar("", BarColor.WHITE);
+					//not really necessary, the boss bar just cannot be null			
 					onBlockChallenge.setTimer(new OnBlockTimer(PLUGIN, 
 							onBlockChallenge, 
 							cfg.getLong("onBlock.TotalTimeTo"), 
-							cfg.getLong("onBlock.TimeTo")));
+							cfg.getLong("onBlock.TimeTo"),
+							false));
 				}
+				onBlockChallenge.createBossBar(cfg.isSet("onBlock.Message") ? 
+						cfg.getString("onBlock.Message").replace("[TIME]", DateUtil.formatNoHourDuration(onBlockChallenge.getTimer().getTimeTo())) 
+						: LanguageMessages.onBlockHidden, BarColor.WHITE);
+				cProfile.getParticipantsAsPlayers().forEach(p -> onBlockChallenge.addPlayerToBossBar(p));
 			}
 			ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
 			if(iCLGChallenge.isActive()) {
@@ -371,6 +378,7 @@ public class ConfigHandler extends ConfigUtil {
 			
 			OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);
 			if(onBlockChallenge.isActive()) {
+				cfg.set("onBlock.Punishment", onBlockChallenge.getPunishType().toString());
 				cfg.set("onBlock.EarliestToShow", onBlockChallenge.getEarliestToShow());
 				cfg.set("onBlock.LatestToShow", onBlockChallenge.getLatestToShow());
 				cfg.set("onBlock.EarliestOnBlock", onBlockChallenge.getEarliestOnBlock());
@@ -380,6 +388,8 @@ public class ConfigHandler extends ConfigUtil {
 				//message has to be constructed on start again, because user can change language while stored in config
 				if(onBlockChallenge.getTimer() != null) {
 					onBlockChallenge.getBossBar().removeAll();
+					if(onBlockChallenge.getBossBarMessageShown() != null && !onBlockChallenge.getBossBarMessageShown().isEmpty())
+						cfg.set("onBlock.Message", onBlockChallenge.getBossBarMessageShown());
 					cfg.set("onBlock.TimeTo", onBlockChallenge.getTimer().getTimeTo());
 					cfg.set("onBlock.TotalTimeTo", onBlockChallenge.getTimer().getTotalTimeTo());
 				}

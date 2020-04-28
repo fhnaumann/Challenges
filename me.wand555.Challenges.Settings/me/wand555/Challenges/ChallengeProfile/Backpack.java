@@ -11,7 +11,6 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ReasonNotifiable;
 
 public class Backpack {
 
-	public static final int BACKPACK_SIZE = 27;
 	private final Challenges plugin;
 	
 	private boolean isEnabled;
@@ -70,7 +69,7 @@ public class Backpack {
 	 * @return the backpackSize
 	 */
 	public static int getBackpackSize() {
-		return BACKPACK_SIZE;
+		return InventoryManager.BACKPACK_GUI_SIZE;
 	}
 
 	/**

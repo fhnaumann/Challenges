@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
@@ -30,6 +31,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import me.wand555.Challenges.Challenges;
+import me.wand555.Challenges.API.Events.Violation.CallViolationEvent;
+import me.wand555.Challenges.API.Events.Violation.ChallengeEnd.ChallengeEndEvent;
+import me.wand555.Challenges.API.Events.Violation.ChallengeEnd.TimerHitZeroEvent;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.CustomHealthChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
@@ -54,7 +58,7 @@ import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
 import me.wand555.GUI.GUIType;
 import me.wand555.GUI.SignMenuFactory;
 
-public class ChallengeProfile extends Settings implements TimerOptions, ChallengeOptions {
+public class ChallengeProfile extends Settings implements TimerOptions, ChallengeOptions, CallViolationEvent {
 
 	private static ChallengeProfile cProfile;
 	private static final Challenges PLUGIN = Challenges.getPlugin(Challenges.class);
@@ -216,7 +220,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		}
 		
 		MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
-		if(mlgChallenge.isActive()) {
+		/*if(mlgChallenge.isActive()) {
 			//if timer is already active
 			if(mlgChallenge.getTimer() == null 
 					|| mlgChallenge.getTimer().getTimeToMLG() == 0 
@@ -227,10 +231,10 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 			else if(mlgChallenge.getTimer().isCancelled()) {
 				mlgChallenge.setTimer(new MLGTimer(PLUGIN, mlgChallenge.getTimer().getTotalTimeToMLG(), mlgChallenge.getTimer().getTimeToMLG()));
 			}
-		}
+		}*/
 		
 		OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);
-		if(onBlockChallenge.isActive()) {
+		/*if(onBlockChallenge.isActive()) {
 			if(onBlockChallenge.getTimer() == null
 					|| onBlockChallenge.getTimer().getTimeTo() == 0
 					|| onBlockChallenge.getTimer().getTotalTimeTo() == 0) {
@@ -242,7 +246,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 			}
 			
 			getParticipantsAsPlayers().forEach(p -> onBlockChallenge.addPlayerToBossBar(p));
-		}
+		}*/
 	}
 	
 	private String getMultipleCausers(Player[] causers) {
@@ -260,20 +264,22 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	}
 
 	@Override
-	public void endChallenge(ChallengeEndReason reason, Player... causer) {
-		restoreChallenge = new RestoreChallenge(getParticipantsAsPlayers(), getSecondTimer().getTime(), reason);
-		setPaused();
-		setDone();
-		getSecondTimer().setMessageType(TimerMessage.TIMER_FINISHED);
+	public <T extends GenericChallenge> void endChallenge(T rawType, ChallengeEndReason reason, Player... causer) {		
+		if(reason.isRestorable()) restoreChallenge = new RestoreChallenge(getParticipantsAsPlayers(), getSecondTimer().getTime(), reason);	
 		String reasonMessage;
 		LinkedHashMap<UUID, Integer> sorted = new LinkedHashMap<UUID, Integer>();
 		switch(reason) {
 		case FINISHED:
+			List<ChallengeType> activeChallenges = Stream.of(ChallengeType.values()).filter(GenericChallenge::isActive).collect(Collectors.toList());
 			reasonMessage = LanguageMessages.endChallengeComplete.replace("[TIME]", DateUtil.formatDuration(secondTimer.getTime()));
 			if(GenericChallenge.isActive(ChallengeType.ITEM_LIMIT_GLOBAL)) {
 				sorted = ((ItemCollectionLimitGlobalChallenge)GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL)).displayReadyStats();
+				callItemCollectionLimitGlobalChallengeBeatenEvent(activeChallenges, reasonMessage, sorted);
 			}
-			break;
+			else {	
+				callChallengeBeatenEvent(activeChallenges, reasonMessage);
+			}
+			return;
 		case NATURAL_DEATH:
 			reasonMessage = LanguageMessages.endChallengeNaturalDeath.replace("[PLAYER]", causer[0].getName());
 			break;
@@ -299,12 +305,16 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 			reasonMessage = LanguageMessages.endChallengeNotOnBlock.replace("[PLAYER]", getMultipleCausers(causer));
 			break;
 		case NO_TIME_LEFT:
+			//rawType will be null here.
 			reasonMessage = LanguageMessages.endChallengeNoTimeLeft;
-			break;
+			callEndChallengeNoTimeLeft(reasonMessage);
+			return;
 		case TOO_MANY_ITEMS_GLOBAL:
 			reasonMessage = LanguageMessages.endChallengeTooManyItemsGlobal.replace("[PLAYER]", causer[0].getName());	
-			sorted = ((ItemCollectionLimitGlobalChallenge)GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL)).displayReadyStats();
-			break;
+			ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
+			sorted = iCLGChallenge.displayReadyStats();
+			callEndChallengeItemCollectionLimitGlobalChallengeEventAndActUpon(iCLGChallenge, reason, reasonMessage, sorted, causer[0]);
+			return;
 		case SAME_ITEM_IN_INVENTORY:
 			reasonMessage = LanguageMessages.endChallengeSameItemInInventory
 				.replace("[PLAYER]", causer[0].getName())
@@ -315,19 +325,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 			reasonMessage = "Unknown";
 			break;	
 		}
-		
-		for(Player p : getParticipantsAsPlayers()) {
-			p.sendMessage(reasonMessage);
-			p.setGameMode(GameMode.SPECTATOR);
-			if(!sorted.isEmpty()) {
-				int place = 0;
-				for(Map.Entry<UUID, Integer> entry : sorted.entrySet()) {
-					String toSend = ChatColor.GRAY + "" + (++place) + ": " + ChatColor.DARK_GREEN
-							+ Bukkit.getOfflinePlayer(entry.getKey()).getName() + " " + ChatColor.YELLOW + entry.getValue() + ChatColor.GRAY + " Items!";
-					p.sendMessage(toSend);
-				}
-			}
-		}		
+		callEndChallengeEventAndActUpon(rawType, reason, reasonMessage, causer);			
 	}
 
 	@Override

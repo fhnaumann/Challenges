@@ -1,11 +1,12 @@
-package me.wand555.Challenges.ChallengeProfile.Events.SettingsChange;
+package me.wand555.Challenges.API.Events.SettingsChange;
 
 import org.bukkit.entity.Player;
 
+import me.wand555.Challenges.API.Events.Overridable;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
-import me.wand555.Challenges.ChallengeProfile.Events.Overridable;
 /**
  * Called when a player switches a challenge setting that is {@link Punishable} and involves a {@link PunishType}.
  * You don't need to fill in T when listening to this event.
@@ -14,22 +15,22 @@ import me.wand555.Challenges.ChallengeProfile.Events.Overridable;
  *
  * @param <T> The challenge this was called with (T extends GenericChallenge and T extends Punishable).
  */
-public class PunishableChallengeStatusSwitchEvent<T> extends ChallengeStatusSwitchEvent<T> implements Overridable {
+public class PunishableChallengeStatusSwitchEvent<T extends GenericChallenge & Punishable> extends ChallengeStatusSwitchEvent<T> implements Overridable {
 
 	private PunishType punishType;
 	private String overrideMessage;
 	
 	/**
 	 * 
-	 * @param challenge The challenge that triggered this event.
+	 * @param rawType The challenge that triggered this event.
 	 * @param punishType The punishType the player selected.
 	 * @param player The player who changed the setting.
 	 */
-	public PunishableChallengeStatusSwitchEvent(T challenge, PunishType punishType, Player player) {
-		super(challenge, player);
+	public PunishableChallengeStatusSwitchEvent(T rawType, PunishType punishType, Player player) {
+		super(rawType, player);
 		this.punishType = punishType;
 	}
-	
+
 	/**
 	 * Sets the punishType. This will override the input by the player.
 	 * @param punishType

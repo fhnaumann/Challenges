@@ -12,9 +12,10 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoSneakingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 
-public class NoSneakingListener implements Listener {
+public class NoSneakingListener extends CoreListener {
 
 	public NoSneakingListener(Challenges plugin) {
+		super(plugin);
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 	
@@ -27,12 +28,11 @@ public class NoSneakingListener implements Listener {
 					if(cProfile.isInChallenge(event.getPlayer().getUniqueId())) {
 						NoSneakingChallenge nSChallenge = GenericChallenge.getChallenge(ChallengeType.NO_SNEAKING);
 						if(nSChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-							cProfile.endChallenge(ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());
+							cProfile.endChallenge(nSChallenge, ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());
 						}
 						else {
-							nSChallenge.enforcePunishment(nSChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), event.getPlayer());
 							String message = nSChallenge.createReasonMessage(nSChallenge.getPunishCause(), nSChallenge.getPunishType(), event.getPlayer());
-							cProfile.sendMessageToAllParticipants(message);
+							callViolationPunishmentEventAndActUpon(nSChallenge, message, event.getPlayer());
 						}
 						if(nSChallenge.getPunishType() == PunishType.NOTHING) {
 							event.setCancelled(true);

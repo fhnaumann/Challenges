@@ -1,4 +1,4 @@
-package me.wand555.Challenges.ChallengeProfile.Events;
+package me.wand555.Challenges.API.Events;
 
 import javax.annotation.Nullable;
 

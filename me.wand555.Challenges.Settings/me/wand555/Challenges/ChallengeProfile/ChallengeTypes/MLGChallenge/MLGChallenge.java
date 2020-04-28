@@ -19,6 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.google.common.collect.Lists;
 
 import me.wand555.Challenges.Challenges;
+import me.wand555.Challenges.API.Events.Violation.CallViolationEvent;
 import me.wand555.Challenges.ChallengeProfile.ChallengeEndReason;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
@@ -29,7 +30,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ReasonNotifiable;
 import me.wand555.Challenges.Config.LanguageMessages;
 import me.wand555.Challenges.Config.WorldUtil;
 
-public class MLGChallenge extends GenericChallenge implements Punishable, ReasonNotifiable {
+public class MLGChallenge extends GenericChallenge implements Punishable, ReasonNotifiable, CallViolationEvent {
 
 	/**
 	 * This map only holds entries of players who are currently in the MLG world.
@@ -112,33 +113,21 @@ public class MLGChallenge extends GenericChallenge implements Punishable, Reason
 				.map(Bukkit::getPlayer)
 				.filter(p1 -> p1 != null)
 				.forEach(WorldUtil::loadPlayerInformationInChallengeAndApply);
-				ChallengeProfile.getInstance().endChallenge(ChallengeEndReason.FAILED_MLG, p);
+				ChallengeProfile.getInstance().endChallenge(GenericChallenge.getChallenge(ChallengeType.MLG), ChallengeEndReason.FAILED_MLG, p);
 				
 				ChallengeProfile.getInstance().setInMLGRightNow();
 				inMLGWorld.clear();
 			}
 			else {
 				inMLGWorld.put(p.getUniqueId(), false);
-				//inMLGWorld.remove(p.getUniqueId());
-				WorldUtil.loadPlayerInformationInChallengeAndApply(p);
-				enforcePunishment(punishType, ChallengeProfile.getInstance().getParticipantsAsPlayers(), p);
+				WorldUtil.loadPlayerInformationInChallengeAndApply(p);	
 				String message = createReasonMessage(getPunishCause(), getPunishType(), p);
+				callViolationPunishmentEventAndActUpon(this, message, p);
 				ChallengeProfile.getInstance().sendMessageToAllParticipants(message);
 				if(inMLGWorld.entrySet().stream().allMatch(entry -> entry.getValue() != null)) {	
 					this.setTimer(new MLGTimer(Challenges.getPlugin(Challenges.class), this));
 					ChallengeProfile.getInstance().setInMLGRightNow();
-					//inMLGWorld.clear();
-					//Bukkit.getScheduler().runTaskLater(Challenges.getPlugin(Challenges.class), () -> inMLGWorld.clear(), 30L);
 				}
-				/*
-				if(inMLGWorld.isEmpty() || inMLGWorld.entrySet().stream().allMatch(entry -> entry.getValue() == null || entry.getValue() == false)) {	
-					String messagePassed = createPassedMessage(getPunishCause());
-					ChallengeProfile.getInstance().sendMessageToAllParticipants(messagePassed);		
-					this.setTimer(new MLGTimer(Challenges.getPlugin(Challenges.class), this));
-					ChallengeProfile.getInstance().setInMLGRightNow();
-					Bukkit.getScheduler().runTaskLater(Challenges.getPlugin(Challenges.class), () -> inMLGWorld.clear(), 5L);
-				}
-				*/
 			}
 			
 			

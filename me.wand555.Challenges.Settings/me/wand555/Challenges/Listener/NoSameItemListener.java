@@ -52,7 +52,7 @@ public class NoSameItemListener implements Listener {
 				else {
 					iCSILChallenge.addToTotalInventoryItems(mat, player.getUniqueId());
 					if(iCSILChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-						cProfile.endChallenge(ChallengeEndReason.SAME_ITEM_IN_INVENTORY, player);
+						cProfile.endChallenge(iCSILChallenge, ChallengeEndReason.SAME_ITEM_IN_INVENTORY, player);
 					}
 					else {
 						iCSILChallenge.enforcePunishment(iCSILChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), player);
@@ -117,7 +117,7 @@ public class NoSameItemListener implements Listener {
 					}
 					else {
 						if(iCSILChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-							cProfile.endChallenge(ChallengeEndReason.SAME_ITEM_IN_INVENTORY, player);
+							cProfile.endChallenge(iCSILChallenge, ChallengeEndReason.SAME_ITEM_IN_INVENTORY, player);
 						}
 						else {
 							iCSILChallenge.enforcePunishment(iCSILChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), player);
