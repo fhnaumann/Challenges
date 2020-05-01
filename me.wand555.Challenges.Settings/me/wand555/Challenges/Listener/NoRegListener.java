@@ -27,6 +27,7 @@ public class NoRegListener implements Listener {
 					ChallengeProfile cProfile = ChallengeProfile.getInstance();
 					Player player = (Player) event.getEntity();
 					if(cProfile.isInChallenge(player.getUniqueId())) {
+						System.out.println("blocked");
 						event.setCancelled(true);
 					}
 				}	
@@ -37,14 +38,17 @@ public class NoRegListener implements Listener {
 	@EventHandler
 	public void onNoRegHardAbsorptionEvent(EntityPotionEffectEvent event) {
 		if(event.getEntity() instanceof Player) {
-			if(event.getModifiedType() == PotionEffectType.ABSORPTION) {
-				if(GenericChallenge.isActive(ChallengeType.NO_REG_HARD)) {
-					ChallengeProfile cProfile = ChallengeProfile.getInstance();
-					Player player = (Player) event.getEntity();
-					if(cProfile.isInChallenge(player.getUniqueId())) {
-						event.setCancelled(true);
+			if(event.getNewEffect() != null) {
+				if(event.getNewEffect().getType().getId() == 22 || event.getNewEffect().getType().getId() == 10) {
+					if(GenericChallenge.isActive(ChallengeType.NO_REG_HARD)) {
+						ChallengeProfile cProfile = ChallengeProfile.getInstance();
+						Player player = (Player) event.getEntity();
+						if(cProfile.isInChallenge(player.getUniqueId())) {
+							System.out.println("blockedPotion");
+							event.setCancelled(true);
+						}
 					}
-				}
+				}		
 			}	
 		}
 	}

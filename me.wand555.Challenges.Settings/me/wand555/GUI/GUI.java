@@ -91,6 +91,12 @@ public class GUI implements ItemDisplayCreator {
 				//case 17:
 					//gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM).getDisplayItem());
 					//break;
+				case 18:
+					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.GROUND_IS_LAVA).getDisplayItem());
+					break;
+				case 19:
+					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT).getDisplayItem());
+					break;
 				case 26:
 					gui.setItem(i, createItem(Material.CHEST, 
 							LanguageMessages.guiBackpackName, 

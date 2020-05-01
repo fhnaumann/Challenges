@@ -9,8 +9,10 @@ import org.bukkit.inventory.ItemStack;
 import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ReasonNotifiable;
 
+@Deprecated
 public class Backpack {
 
+	
 	private final Challenges plugin;
 	
 	private boolean isEnabled;

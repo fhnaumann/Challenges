@@ -53,6 +53,9 @@ public class LanguageMessages extends ConfigUtil {
 	public static String noRestoreBecauseDesc;
 	public static String posEmpty;
 	public static String notRestorable;
+	public static String timerNotSettable;
+	
+	public static String loadingWorlds;
 	
 	public static String endChallengeReset;
 	public static String endChallengeComplete;
@@ -104,6 +107,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String guiRandomMLGName;
 	public static String guiOnBlockName;
 	public static String guiItemCollectionLimitGlobalName;
+	public static String guiItemFloorIsLavaName;
 	
 	public static ArrayList<String> guiBackpackLore;
 	public static ArrayList<String> guiDeathLore;
@@ -123,6 +127,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static ArrayList<String> guiMLGLore;
 	public static ArrayList<String> guiOnBlockLore;
 	public static ArrayList<String> guiItemCollectionLimitGlobalLore;
+	public static ArrayList<String> guiItemFloorIsLavaLore;
 	
 	public static String guiCustomHealthAmount;
 	public static String guiItemCollectionLimit;
@@ -154,6 +159,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String violationMLG;
 	public static String violationOnBlock;
 	public static String violationNoSameItemInInventory;
+	public static String violationToBeOnHeight;
 	
 	/**
 	 * Message in chat when (mostly everyone) passed a certain challenge. Not all challenges notify in chat.
@@ -184,6 +190,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static ArrayList<String> punishmentAmountSign;	
 	public static ArrayList<String> timerStartDescSign;
 	public static ArrayList<String> itemCollectionLimitGlobalSign;
+	public static ArrayList<String> floorIsLavaSign;
 	
 	/**
 	 * When in SignGUI entered wrong. (right, first var here)
@@ -193,11 +200,15 @@ public class LanguageMessages extends ConfigUtil {
 	public static String signLatestLowerThanEarliestWrong;
 	public static String signNoNumberInRange;
 	public static String signNoEffect;
+	public static String signNoBoolean;
+	
 	/**
 	 * The title on the bossbar depending on the status of the OnBlock/ForceBlock Challenge
 	 */
 	public static String onBlockHidden;
 	public static String onBlockShown;
+	public static String onHeightHidden;
+	public static String onHeightShown;
 	
 	public static String itemOnGroundAlreadyCollectedName;
 	
@@ -252,6 +263,9 @@ public class LanguageMessages extends ConfigUtil {
 		noRestoreBecauseDesc = format(cfg.getString("noRestoreBecauseDesc"));
 		posEmpty = format(cfg.getString("posEmpty"));
 		notRestorable = format(cfg.getString("notRestorable"));
+		timerNotSettable = format(cfg.getString("timerNotSettable"));
+		
+		loadingWorlds = format(cfg.getString("loadingWorlds"));
 		
 		endChallengeReset = format(cfg.getString("endChallengeReset"));
 		endChallengeComplete = format(cfg.getString("endChallengeComplete"));
@@ -303,6 +317,7 @@ public class LanguageMessages extends ConfigUtil {
 		guiRandomMLGName = formatWithoutPrefix(cfg.getString("guiRandomMLGName"));
 		guiOnBlockName = formatWithoutPrefix(cfg.getString("guiOnBlockName"));
 		guiItemCollectionLimitGlobalName = formatWithoutPrefix(cfg.getString("guiItemCollectionLimitGlobalName"));
+		guiItemFloorIsLavaName = formatWithoutPrefix(cfg.getString("guiItemFloorIsLavaName"));
 		
 		guiDeathLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiDeathLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
@@ -340,6 +355,8 @@ public class LanguageMessages extends ConfigUtil {
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		guiItemCollectionLimitGlobalLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiItemCollectionLimitGlobalLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
+		guiItemFloorIsLavaLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiItemFloorIsLavaLore")), 20, "_", true).split("_"))
+				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		
 		guiCustomHealthAmount = formatWithoutPrefix(cfg.getString("guiCustomHealthAmount"));
 		guiItemCollectionLimit = formatWithoutPrefix(cfg.getString("guiItemCollectionLimit"));
@@ -364,6 +381,7 @@ public class LanguageMessages extends ConfigUtil {
 		violationMLG = format(cfg.getString("violationMLG"));
 		violationOnBlock = format(cfg.getString("violationOnBlock"));
 		violationNoSameItemInInventory = format(cfg.getString("violationNoSameItemInInventory"));
+		violationToBeOnHeight = format(cfg.getString("violationToBeOnHeight"));
 		
 		passedMLG = format(cfg.getString("passedMLG"));
 		passedOnBlock = format(cfg.getString("passedOnBlock"));
@@ -388,15 +406,20 @@ public class LanguageMessages extends ConfigUtil {
 				.stream().collect(Collectors.toCollection(ArrayList::new));
 		itemCollectionLimitGlobalSign = Lists.newArrayList(cfg.getString("itemCollectionLimitGlobalSign").split("_"))
 				.stream().collect(Collectors.toCollection(ArrayList::new));
+		floorIsLavaSign = Lists.newArrayList(cfg.getString("floorIsLavaSign").split("_"))
+				.stream().collect(Collectors.toCollection(ArrayList::new));
 		
 		signCorrect = format(cfg.getString("signCorrect"));
 		signTooLowWrong = format(cfg.getString("signTooLowWrong"));
 		signLatestLowerThanEarliestWrong = format(cfg.getString("signLatestLowerThanEarliestWrong"));
 		signNoNumberInRange = format(cfg.getString("signNoNumberInRange"));
 		signNoEffect = format(cfg.getString("signNoEffect"));
+		signNoBoolean = format(cfg.getString("signNoBoolean"));
 		
 		onBlockHidden = formatWithoutPrefix(cfg.getString("onBlockHidden"));
 		onBlockShown = formatWithoutPrefix(cfg.getString("onBlockShown"));
+		onHeightHidden = formatWithoutPrefix(cfg.getString("onHeightHidden"));
+		onHeightShown = formatWithoutPrefix(cfg.getString("onHeightShown"));
 		
 		itemOnGroundAlreadyCollectedName = formatWithoutPrefix(cfg.getString("itemOnGroundAlreadyCollectedName"));
 	}

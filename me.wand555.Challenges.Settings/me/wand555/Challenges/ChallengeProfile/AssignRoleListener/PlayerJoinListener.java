@@ -13,6 +13,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.CustomHealthChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge.HeightChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
 import me.wand555.Challenges.Config.WorldUtil;
@@ -34,8 +35,10 @@ public class PlayerJoinListener implements Listener {
 	public void onPlayerJoinListener(PlayerJoinEvent event) {
 		if(WorldLinkManager.worlds.contains(event.getPlayer().getWorld())) {
 			ChallengeProfile.getInstance().addToParticipants(event.getPlayer().getUniqueId());
+			ChallengeProfile.getInstance().addToScoreBoard(event.getPlayer());
 			CustomHealthChallenge cHealthChallenge = GenericChallenge.getChallenge(ChallengeType.CUSTOM_HEALTH);
 			OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);
+			HeightChallenge heightChallenge = GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT);
 			Player p = event.getPlayer();
 			if(ChallengeProfile.getInstance().canTakeEffect()) {
 				if(cHealthChallenge.isActive()) {			
@@ -67,8 +70,10 @@ public class PlayerJoinListener implements Listener {
 			}	
 			
 			if(onBlockChallenge.isActive()) {
-				System.out.println("added player");
 				onBlockChallenge.addPlayerToBossBar(p);
+			}
+			if(heightChallenge.isActive()) {
+				heightChallenge.addPlayerToBossBar(p);
 			}
 		}
 	}

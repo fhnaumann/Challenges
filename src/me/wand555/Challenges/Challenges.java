@@ -18,6 +18,7 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.World.Environment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -35,7 +36,10 @@ import me.wand555.Challenges.Config.Language;
 import me.wand555.Challenges.Config.LanguageMessages;
 import me.wand555.Challenges.Config.UserConfig;
 import me.wand555.Challenges.Listener.BackpackListener;
+import me.wand555.Challenges.Listener.EnderDragonDeathListener;
+import me.wand555.Challenges.Listener.HeightWorldChangeListener;
 import me.wand555.Challenges.Listener.ItemCollectionLimitGlobalListener;
+import me.wand555.Challenges.Listener.LavaGroundListener;
 import me.wand555.Challenges.Listener.MLGListener;
 import me.wand555.Challenges.Listener.NoBlockBreakingListener;
 import me.wand555.Challenges.Listener.NoBlockPlacingListener;
@@ -72,7 +76,70 @@ public class Challenges extends JavaPlugin {
 		else if(lang.equalsIgnoreCase("de")) LanguageMessages.loadLang(Language.GERMAN);
 		else LanguageMessages.loadLang(Language.ENGLISH);
 		
+		ChallengeProfile.getInstance().initializeScoreBoard();
+		initializeWorlds();
 		
+		ConfigHandler.loadFromConfig();
+		
+		
+		
+		/**
+		 * 
+		 * ON LOAD EVERY CHALLENGE INSTANCE HAS TO BE CREATED ONCE SO IT IS NEVER NULL, DONT DO THAT HERE, DO IT
+		 * WHEN LOADING FROM CONFIG WITH THE STORED VALUES (boolean)!!!!!!!!!!!
+		 * 
+		 * 
+		 */
+		
+		gui = new GUI(this);
+		signMenuFactory = new SignMenuFactory(this);
+		
+		myCE = new CE(this, gui, signMenuFactory);
+		this.getCommand("challenge").setExecutor(myCE);
+		this.getCommand("timer").setExecutor(myCE);
+		this.getCommand("pos").setExecutor(myCE);
+		this.getCommand("bp").setExecutor(myCE);
+		this.getCommand("hp").setExecutor(myCE);
+		this.getCommand("settings").setExecutor(myCE);
+		
+		registerListeners();	
+	}
+	
+	public void onDisable() {
+		ChallengeProfile.getInstance().pauseTimer();
+		ConfigHandler.storeToConfig();
+		Bukkit.getOnlinePlayers().forEach(Player::closeInventory);
+	}
+	
+	private void registerListeners() {
+		new PlayerJoinListener(this);
+		new PlayerQuitListener(this);
+		new GUIClickListener(this, gui, signMenuFactory);
+		new PortalListener(this);
+		new EnderDragonDeathListener(this);
+		new PlayerDeathListener(this);
+		new NoDamageListener(this);
+		new NoRegListener(this);
+		new SharedHealthPlayerChangeLifeListener(this);
+		new NoBlockPlacingListener(this);
+		new NoBlockBreakingListener(this);
+		new NoCraftingListener(this);
+		new NoSneakingListener(this);
+		new RandomizeListener(this);
+		new MLGListener(this);
+		new ItemCollectionLimitGlobalListener(this);
+		//new NoSameItemListener(this);
+		new LavaGroundListener(this);
+		new HeightWorldChangeListener(this);
+		
+		new BackpackListener(this);
+	}
+	
+	public static boolean hasClickedTop(InventoryClickEvent event) {
+        return event.getRawSlot() == event.getSlot();
+    }
+	
+	public static void initializeWorlds() {
 		World overWorld = Bukkit.createWorld(new WorldCreator("ChallengeOverworld").environment(Environment.NORMAL));
 		overWorld.setDifficulty(Difficulty.HARD);
 		WorldLinkManager.worlds.add(overWorld);
@@ -92,60 +159,5 @@ public class Challenges extends JavaPlugin {
 		mlgWorld.setDifficulty(Difficulty.PEACEFUL);
 		mlgWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
 		WorldLinkManager.worlds.add(mlgWorld);
-		
-		ConfigHandler.loadFromConfig();
-		
-		
-		
-		/**
-		 * 
-		 * ON LOAD EVERY CHALLENGE INSTANCE HAS TO BE CREATED ONCE SO IT IS NEVER NULL, DONT DO THAT HERE, DO IT
-		 * WHEN LOADING FROM CONFIG WITH THE STORED VALUES (boolean)!!!!!!!!!!!
-		 * 
-		 * 
-		 */
-		
-		gui = new GUI(this);
-		signMenuFactory = new SignMenuFactory(this);
-		
-		myCE = new CE(gui, signMenuFactory);
-		this.getCommand("challenge").setExecutor(myCE);
-		this.getCommand("timer").setExecutor(myCE);
-		this.getCommand("pos").setExecutor(myCE);
-		this.getCommand("bp").setExecutor(myCE);
-		this.getCommand("hp").setExecutor(myCE);
-		this.getCommand("settings").setExecutor(myCE);
-		
-		registerListeners();	
 	}
-	
-	public void onDisable() {
-		ChallengeProfile.getInstance().pauseTimer();
-		ConfigHandler.storeToConfig();
-	}
-	
-	private void registerListeners() {
-		new PlayerJoinListener(this);
-		new PlayerQuitListener(this);
-		new GUIClickListener(this, gui, signMenuFactory);
-		new PortalListener(this);
-		new PlayerDeathListener(this);
-		new NoDamageListener(this);
-		new NoRegListener(this);
-		new SharedHealthPlayerChangeLifeListener(this);
-		new NoBlockPlacingListener(this);
-		new NoBlockBreakingListener(this);
-		new NoCraftingListener(this);
-		new NoSneakingListener(this);
-		new RandomizeListener(this);
-		new MLGListener(this);
-		new ItemCollectionLimitGlobalListener(this);
-		//new NoSameItemListener(this);
-		
-		new BackpackListener(this);
-	}
-	
-	public static boolean hasClickedTop(InventoryClickEvent event) {
-        return event.getRawSlot() == event.getSlot();
-    }
 }

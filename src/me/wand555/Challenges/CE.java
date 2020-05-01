@@ -15,6 +15,7 @@ import org.bukkit.entity.Wolf;
 
 import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
+import me.wand555.Challenges.ChallengeProfile.InventoryManager;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.SharedHealthChallenge.SharedHealthChallenge;
@@ -29,10 +30,12 @@ import me.wand555.GUI.SignMenuFactory;
 
 public class CE implements CommandExecutor {
 	
+	private Challenges plugin;
 	private GUI gui;
 	private SignMenuFactory signMenuFactory;
 	
-	public CE(GUI gui, SignMenuFactory signMenuFactory) {
+	public CE(Challenges plugin, GUI gui, SignMenuFactory signMenuFactory) {
+		this.plugin = plugin;
 		this.gui = gui;
 		this.signMenuFactory = signMenuFactory;
 	}
@@ -59,6 +62,7 @@ public class CE implements CommandExecutor {
 									WorldUtil.loadPlayerInformationInChallengeAndApply(player);
 									
 									ChallengeProfile.getInstance().addToParticipants(player.getUniqueId());
+									ChallengeProfile.getInstance().addToScoreBoard(player);
 									player.sendMessage(LanguageMessages.teleportMsg);
 								}
 								else {
@@ -83,6 +87,7 @@ public class CE implements CommandExecutor {
 							WorldUtil.loadPlayerInformationBeforeChallengeAndApply(player);
 							
 							ChallengeProfile.getInstance().removeFromParticipants(player.getUniqueId());
+							ChallengeProfile.getInstance().removeFromScoreBoard(player);
 							player.sendMessage(LanguageMessages.teleportMsg);
 						}
 						else {
@@ -105,9 +110,27 @@ public class CE implements CommandExecutor {
 				else if(args[0].equalsIgnoreCase("reset")) {
 					if(player.hasPermission("challenge.reset")) {
 						if(!ChallengeProfile.getInstance().isRestarted) {
-							ChallengeProfile.getInstance().resetChallenge();
-							player.sendMessage(LanguageMessages.deletedChallengeWorlds);
-							player.sendMessage(LanguageMessages.resetWarning);
+							if(plugin.getConfig().getBoolean("autoReset")) {
+								ChallengeProfile.getInstance().resetChallenge();
+								//send waiting message
+								Bukkit.getScheduler().runTaskLater(plugin, () -> {
+									ChallengeProfile.getInstance().sendMessageToAllParticipants(LanguageMessages.loadingWorlds);
+									Challenges.initializeWorlds();	
+									Bukkit.getScheduler().runTaskLater(plugin, () -> {
+										ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(p -> {
+											p.sendMessage(LanguageMessages.teleportMsg);
+											WorldUtil.storePlayerInformationBeforeChallenge(p);
+											WorldUtil.loadPlayerInformationInChallengeAndApply(p);
+										});
+									}, 20L);
+								}, 5*20L);
+							}
+							else {
+								ChallengeProfile.getInstance().resetChallenge();
+								player.sendMessage(LanguageMessages.deletedChallengeWorlds);
+								player.sendMessage(LanguageMessages.resetWarning);
+							}
+							
 						}	
 						else {
 							player.sendMessage(LanguageMessages.resetWarning);
@@ -171,6 +194,43 @@ public class CE implements CommandExecutor {
 						}
 					}
 				}
+				else if(args[0].equalsIgnoreCase("set")) {
+					if(player.hasPermission("timer.set")) {
+						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+							if(ChallengeProfile.getInstance().hasStarted && !ChallengeProfile.getInstance().isDone) {
+								ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
+								ChallengeProfile.getInstance().displayTimerSetEnterGUI(signMenuFactory, player);
+							}
+							else {
+								player.sendMessage(LanguageMessages.timerNotSettable);
+							}
+						}
+						else {
+							player.sendMessage(LanguageMessages.notInChallenge);
+						}
+					}
+				}
+				else if(args[0].equalsIgnoreCase("reset")) {
+					if(player.hasPermission("timer.reset")) {
+						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+							if(ChallengeProfile.getInstance().hasStarted && !ChallengeProfile.getInstance().isDone) {
+								ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
+								if(ChallengeProfile.getInstance().getSecondTimer().getOrder() == TimerOrder.ASC) {
+									ChallengeProfile.getInstance().getSecondTimer().setTime(0);
+								}
+								else {
+									ChallengeProfile.getInstance().getSecondTimer().setTime(1);
+								}
+							}
+							else {
+								player.sendMessage(LanguageMessages.timerNotSettable);
+							}
+						}
+						else {
+							player.sendMessage(LanguageMessages.notInChallenge);
+						}
+					}
+				}
 				else {
 					player.sendMessage(LanguageMessages.timerOptionSyntax);
 					player.sendMessage(LanguageMessages.timerStartSyntax);
@@ -213,7 +273,7 @@ public class CE implements CommandExecutor {
 				if(player.hasPermission("challenge.bp")) {
 					if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
 						if(ChallengeProfile.getInstance().getBackpack().isEnabled()) {
-							gui.createGUI(player, GUIType.BACKPACK);
+							player.openInventory(ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI());
 						}
 						else {
 							player.sendMessage(LanguageMessages.backpackDisabled);

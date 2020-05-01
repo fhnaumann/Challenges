@@ -21,4 +21,7 @@ public interface BossBarShown {
 	
 	public void addPlayerToBossBar(Player player);
 	public void removePlayerFromBossBar(Player player);
+	
+	public void fromHiddenToShownChange(long totalTimeTo);
+	public void fromShownToHiddenChange();
 }

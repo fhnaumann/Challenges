@@ -58,7 +58,7 @@ public class SharedHealthPlayerChangeLifeListener implements Listener {
 									ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
 									.filter(p -> p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
 									.forEach(p -> {
-										p.setHealth(0);
+										if(p != null) p.setHealth(0);
 									});
 									sHChallenge.setSharedHealth(sHChallenge.getDefaultHealthToSet());
 								}

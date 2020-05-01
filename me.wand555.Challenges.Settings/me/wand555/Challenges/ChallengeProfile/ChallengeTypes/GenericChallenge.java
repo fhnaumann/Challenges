@@ -9,12 +9,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.ChallengeProfile.Challenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.SharedHealthChallenge.SharedHealthChallenge;
 import me.wand555.Challenges.Config.LanguageMessages;
 
 public abstract class GenericChallenge implements Challenge, ItemDisplayCreator {
 
+	protected static final Challenges PLUGIN = Challenges.getPlugin(Challenges.class);
+	
 	protected static EnumMap<ChallengeType, GenericChallenge> activeChallenges = new EnumMap<>(ChallengeType.class);
 	
 	protected boolean active;
@@ -129,7 +132,10 @@ public abstract class GenericChallenge implements Challenge, ItemDisplayCreator 
 		case RANDOMIZE_CRAFTING: return LanguageMessages.guiRandomCraftingName;
 		case MLG: return LanguageMessages.guiRandomMLGName;
 		case ON_BLOCK: return LanguageMessages.guiOnBlockName;
-		default: return LanguageMessages.guiItemCollectionLimitGlobalName;
+		case ITEM_LIMIT_GLOBAL: return LanguageMessages.guiItemCollectionLimitGlobalName;
+		case GROUND_IS_LAVA: return LanguageMessages.guiItemFloorIsLavaName;
+		case BE_AT_HEIGHT: return "";
+		default: return "";
 		}
 	}
 	

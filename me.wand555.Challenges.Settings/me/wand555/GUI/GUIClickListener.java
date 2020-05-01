@@ -39,12 +39,15 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoSneakingChallenge
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge.HeightChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.LavaGroundChallenge.LavaGroundChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockTimer;
 import me.wand555.Challenges.Config.LanguageMessages;
+import me.wand555.GUI.Holders.SettingsHolder;
 
 public class GUIClickListener implements Listener, CallSettingsChangeEvents {
 
@@ -63,7 +66,7 @@ public class GUIClickListener implements Listener, CallSettingsChangeEvents {
 	public <T extends GenericChallenge & Punishable> void onGUIPunishableChallengeClickEvent(InventoryClickEvent event) {
 		if(event.getClickedInventory() != null) {
 			if(event.getCurrentItem() != null) {
-				if(event.getWhoClicked() instanceof Player) {
+				if(event.getWhoClicked() instanceof Player) {		
 					if(event.getView().getTitle().equalsIgnoreCase(ChatColor.RED + "Punishments")) {
 						Player p = (Player) event.getWhoClicked();
 						int slot = event.getRawSlot();
@@ -72,8 +75,6 @@ public class GUIClickListener implements Listener, CallSettingsChangeEvents {
 						ChallengeType challengeType = gui.punishmentChallengeTypeOpenGUI.get(p.getUniqueId());
 						@SuppressWarnings("unchecked")
 						T rawType = (T) GenericChallenge.getChallenge(challengeType);
-						GenericChallenge genericChallenge = (GenericChallenge) rawType;
-						//gui.punishmentChallengeTypeOpenGUI.remove(p.getUniqueId());	
 						
 						switch(slot) {
 						case 0:
@@ -346,7 +347,7 @@ public class GUIClickListener implements Listener, CallSettingsChangeEvents {
 									gui.createGUI(p, GUIType.PUNISHMENT, nCChallenge.getPunishCause());
 								}
 								else {
-									callSettingsChangeNormalEventAndActUpon(GenericChallenge.getChallenge(ChallengeType.NO_CRAFTING), p, gui);
+									callSettingsChangeNormalEventAndActUpon(nCChallenge, p, gui);
 								}
 								break;
 							}			
@@ -550,6 +551,124 @@ public class GUIClickListener implements Listener, CallSettingsChangeEvents {
 									iCLGChallenge.getPageMap().put(p.getUniqueId(), 1);
 									gui.createGUI(p, GUIType.COLLECTED_ITEMS_LIST);								
 								}
+								break;
+							}
+							case 18:
+							{
+								LavaGroundChallenge lavaGroundChallenge = GenericChallenge.getChallenge(ChallengeType.GROUND_IS_LAVA);
+								if(!lavaGroundChallenge.isActive()) {
+									signMenuFactory
+						            .newMenu(new ArrayList<String>(LanguageMessages.floorIsLavaSign))
+						            .reopenIfFail()
+						            .response((player, lines) -> {
+						            	if(ChallengeProfile.getInstance().canTakeEffect()) {
+						            		p.sendMessage(LanguageMessages.signNoEffect);
+						            		return true;
+						            	}
+						            	String[] entered = lines[0].split(" ");
+						            	if(entered.length == 2) {
+						            		String enteredLine1 = entered[0];
+							            	String enteredLine2 = entered[1];
+							            	if(StringUtils.isNumericSpace(enteredLine1) && !enteredLine1.isEmpty()) {
+							            		long timeToChangeType = (int) Math.round(Double.valueOf(enteredLine1));
+							            		if(timeToChangeType >= 20) {
+							            			if(enteredLine2.equalsIgnoreCase("true") || enteredLine2.equalsIgnoreCase("false")) {
+							            				lavaGroundChallenge.setTimeToTransition(timeToChangeType);
+							            				lavaGroundChallenge.setLavaStay(Boolean.valueOf(enteredLine2));
+							            				//CALL EVENT CORRECT EVENT (ADD LATER)
+							            				Bukkit.getScheduler().runTaskLater(plugin, () -> callSettingsChangeNormalEventAndActUpon(lavaGroundChallenge, p, gui), 0L);
+							            				p.sendMessage(LanguageMessages.signCorrect);
+							            				return true;
+							            			}
+							            			else {
+							            				//second argument is not true or false
+							            				p.sendMessage(LanguageMessages.signNoBoolean.replace("[BOOL]", enteredLine2));
+							            			}
+							            		}
+							            		else {
+							            			p.sendMessage(LanguageMessages.signTooLowWrong);
+							            		}
+							            	}
+							            	else {
+							            		p.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", enteredLine1));
+							            	}
+						            	}
+						            	else {
+						            		
+						            	} 	
+						                return false; // failure. becaues reopenIfFail was called, menu will reopen when closed.
+						            })
+						            .open(p);
+								}
+								else {
+									callSettingsChangeNormalEventAndActUpon(lavaGroundChallenge, p, gui);
+								}
+								break;
+							}
+							case 19:
+							{			
+								HeightChallenge heightChallenge = GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT);														
+								if(!heightChallenge.isActive()) {
+									signMenuFactory
+						            .newMenu(new ArrayList<String>(LanguageMessages.onBlockSign))
+						            .reopenIfFail()
+						            .response((player, lines) -> {
+						            	if(ChallengeProfile.getInstance().canTakeEffect()) {
+						            		p.sendMessage(LanguageMessages.signNoEffect);
+						            		return true;
+						            	}
+						            	String[] entered = lines[0].split(" ");
+						            	if(entered.length == 4) {
+						            		String enteredLine2 = entered[0];
+							            	String enteredLine3 = entered[1];
+							            	String enteredLine4 = entered[2];
+							            	String enteredLine5 = entered[3];
+							            	if(StringUtils.isNumericSpace(enteredLine2) && !enteredLine2.isEmpty()
+							            			&& StringUtils.isNumericSpace(enteredLine3) && !enteredLine3.isEmpty()
+							            			&& StringUtils.isNumericSpace(enteredLine4) && !enteredLine4.isEmpty()
+							            			&& StringUtils.isNumericSpace(enteredLine5) && !enteredLine5.isEmpty()) {
+							            		int earliestToShown = (int) Math.round(Double.valueOf(enteredLine2));
+							            		int latestToShown = (int) Math.round(Double.valueOf(enteredLine3));
+							            		int earliestOnBlock = (int) Math.round(Double.valueOf(enteredLine4));
+							            		int latestOnBlock = (int) Math.round(Double.valueOf(enteredLine5));
+							            		
+							            		if(earliestToShown > 0 && latestToShown > 0 
+							            				&& earliestOnBlock > 0 && latestOnBlock > 0) {
+							            			if(earliestToShown <= latestToShown || earliestOnBlock <= latestOnBlock) {
+							            				heightChallenge.setEarliestToShow(earliestToShown);
+							            				heightChallenge.setLatestToShow(latestToShown);
+							            				heightChallenge.setEarliestToBeOnHeight(earliestOnBlock);
+							            				heightChallenge.setLatestToBeOnHeight(latestOnBlock);
+							            				p.sendMessage(LanguageMessages.signCorrect);
+							            				Bukkit.getScheduler().runTaskLater(plugin, () -> {
+							            					gui.createGUI(p, GUIType.PUNISHMENT, heightChallenge.getPunishCause());
+							            				}, 0L);
+							            				
+							            				return true;
+							            			}
+							            			else {
+							            				p.sendMessage(LanguageMessages.signLatestLowerThanEarliestWrong);
+							            			}
+							            		}
+							            		else {
+							            			p.sendMessage(LanguageMessages.signTooLowWrong);
+							            		}
+							            	}
+							            	else {
+							            		p.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", "Entered"));
+							            	}
+						            	}
+						            	else {
+						            		
+						            	} 	
+						                return false; // failure. becaues reopenIfFail was called, menu will reopen when closed.
+						            })
+						            .open(p);
+								}
+								else {
+									callSettingsChangeNormalEventAndActUpon(heightChallenge, p, gui);
+									//onBlockChallenge.setBossBar(null);
+								}					
 								break;
 							}
 							case 26:

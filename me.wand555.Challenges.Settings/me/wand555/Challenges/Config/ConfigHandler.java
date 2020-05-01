@@ -19,6 +19,7 @@ import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.InventoryManager;
 import me.wand555.Challenges.ChallengeProfile.Settings;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.BossBarStatus;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.CustomHealthChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.EndOnDeathChallenge;
@@ -36,12 +37,14 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomizedBlockDropsChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomizedCraftingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomizedMobDropsChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge.HeightChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge.HeightTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionSameItemLimitChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.LavaGroundChallenge.LavaGroundChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
-import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallengeStatus;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.SharedHealthChallenge.SharedHealthChallenge;
 import me.wand555.Challenges.ChallengeProfile.Positions.Position;
@@ -85,8 +88,8 @@ public class ConfigHandler extends ConfigUtil {
 		ChallengeProfile.getInstance().getBackpack().setEnabled(cfg.getBoolean("Status"));
 		List<?> list = cfg.getList("Content");
 		if(list == null) {
-			ChallengeProfile.getInstance().getBackpack().setContents(new ItemStack[InventoryManager.BACKPACK_GUI_SIZE]);
-		} else ChallengeProfile.getInstance().getBackpack().setContents(list.toArray(new ItemStack[list.size()]));
+			//ChallengeProfile.getInstance().getBackpack().setContents(new ItemStack[InventoryManager.BACKPACK_GUI_SIZE]);
+		} else ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI().setContents(list.toArray(new ItemStack[list.size()]));
 	}
 	
 	private static void storeBackpackToConfig() {
@@ -94,7 +97,7 @@ public class ConfigHandler extends ConfigUtil {
 		File file = new File(PLUGIN.getDataFolder()+"", "backpack.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		cfg.set("Status", ChallengeProfile.getInstance().getBackpack().isEnabled());
-		cfg.set("Content", Arrays.asList(ChallengeProfile.getInstance().getBackpack().getContents()));
+		cfg.set("Content", Arrays.asList(ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI().getContents()));
 		saveCustomYml(cfg, file);
 	}
 	
@@ -153,6 +156,8 @@ public class ConfigHandler extends ConfigUtil {
 		new OnBlockChallenge().setActive(cfg.getBoolean("onBlock.Boolean"));
 		new ItemCollectionLimitGlobalChallenge().setActive(cfg.getBoolean("itemCollectionLimitGlobal.Boolean"));
 		new ItemCollectionSameItemLimitChallenge().setActive(cfg.getBoolean("noSameItem.Boolean"));
+		new LavaGroundChallenge().setActive(cfg.getBoolean("floorIsLava.Boolean"));
+		new HeightChallenge().setActive(cfg.getBoolean("heightChallenge.Boolean"));
 		
 		if(cProfile.hasStarted) {	
 			cProfile.setSecondTimer(new SecondTimer(PLUGIN, cfg.getLong("Timer")));
@@ -214,7 +219,7 @@ public class ConfigHandler extends ConfigUtil {
 				onBlockChallenge.setLatestToShow(cfg.getInt("onBlock.LatestToShow"));
 				onBlockChallenge.setEarliestOnBlock(cfg.getInt("onBlock.EarliestOnBlock"));
 				onBlockChallenge.setLatestOnBlock(cfg.getInt("onBlock.LatestOnBlock"));
-				onBlockChallenge.setStatus(OnBlockChallengeStatus.valueOf(cfg.getString("onBlock.Status")));
+				onBlockChallenge.setStatus(BossBarStatus.valueOf(cfg.getString("onBlock.Status")));
 				if(cfg.isSet("onBlock.ToStayOn")) onBlockChallenge.setToStayOn(Material.valueOf(cfg.getString("onBlock.ToStayOn")));
 				//message will be constructed in Timer constructor		
 				if(cfg.isSet("onBlock.TimeTo")) {
@@ -247,6 +252,38 @@ public class ConfigHandler extends ConfigUtil {
 			ItemCollectionSameItemLimitChallenge iCSILChallenge = GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM);
 			if(iCSILChallenge.isActive()) {
 				iCSILChallenge.setPunishType(PunishType.valueOf(cfg.getString("noSameItem.Punishment")));
+			}
+			LavaGroundChallenge lavaGroundChallenge = GenericChallenge.getChallenge(ChallengeType.GROUND_IS_LAVA);
+			if(lavaGroundChallenge.isActive()) {
+				lavaGroundChallenge.setTimeToTransition(cfg.getLong("floorIsLava.Time"));
+				lavaGroundChallenge.setLavaStay(cfg.getBoolean("floorIsLava.LavaStay"));
+				lavaGroundChallenge.setChangeTimers(deserializeFloorIsLavaTimers(lavaGroundChallenge, cfg.getStringList("floorIsLava.Pos")));
+			}
+			HeightChallenge heightChallenge = GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT);
+			if(heightChallenge.isActive()) {
+				heightChallenge.setPunishType(PunishType.valueOf(cfg.getString("heightChallenge.Punishment")));
+				heightChallenge.setEarliestToShow(cfg.getInt("heightChallenge.EarliestToShow"));
+				heightChallenge.setLatestToShow(cfg.getInt("heightChallenge.LatestToShow"));
+				heightChallenge.setEarliestToBeOnHeight(cfg.getInt("heightChallenge.EarliestToBeOnHeight"));
+				heightChallenge.setLatestToBeOnHeight(cfg.getInt("heightChallenge.LatestToBeOnHeight"));
+				heightChallenge.setStatus(BossBarStatus.valueOf(cfg.getString("heightChallenge.Status")));
+				if(cfg.isSet("heightChallenge.ToBeOnHeightNormal")) {
+					heightChallenge.getNormalHeight().setToBeOnHeight(cfg.getInt("heightChallenge.ToBeOnHeightNormal"));
+					heightChallenge.getNetherHeight().setToBeOnHeight(cfg.getInt("heightChallenge.ToBeOnHeightNether"));
+				}
+				//message will be constructed in Timer constructor		
+				if(cfg.isSet("heightChallenge.TimeTo")) {
+					//not really necessary, the boss bar just cannot be null			
+					heightChallenge.setTimer(new HeightTimer(PLUGIN, 
+							heightChallenge, 
+							cfg.getLong("heightChallenge.TotalTimeTo"), 
+							cfg.getLong("heightChallenge.TimeTo"),
+							false));
+				}
+				heightChallenge.createBossBar(cfg.isSet("onBlock.Message") ? 
+						cfg.getString("heightChallenge.Message").replace("[TIME]", DateUtil.formatNoHourDuration(heightChallenge.getTimer().getTimeTo())) 
+						: LanguageMessages.onHeightHidden, BarColor.WHITE);
+				cProfile.getParticipantsAsPlayers().forEach(p -> heightChallenge.addPlayerToBossBar(p));
 			}
 		}
 		else {
@@ -325,6 +362,8 @@ public class ConfigHandler extends ConfigUtil {
 		cfg.set("onBlock.Boolean", GenericChallenge.isActive(ChallengeType.ON_BLOCK));
 		cfg.set("itemCollectionLimitGlobal.Boolean", GenericChallenge.isActive(ChallengeType.ITEM_LIMIT_GLOBAL));
 		cfg.set("noSameItem.Boolean", GenericChallenge.isActive(ChallengeType.NO_SAME_ITEM));
+		cfg.set("floorIsLava.Boolean", GenericChallenge.isActive(ChallengeType.GROUND_IS_LAVA));
+		cfg.set("heightChallenge.Boolean", GenericChallenge.isActive(ChallengeType.BE_AT_HEIGHT));
 		
 		if(cProfile.hasStarted) {
 			cfg.set("Order", cProfile.getSecondTimer().getOrder().toString());
@@ -405,6 +444,35 @@ public class ConfigHandler extends ConfigUtil {
 			ItemCollectionSameItemLimitChallenge iCSILChallenge = GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM);
 			if(iCSILChallenge.isActive()) {
 				cfg.set("noSameItem.Punishment", iCSILChallenge.getPunishType().toString());
+			}
+			LavaGroundChallenge lavaGroundChallenge = GenericChallenge.getChallenge(ChallengeType.GROUND_IS_LAVA);
+			if(lavaGroundChallenge.isActive()) {
+				cfg.set("floorIsLava.Time", lavaGroundChallenge.getTimeToTransition());
+				cfg.set("floorIsLava.LavaStay", lavaGroundChallenge.isLavaStay());
+				cfg.set("floorIsLava.Pos", serializeFloorIsLavaTimers(lavaGroundChallenge.getChangeTimers()));
+			}
+			HeightChallenge heightChallenge = GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT);
+			if(heightChallenge.isActive()) {
+				cfg.set("heightChallenge.Punishment", heightChallenge.getPunishType().toString());
+				cfg.set("heightChallenge.EarliestToShow", heightChallenge.getEarliestToShow());
+				cfg.set("heightChallenge.LatestToShow", heightChallenge.getLatestToShow());
+				cfg.set("heightChallenge.EarliestToBeOnHeight", heightChallenge.getEarliestToBeOnHeight());
+				cfg.set("heightChallenge.LatestToBeOnHeight", heightChallenge.getEarliestToBeOnHeight());
+				cfg.set("heightChallenge.Status", heightChallenge.getStatus().toString());
+				if(heightChallenge.getNormalHeight().getToBeOnHeight() != 0) {
+					cfg.set("heightChallenge.ToBeOnHeightNormal", heightChallenge.getNormalHeight().getToBeOnHeight());
+					cfg.set("heightChallenge.ToBeOnHeightNether", heightChallenge.getNetherHeight().getToBeOnHeight());
+				}
+				if(heightChallenge.getTimer() != null) {
+					heightChallenge.getNormalHeight().getBossbar().removeAll();
+					heightChallenge.getNetherHeight().getBossbar().removeAll();
+					if(heightChallenge.getNormalHeight().getBossbarMessageShown() != null && !heightChallenge.getNormalHeight().getBossbarMessageShown().isEmpty()) {
+						cfg.set("heightChallenge.NormalMessage", heightChallenge.getNormalHeight().getBossbarMessageShown());
+						cfg.set("heightChallenge.NetherMessage", heightChallenge.getNetherHeight().getBossbarMessageShown());				
+					}
+					cfg.set("heightChallenge.TimeTo", heightChallenge.getTimer().getTimeTo());
+					cfg.set("heightChallenge.TotalTimeTo", heightChallenge.getTimer().getTotalTimeTo());
+				}
 			}
 		}
 		saveCustomYml(cfg, file);

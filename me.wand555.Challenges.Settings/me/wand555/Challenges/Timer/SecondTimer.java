@@ -1,6 +1,8 @@
 package me.wand555.Challenges.Timer;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
+import org.bukkit.Particle;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.wand555.Challenges.Challenges;
@@ -61,7 +63,10 @@ public class SecondTimer extends BukkitRunnable {
 			}
 			//System.out.println(component);
 			cProfile.getParticipantsAsPlayers()
-				.forEach(p -> p.spigot().sendMessage(ChatMessageType.ACTION_BAR, component));
+				.forEach(p -> {
+					p.spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
+					p.getWorld().spawnParticle(Particle.PORTAL, p.getLocation().add(0, 1, 0), 50);
+				});
 		}
 	}
 	

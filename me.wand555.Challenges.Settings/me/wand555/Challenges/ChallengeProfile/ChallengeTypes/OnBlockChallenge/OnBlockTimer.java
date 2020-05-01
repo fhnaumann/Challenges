@@ -15,6 +15,7 @@ import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.API.Events.Violation.CallViolationEvent;
 import me.wand555.Challenges.ChallengeProfile.ChallengeEndReason;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.BossBarStatus;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 import me.wand555.Challenges.Config.LanguageMessages;
 
@@ -47,7 +48,7 @@ public class OnBlockTimer extends BukkitRunnable implements CallViolationEvent {
 			onBlockChallenge.setDefaults();
 		}
 		else {
-			if(onBlockChallenge.getStatus() == OnBlockChallengeStatus.SHOWN) {
+			if(onBlockChallenge.getStatus() == BossBarStatus.SHOWN) {
 				onBlockChallenge.setBossBarMessageShown(LanguageMessages.onBlockShown
 						.replace("[BLOCK]", WordUtils.capitalize(onBlockChallenge.getToStayOn().toString().toLowerCase().replace('_', ' '))));
 			}
@@ -67,7 +68,7 @@ public class OnBlockTimer extends BukkitRunnable implements CallViolationEvent {
 		System.out.println(timeTo);
 		if(timeTo <= 0) {
 			//System.out.println(onBlockChallenge.getStatus());
-			if(onBlockChallenge.getStatus() == OnBlockChallengeStatus.HIDDEN) {
+			if(onBlockChallenge.getStatus() == BossBarStatus.HIDDEN) {
 				timeTo = ThreadLocalRandom.current()
 						.nextLong(onBlockChallenge.getEarliestOnBlock(), (onBlockChallenge.getLatestOnBlock()+1));
 				totalTimeTo = timeTo;
@@ -109,7 +110,7 @@ public class OnBlockTimer extends BukkitRunnable implements CallViolationEvent {
 		}
 		else {	
 			timeTo -= 1;		
-			if(onBlockChallenge.getStatus() == OnBlockChallengeStatus.SHOWN) {
+			if(onBlockChallenge.getStatus() == BossBarStatus.SHOWN) {
 				onBlockChallenge.adjustProgress(timeTo < 0 ? 0 : timeTo);
 				onBlockChallenge.adjustColorIfCase();
 			}

@@ -39,8 +39,8 @@ public class RandomizeListener implements Listener {
 					RandomizedBlockDropsChallenge rBDChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_BLOCK_DROPS);
 					Material random = rBDChallenge.getRandomizedMaterial(block.getType());
 					if(random.isAir()) return;
-					event.setCancelled(true);
-					event.getBlock().setType(Material.AIR);
+					if(!random.isItem()) return;
+					event.setDropItems(false);
 					block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(random));
 				}
 			}
@@ -62,6 +62,7 @@ public class RandomizeListener implements Listener {
 						event.getDrops().forEach(itemstack -> {
 							Material random = rMDChallenge.getRandomizedMaterial(itemstack.getType());
 							if(random.isAir()) return;
+							if(!random.isItem()) return;
 							entity.getWorld().dropItemNaturally(entity.getLocation(), new ItemStack(random, itemstack.getAmount()));
 						});
 					}
@@ -96,6 +97,7 @@ public class RandomizeListener implements Listener {
 					RandomizedCraftingChallenge rCChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_CRAFTING);
 					Material random = rCChallenge.getRandomizedMaterial(event.getResult().getType());
 					if(random.isAir()) return;
+					if(!random.isItem()) return;
 					event.setResult(new ItemStack(random, event.getResult().getAmount()));
 				}
 			}

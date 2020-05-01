@@ -29,6 +29,12 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scoreboard.Criterias;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.RenderType;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.API.Events.Violation.CallViolationEvent;
@@ -71,7 +77,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	
 	private InventoryManager invManager;
 	
-	//private MLG mlg;
+	private Scoreboard scoreBoard;
 	
 	private ChallengeProfile() {}
 	
@@ -95,7 +101,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	}
 	
 	public Set<Player> getParticipantsAsPlayers() {
-		return participants.stream().map(Bukkit::getPlayer).collect(Collectors.toSet());
+		return participants.stream().map(Bukkit::getPlayer).filter(p -> p != null).collect(Collectors.toSet());
 	}
 	
 	public static ChallengeProfile getInstance() {
@@ -109,6 +115,22 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	
 	public boolean isInChallenge(UUID uuid) {
 		return participants.stream().anyMatch(key -> key.equals(uuid));
+	}
+	
+	public void initializeScoreBoard() {
+		scoreBoard = Bukkit.getScoreboardManager().getNewScoreboard();
+		Objective objective = scoreBoard.registerNewObjective("Health", Criterias.HEALTH, "health", RenderType.HEARTS);
+		objective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+		//Score score = objective.getScore("abcTest").set;
+		//score.set
+	}
+	
+	public void addToScoreBoard(Player p) {
+		p.setScoreboard(scoreBoard);
+	}
+	
+	public void removeFromScoreBoard(Player p) {
+		p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 	}
 	
 	public void displayTimerDescendingEnterGUI(SignMenuFactory signMenuFactory, Player p) {	
@@ -125,6 +147,26 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
         	if(timeEntered > 0) {
         		getSecondTimer().setTime(timeEntered);
         		ChallengeProfile.getInstance().startTimer(TimerOrder.DESC);
+				ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
+        		return true;
+        	}
+        	else {
+        		p.sendMessage(LanguageMessages.notANumber.replace("[NUMBER]", enteredLine1));
+        		return false;
+        	}
+        })
+        .open(p);
+	}
+	
+	public void displayTimerSetEnterGUI(SignMenuFactory signMenuFactory, Player p) {
+		signMenuFactory
+        .newMenu(new ArrayList<String>(LanguageMessages.timerStartDescSign))
+        .reopenIfFail()
+        .response((player, lines) -> {
+        	String enteredLine1 = lines[0]; 
+        	long timeEntered = DateUtil.getSecondsFromFormattedDuration(enteredLine1);
+        	if(timeEntered > 0) {
+        		getSecondTimer().setTime(timeEntered);
 				ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
         		return true;
         	}
@@ -214,38 +256,9 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		}
 		
 		//It doesnt have to be block drops, I just need any so I can access the static map
-		RandomChallenge randomChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_BLOCK_DROPS);
+		/*RandomChallenge randomChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_BLOCK_DROPS);
 		if(!RandomChallenge.clearRandomizationIfCase()) {
 			randomChallenge.randomizeItems();
-		}
-		
-		MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
-		/*if(mlgChallenge.isActive()) {
-			//if timer is already active
-			if(mlgChallenge.getTimer() == null 
-					|| mlgChallenge.getTimer().getTimeToMLG() == 0 
-					|| mlgChallenge.getTimer().getTotalTimeToMLG() == 0) {
-				//wenn der Timer noch nie vorher gestartet wurde
-				mlgChallenge.setTimer(new MLGTimer(PLUGIN, mlgChallenge));
-			}
-			else if(mlgChallenge.getTimer().isCancelled()) {
-				mlgChallenge.setTimer(new MLGTimer(PLUGIN, mlgChallenge.getTimer().getTotalTimeToMLG(), mlgChallenge.getTimer().getTimeToMLG()));
-			}
-		}*/
-		
-		OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);
-		/*if(onBlockChallenge.isActive()) {
-			if(onBlockChallenge.getTimer() == null
-					|| onBlockChallenge.getTimer().getTimeTo() == 0
-					|| onBlockChallenge.getTimer().getTotalTimeTo() == 0) {
-				//noch nie gestartet
-				onBlockChallenge.setTimer(new OnBlockTimer(PLUGIN, onBlockChallenge));
-			}
-			else if(onBlockChallenge.getTimer().isCancelled()) {
-				onBlockChallenge.setTimer(new OnBlockTimer(PLUGIN, onBlockChallenge, onBlockChallenge.getTimer().getTotalTimeTo(), onBlockChallenge.getTimer().getTimeTo()));
-			}
-			
-			getParticipantsAsPlayers().forEach(p -> onBlockChallenge.addPlayerToBossBar(p));
 		}*/
 	}
 	
@@ -336,13 +349,14 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	@Override
 	public void resetChallenge() {
 		isRestarted = true;
+		System.out.println(getParticipantsAsPlayers().size());
 		getParticipantsAsPlayers().forEach(WorldUtil::loadPlayerInformationBeforeChallengeAndApply);
 		Bukkit.getScheduler().runTaskLater(PLUGIN, () -> {
 			WorldUtil.deleteChallengeWorldsAndPlayerData();
 			WorldUtil.deletePortalData();
 			WorldUtil.deletePositionData();
 			
-			participants.clear();
+			if(!PLUGIN.getConfig().getBoolean("autoReset")) participants.clear();
 			WorldLinkManager.worlds.clear();
 			super.restoreDefault();
 		}, 30L);

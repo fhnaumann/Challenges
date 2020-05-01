@@ -224,20 +224,6 @@ public class WorldUtil extends ConfigUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		ChallengeProfile.getInstance().getParticipantsAsPlayers().stream().forEach(p -> {
-			System.out.println("Deleting player: " + p.getUniqueId().toString());
-			File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"PlayerData"+File.separatorChar, p.getUniqueId().toString()+".yml");
-			System.out.println(file.getPath());
-			//YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-			//cfg.getKeys(false).forEach(s -> {
-			//	System.out.println(s);
-			//	cfg.set(s, null);
-			//});
-			//saveCustomYml(cfg, file);
-			boolean b = file.delete();
-			System.out.println(b);
-		});*/
 		new File(PLUGIN.getDataFolder()+"", "profilesAndTimers.yml").delete();
 	}
 	

@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 
 import io.netty.util.internal.ThreadLocalRandom;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.BossBarShown;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.BossBarStatus;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
@@ -28,7 +29,7 @@ import me.wand555.Challenges.Timer.DateUtil;
 public class OnBlockChallenge extends GenericChallenge implements Punishable, ReasonNotifiable, BossBarShown {
 
 	private Material toStayOn;
-	private OnBlockChallengeStatus status;
+	private BossBarStatus status;
 	
 	private int earliestToShow;
 	private int latestToShow;
@@ -62,8 +63,9 @@ public class OnBlockChallenge extends GenericChallenge implements Punishable, Re
 	/**
 	 * When the status changes from HIDDEN to SHOWN
 	 */
+	@Override
 	public void fromHiddenToShownChange(long totalTimeTo) {
-		setStatus(OnBlockChallengeStatus.SHOWN);
+		setStatus(BossBarStatus.SHOWN);
 		toStayOn = blockMaterials.get(ThreadLocalRandom.current().nextInt(blockMaterials.size()));
 		bossBarMessageShown = LanguageMessages.onBlockShown
 				.replace("[BLOCK]", WordUtils.capitalize(toStayOn.toString().toLowerCase().replace('_', ' ')));
@@ -72,8 +74,9 @@ public class OnBlockChallenge extends GenericChallenge implements Punishable, Re
 		bossbar.setColor(BarColor.BLUE);
 	}
 	
+	@Override
 	public void fromShownToHiddenChange() {
-		setStatus(OnBlockChallengeStatus.HIDDEN);
+		setStatus(BossBarStatus.HIDDEN);
 		bossbar.setTitle(LanguageMessages.onBlockHidden);
 		bossBarMessageShown = null;
 		bossbar.setProgress(1);
@@ -113,14 +116,14 @@ public class OnBlockChallenge extends GenericChallenge implements Punishable, Re
 	/**
 	 * @return the status
 	 */
-	public OnBlockChallengeStatus getStatus() {
+	public BossBarStatus getStatus() {
 		return status;
 	}
 
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(OnBlockChallengeStatus status) {
+	public void setStatus(BossBarStatus status) {
 		this.status = status;
 	}
 
@@ -220,7 +223,7 @@ public class OnBlockChallenge extends GenericChallenge implements Punishable, Re
 	@Override
 	public void adjustProgress(long time) {
 		this.bossbar.setProgress(timer.getTimeTo()/((double)timer.getTotalTimeTo()));
-		if(status == OnBlockChallengeStatus.SHOWN) {
+		if(status == BossBarStatus.SHOWN) {
 			this.bossbar.setTitle(bossBarMessageShown.replace("[TIME]", DateUtil.formatNoHourDuration(time)));
 		}
 	}
@@ -269,7 +272,7 @@ public class OnBlockChallenge extends GenericChallenge implements Punishable, Re
 
 	@Override
 	public void setDefaults() {
-		setStatus(OnBlockChallengeStatus.HIDDEN);
+		setStatus(BossBarStatus.HIDDEN);
 		createBossBar(LanguageMessages.onBlockHidden, BarColor.WHITE);
 	}
 	

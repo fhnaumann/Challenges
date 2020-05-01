@@ -10,6 +10,11 @@ import com.google.common.collect.ImmutableList;
 import me.wand555.Challenges.ChallengeProfile.ChallengeEndReason;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 
+/**
+ * Called when a player has beaten a challenge.
+ * @author wand555
+ *
+ */
 public class ChallengeBeatenEvent extends Event {
 
 	private static final HandlerList handlers = new HandlerList();

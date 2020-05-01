@@ -20,6 +20,7 @@ public class UserConfig extends ConfigUtil {
 		PLUGIN.getConfig().addDefault("Language", "#German - " + Language.GERMAN.getAbbreviation());
 		PLUGIN.getConfig().addDefault("Language", "de");
 		PLUGIN.getConfig().addDefault("logDamage", true);
+		PLUGIN.getConfig().addDefault("autoReset", false);
 		PLUGIN.saveConfig();
 	}
 	
@@ -67,6 +68,9 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("noRestoreBecauseDesc", "&7Cannot restore a countdown challenge!");
 		msgDefaults.put("posEmpty", "&7No positions exist.");
 		msgDefaults.put("notRestorable", "&7This challenge is not restorable.");
+		msgDefaults.put("timerNotSettable", "&7Challenge has be running.");
+		
+		msgDefaults.put("loadingWorlds", "&7Generating new worlds...");
 		
 		msgDefaults.put("endChallengeReset", "&7Type &a/challenge reset &7to reset the challenge.");
 		msgDefaults.put("endChallengeComplete", "&7The challenge has been completed in &2&l[TIME]&7!");
@@ -87,7 +91,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("timerMessageFinished", "&7&lFinal Time: &2[TIME] &7 - /challenge reset or /challenge restore");
 		
 		msgDefaults.put("challengeOptionSyntax", "&7Syntax: /challenge join:leave:restore:reset");
-		msgDefaults.put("timerOptionSyntax", "&7Syntax: &a/timer start:pause");
+		msgDefaults.put("timerOptionSyntax", "&7Syntax: &a/timer start:pause:set:reset");
 		msgDefaults.put("hpOptionSyntax", "&7Syntax: &a/hp <Amount> <Player>");
 		msgDefaults.put("positionSyntax", "&7Syntax: &a/pos <Name>");
 		msgDefaults.put("bpSyntax", "&7Syntax: &a/bp");
@@ -112,6 +116,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiRandomMLGName", "&7&lRandom MLG");
 		msgDefaults.put("guiOnBlockName", "&7&lForceBlock");
 		msgDefaults.put("guiItemCollectionLimitGlobalName", "&7&lGlobal Item Limit");
+		msgDefaults.put("guiItemFloorIsLavaName", "&7&lFloor is Lava");
 		
 		msgDefaults.put("noPreviousPage", "&7You're on the first page.");
 		msgDefaults.put("noNextPage", "&7You're on the last page.");
@@ -137,6 +142,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiMLGLore", "Random MLG's in custom intervals!");
 		msgDefaults.put("guiOnBlockLore", "All players have to stand on a certain block type in random intervals (configurable)!");
 		msgDefaults.put("guiItemCollectionLimitGlobalLore", "The unique amount of items players can in the inventory in total!");
+		msgDefaults.put("guiItemFloorIsLavaLore", "The floor is lava. The blocks you stand on transition from normal -> magma -> lava -> normal.");
 		
 		msgDefaults.put("guiCustomHealthAmount", "&7Custom HP: &a[AMOUNT]HP");
 		msgDefaults.put("guiItemCollectionLimit", "&7Limit: &a[AMOUNT] &7Unique items");
@@ -161,6 +167,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("violationMLG", "&2[PLAYER] &7failed the MLG (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationOnBlock", "&2[PLAYER] &7failed to stand on the block (Punishment: &2[PUNISHMENT]&7!");
 		msgDefaults.put("violationNoSameItemInInventory", "&2[PLAYER] &7collected &e[MATERIAL]&7, which is already in someone's inventory (Punishment: &2[PUNISHMENT]&7)!");
+		msgDefaults.put("violationToBeOnHeight", "&2[PLAYER] &7failed to be at &e[HEIGHT] &7(Punishment: &2[PUNISHMENT]&7!");
 		
 		msgDefaults.put("passedMLG", "&7All players beat the MLG!");
 		msgDefaults.put("passedOnBlock", "&7All players stood on the correct block!");
@@ -179,15 +186,19 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("punishmentAmountSign", "_Choose a value_between 1 and 10_(both inclusive)");
 		msgDefaults.put("timerStartDescSign", "__Format is_HH:MM:SS");
 		msgDefaults.put("itemCollectionLimitGlobalSign", "__Choose amount_of unique items");
+		msgDefaults.put("floorIsLavaSign", "__Format is_Time true | false");
 		
 		msgDefaults.put("signCorrect", "&7Successfully changed settings.");
 		msgDefaults.put("signTooLowWrong", "&7a number entered is too low.");
 		msgDefaults.put("signLatestLowerThanEarliestWrong", "&7Latest cannot be smaller than earliest.");
 		msgDefaults.put("signNoNumberInRange", "&7'&a[NUMBER]&7' has to be between 1 and 10 (inclusive).");
 		msgDefaults.put("signNoEffect", "&Notice: Your action had no effect because another player started/resumed the timer.");
+		msgDefaults.put("signNoBoolean", "&a[BOOL] &7has to equal either 'true' or 'false'.");
 		
 		msgDefaults.put("onBlockHidden", "&7Waiting for block...");
 		msgDefaults.put("onBlockShown", "&7Stand on &e[BLOCK] &7in &2[TIME]&7!");
+		msgDefaults.put("onHeightHidden", "&7Waiting for height...");
+		msgDefaults.put("onHeightShown", "&7Be on &e[HEIGHT] &7in &2[TIME]&7!");
 		
 		msgDefaults.put("itemOnGroundAlreadyCollectedName", "&7Registered");
 		
@@ -234,6 +245,9 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("noRestoreBecauseDesc", "&7Kann keine Countdown Challenge wiederherstellen!");
 		msgDefaults.put("posEmpty", "&7Es existieren keine Positions.");
 		msgDefaults.put("notRestorable", "&7Diese Challenge ist nicht wiederherstellbar.");
+		msgDefaults.put("timerNotSettable", "&7Challenge muss laufen.");
+		
+		msgDefaults.put("loadingWorlds", "&7Generiere neue Welten...");
 		
 		msgDefaults.put("endChallengeReset", "&7Nutze &a/challenge reset &7um die Challenge zu beenden.");
 		msgDefaults.put("endChallengeComplete", "&7Die Challenge wurde in &2&l[TIME] &7gemeistert!");
@@ -254,7 +268,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("timerMessageFinished", "&7&lFinale Zeit: &2[TIME] &7 - /challenge reset oder /challenge restore");
 		
 		msgDefaults.put("challengeOptionSyntax", "&7Syntax: /challenge join:leave:restore:reset");
-		msgDefaults.put("timerOptionSyntax", "&7Syntax: &a/timer start:pause");
+		msgDefaults.put("timerOptionSyntax", "&7Syntax: &a/timer start:pause:set:reset");
 		msgDefaults.put("hpOptionSyntax", "&7Syntax: &a/hp <Anzahl> <Spieler>");
 		msgDefaults.put("positionSyntax", "&7Syntax: &a/pos <Name>");
 		msgDefaults.put("bpSyntax", "&7Syntax: &a/bp");
@@ -285,6 +299,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiRandomMLGName", "&7&lZufälliger MLG");
 		msgDefaults.put("guiOnBlockName", "&7&lForceBlock");
 		msgDefaults.put("guiItemCollectionLimitGlobalName", "&7&lGlobales Item Limit");
+		msgDefaults.put("guiItemFloorIsLavaName", "&7&lDer Boden ist Lava");
 		
 		msgDefaults.put("guiBackpackLore", "&7Ein gemeinsamer Rucksack zum Teilen von Items!");
 		msgDefaults.put("guiDeathLore", "Die Challenge ist vorbei sobald ein Spieler stirbt!");
@@ -304,6 +319,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiMLGLore", "Zufällige MLG's in ausgewählten Intervallen!");
 		msgDefaults.put("guiOnBlockLore", "Es werden in bestimmten Intervallen zufällig Blöcke ausgewählt, auf denen ihr nach einer konfigurienten Zeit draufstehen müsst!");
 		msgDefaults.put("guiItemCollectionLimitGlobalLore", "Begrenzt die maximale Anzahl an verschiedenen Items, die genutzt werden!");
+		msgDefaults.put("guiItemFloorIsLavaLore", "Der Boden ist Lava. Die Blöcke unter dir verwandeln sich wie folgt: Normal -> Magma -> Lava -> Normal");
 		
 		msgDefaults.put("guiCustomHealthAmount", "&7Ausgewählte HP: &a[AMOUNT]HP");
 		msgDefaults.put("guiItemCollectionLimit", "&7Limit: &a[AMOUNT] &7verschiedene Items");
@@ -323,11 +339,12 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("violationNoDamage", "&2[PLAYER] &7hat durch &a[REASON] &e[AMOUNT] &7Schaden genommen (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationBlockPlacing", "&2[PLAYER] &7hat einen Block platziert (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationBlockBreaking", "&2[PLAYER] &7hat einen Block abgebaut (Bestrafung: &2[PUNISHMENT]&7)!");
-		msgDefaults.put("violationCrafting", "&2[PLAYER] &7hat ein item gecraftet (Bestrafung: &2[PUNISHMENT]&7)!");
+		msgDefaults.put("violationCrafting", "&2[PLAYER] &7hat ein Item gecraftet (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationSneaking", "&2[PLAYER] &7hat gesneakt (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationMLG", "&2[PLAYER]&7 hat den MLG nicht geschafft (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationOnBlock", "&2[PLAYER] &7stand nicht auf dem Block (Bestrafung: &2[PUNISHMENT]&7!");
 		msgDefaults.put("violationNoSameItemInInventory", "&2[PLAYER] &7hat &e[MATERIAL] &7aufgesammelt, was bereits jemand im Inventar hatte (Bestrafung: &2[PUNISHMENT]&7)!");
+		msgDefaults.put("violationToBeOnHeight", "&2[PLAYER] &7war nicht auf der Höhe &e[HEIGHT] &7(Bestrafung: &2[PUNISHMENT]&7!");
 		
 		msgDefaults.put("passedMLG", "&7Alle Spieler haben den MLG geschafft!");
 		msgDefaults.put("passedOnBlock", "Alle Spieler standen auf dem korrekten Block!");
@@ -345,15 +362,19 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("punishmentAmountSign", "_Wähle einen Wert_zw. 1 und 10_(beide inklusive)");
 		msgDefaults.put("timerStartDescSign", "__Format ist_HH:MM:SS");
 		msgDefaults.put("itemCollectionLimitGlobalSign", "__Wähle die max._Anzahl an Items");
+		msgDefaults.put("floorIsLavaSign", "__Format ist_Zeit true | false");
 		
 		msgDefaults.put("signCorrect", "&7Einstellungen erfolgreich aktualisiert.");
 		msgDefaults.put("signTooLowWrong", "&7Eine der Zahlen ist zu niedrig.");
 		msgDefaults.put("signLatestLowerThanEarliestWrong", "&7Maximal kann nicht kleiner als Minimal sein.");
 		msgDefaults.put("signNoNumberInRange", "&7''&a[NUMBER]&7'' muss zwischen 1 und 10 sein (inklusive).");
 		msgDefaults.put("signNoEffect", "&7Hinweis: Deine Eingabe hatte keinen Effekt, da ein anderer Spieler den Timer bereits fortgesetzt hat.");
+		msgDefaults.put("signNoBoolean", "&a[BOOL] &7muss entweder 'true' oder 'false' entsprechen.");
 		
-		msgDefaults.put("onBlockHidden", "&7Waiting for block...");
-		msgDefaults.put("onBlockShown", "&7Stand on &e[BLOCK] &7in &2[TIME]&7!");
+		msgDefaults.put("onBlockHidden", "&7Warten auf Block...");
+		msgDefaults.put("onBlockShown", "&7Stehe auf &e[BLOCK] &7in &2[TIME]&7!");
+		msgDefaults.put("onHeightHidden", "&7Warten auf Höhe...");
+		msgDefaults.put("onHeightShown", "&7Sei auf &e[HEIGHT] &7in &2[TIME]&7!");
 		
 		msgDefaults.put("itemOnGroundAlreadyCollectedName", "&7Registriert");
 		

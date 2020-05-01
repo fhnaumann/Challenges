@@ -8,6 +8,7 @@ import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge.HeightChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
@@ -26,6 +27,7 @@ public class PlayerQuitListener implements Listener {
 			ChallengeProfile.getInstance().removeFromParticipants(event.getPlayer().getUniqueId());
 			if(GenericChallenge.isActive(ChallengeType.ON_BLOCK) && ChallengeProfile.getInstance().canTakeEffect()) {
 				((OnBlockChallenge)GenericChallenge.getChallenge(ChallengeType.ON_BLOCK)).removePlayerFromBossBar(event.getPlayer());
+				((HeightChallenge)GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT)).removePlayerFromBossBar(event.getPlayer());
 			}
 			if(ChallengeProfile.getInstance().isInMLGRightNow) {
 				if(GenericChallenge.isActive(ChallengeType.MLG)) {

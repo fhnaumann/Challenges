@@ -6,20 +6,44 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import me.wand555.Challenges.Challenges;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.LavaGroundChallenge.BlockChangeTimer;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.LavaGroundChallenge.BlockStatus;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.LavaGroundChallenge.LavaGroundBlockData;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.LavaGroundChallenge.LavaGroundChallenge;
 
 public class ConfigUtil {
 	
 	protected static final Challenges PLUGIN = Challenges.getPlugin(Challenges.class);
+	
+	protected static ArrayList<String> serializeFloorIsLavaTimers(Set<BlockChangeTimer> timers) {
+		return timers.stream()
+				.map(timer -> serializeLocation(timer.getBlockLoc()) + "\"" + timer.getData().getStatus().toString() + "\"" + timer.getData().getPreviousMaterial().toString())
+				.collect(Collectors.toCollection(ArrayList::new));
+	}
+	
+	protected static Set<BlockChangeTimer> deserializeFloorIsLavaTimers(LavaGroundChallenge challenge, List<String> timers) {
+		Set<BlockChangeTimer> newTimers = new HashSet<BlockChangeTimer>();
+		for(String string : timers) {
+			String[] splitted = string.split("\"");
+			Location blockLoc = deserializeLocation(splitted[0]);
+			LavaGroundBlockData data = new LavaGroundBlockData(BlockStatus.valueOf(splitted[1]), Material.matchMaterial(splitted[2]));
+			newTimers.add(new BlockChangeTimer(PLUGIN, challenge, blockLoc, data));
+		}
+		return newTimers;
+	}
 	
 	protected static ArrayList<String> serializePotionEffects(Collection<PotionEffect> effects) {
 		return effects.stream().map(pot -> pot.getType().getName()+"/"+pot.getDuration()+"/"+pot.getAmplifier()+"/"

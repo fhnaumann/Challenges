@@ -1,8 +1,10 @@
 package me.wand555.Challenges.ChallengeProfile.ChallengeTypes;
 
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge.HeightChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionSameItemLimitChallenge;
 import me.wand555.Challenges.Config.LanguageMessages;
 
@@ -22,6 +24,8 @@ public interface ReasonNotifiable {
 			return LanguageMessages.passedMLG;
 		case ON_BLOCK:
 			return LanguageMessages.passedOnBlock;
+		case BE_AT_HEIGHT:
+			return "ADD TRANSLATION PASSED MESSAGE";
 		default: return "unknown";
 		}
 	}
@@ -66,6 +70,13 @@ public interface ReasonNotifiable {
 				return LanguageMessages.violationNoSameItemInInventory.replace("[PLAYER]", causer.getName())
 						.replace("[MATERIAL]", WordUtils.capitalize(((ItemCollectionSameItemLimitChallenge)GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM))
 								.getLatestAdded().toString().replace('_', ' ').toLowerCase()))
+						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
+			case BE_AT_HEIGHT:
+				return LanguageMessages.violationToBeOnHeight.replace("[PLAYER]", causer.getName())
+						.replace("[HEIGHT]", 
+								causer.getWorld().getEnvironment() == Environment.NETHER ? 
+										Integer.toString(((HeightChallenge)GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT)).getNetherHeight().getToBeOnHeight())
+										: Integer.toString(((HeightChallenge)GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT)).getNormalHeight().getToBeOnHeight()))
 						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
 			default:
 				return causer.getName() + " has failed a challenge (unknown reason) (" + getFittingPunishmentMessage(punishment) + ")!";

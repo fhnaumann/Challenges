@@ -54,8 +54,8 @@ public class BackpackListener implements Listener {
 						
 						@Override
 						public void run() {
-							ChallengeProfile.getInstance().getBackpack().setContents(event.getWhoClicked().getOpenInventory().getTopInventory().getContents());
-							ChallengeProfile.getInstance().getBackpack().updateInventories();
+							//ChallengeProfile.getInstance().getBackpack().setContents(event.getWhoClicked().getOpenInventory().getTopInventory().getContents());
+							//ChallengeProfile.getInstance().getBackpack().updateInventories();
 						}
 					}.runTaskLater(plugin, 1L);
 				}
@@ -66,8 +66,8 @@ public class BackpackListener implements Listener {
 	@EventHandler
 	public void onBackpackDragEvent(InventoryDragEvent event) {
 		if(event.getView().getTitle().equalsIgnoreCase(ChatColor.GREEN + "Backpack")) {
-			ChallengeProfile.getInstance().getBackpack().setContents(event.getView().getTopInventory().getContents());
-			ChallengeProfile.getInstance().getBackpack().updateInventories();
+			//ChallengeProfile.getInstance().getBackpack().setContents(event.getView().getTopInventory().getContents());
+			//ChallengeProfile.getInstance().getBackpack().updateInventories();
 		}
 	}
 	

@@ -21,6 +21,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge.HeightChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.OnBlockChallenge.OnBlockChallenge;
 import me.wand555.Challenges.Timer.TimerMessage;
@@ -48,6 +49,19 @@ public interface CallViolationEvent {
 		Bukkit.getServer().getPluginManager().callEvent(violationEvent);
 		if(!violationEvent.isCancelled()) {
 			onBlockChallenge.enforcePunishment(onBlockChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), players);
+			cProfile.sendMessageToAllParticipants(violationEvent.getLogMessage());
+		}
+		else {
+			if(violationEvent.hasDeniedMessage()) cProfile.sendMessageToAllParticipants(violationEvent.getDeniedMessage());
+		}
+	}
+	
+	default void callHeightEventAndActUpon(HeightChallenge heightChallenge, String logMessage, int toBeOnHeightNormal, int toBeOnHeightNether, Player... players) {
+		ChallengeProfile cProfile = ChallengeProfile.getInstance();
+		HeightChallengeViolationEvent violationEvent = new HeightChallengeViolationEvent(heightChallenge, heightChallenge.getPunishType(), logMessage, toBeOnHeightNormal, toBeOnHeightNether, players);
+		Bukkit.getServer().getPluginManager().callEvent(violationEvent);
+		if(!violationEvent.isCancelled()) {
+			heightChallenge.enforcePunishment(heightChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), players);
 			cProfile.sendMessageToAllParticipants(violationEvent.getLogMessage());
 		}
 		else {

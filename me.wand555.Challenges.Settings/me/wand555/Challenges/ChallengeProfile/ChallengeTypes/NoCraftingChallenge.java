@@ -1,17 +1,19 @@
 package me.wand555.Challenges.ChallengeProfile.ChallengeTypes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import com.google.common.collect.Lists;
 
 import me.wand555.Challenges.Config.LanguageMessages;
 
 public class NoCraftingChallenge extends GenericChallenge implements Punishable, ReasonNotifiable {
 
-private PunishType punishType;
+	public final HashSet<Material> byPassItems = new HashSet<Material>(Arrays.asList(Material.BLAZE_POWDER, Material.ENDER_EYE));
+	
+	private PunishType punishType;
 	
 	public NoCraftingChallenge() {
 		super(ChallengeType.NO_CRAFTING);

@@ -16,6 +16,8 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge.HeightChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge.HeightTimer;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
@@ -109,6 +111,27 @@ public interface CallSettingsChangeEvents {
 				onBlockChallenge.setLatestOnBlock(switchEvent.getLatestOnBlock());
 				onBlockChallenge.setTimer(new OnBlockTimer(plugin, onBlockChallenge, switchEvent.getTimeToBlockShown(), switchEvent.getTimeToBlockShown(), true));
 				ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(player -> onBlockChallenge.addPlayerToBossBar(player));
+			}
+			else {
+				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	
+			}
+			if(switchEvent.hasOverrideMessage()) p.sendMessage(switchEvent.getOverrideMessage());
+		}
+		else if(rawType.getClass().equals(HeightChallenge.class)) {
+			HeightChallenge heightChallenge = (HeightChallenge) rawType;
+			long timeToHeightShown = ThreadLocalRandom.current()
+					.nextLong(heightChallenge.getEarliestToShow(), (heightChallenge.getLatestToShow()+1));
+			HeightChallengeStatusSwitchEvent switchEvent = new HeightChallengeStatusSwitchEvent(heightChallenge, timeToHeightShown, type, p);
+			Bukkit.getServer().getPluginManager().callEvent(switchEvent);
+			if(!switchEvent.isCancelled()) {
+				heightChallenge.setAround();
+				heightChallenge.setPunishType(switchEvent.getPunishType());
+				heightChallenge.setEarliestToShow(switchEvent.getEarliestToShow());
+				heightChallenge.setLatestToShow(switchEvent.getLatestToShow());
+				heightChallenge.setEarliestToBeOnHeight(switchEvent.getEarliestToBeOnHeight());
+				heightChallenge.setLatestToBeOnHeight(switchEvent.getLatestToBeOnHeight());
+				heightChallenge.setTimer(new HeightTimer(plugin, heightChallenge, switchEvent.getTimeToHeightShown(), switchEvent.getTimeToHeightShown(), true));
+				ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(player -> heightChallenge.addPlayerToBossBar(player));
 			}
 			else {
 				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	

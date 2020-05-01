@@ -35,16 +35,18 @@ public class NoCraftingListener extends CoreListener {
 								if(event.getCurrentItem() != null) {
 									if(event.getCurrentItem().getType() != Material.AIR) {
 										NoCraftingChallenge nCChallenge = GenericChallenge.getChallenge(ChallengeType.NO_CRAFTING);
-										if(nCChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-											cProfile.endChallenge(nCChallenge, ChallengeEndReason.NO_BLOCK_PLACE, player);
-										}
-										else {		
-											String message = nCChallenge.createReasonMessage(nCChallenge.getPunishCause(), nCChallenge.getPunishType(), player);
-											callViolationPunishmentEventAndActUpon(nCChallenge, message, player);
-										}
-										if(nCChallenge.getPunishType() == PunishType.NOTHING) {
-											event.setCancelled(true);
-										}
+										if(!nCChallenge.byPassItems.contains(event.getCurrentItem().getType())) {
+											if(nCChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
+												cProfile.endChallenge(nCChallenge, ChallengeEndReason.NO_BLOCK_PLACE, player);
+											}
+											else {		
+												String message = nCChallenge.createReasonMessage(nCChallenge.getPunishCause(), nCChallenge.getPunishType(), player);
+												callViolationPunishmentEventAndActUpon(nCChallenge, message, player);
+											}
+											if(nCChallenge.getPunishType() == PunishType.NOTHING) {
+												event.setCancelled(true);
+											}
+										}	
 									}
 								}
 							}

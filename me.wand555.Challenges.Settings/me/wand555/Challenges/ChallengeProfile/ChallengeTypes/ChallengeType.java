@@ -18,7 +18,9 @@ RANDOMIZE_CRAFTING(false, false),
 MLG(true, false),
 ON_BLOCK(true, false),
 ITEM_LIMIT_GLOBAL(false, true),
-NO_SAME_ITEM(true, false)
+NO_SAME_ITEM(true, false),
+GROUND_IS_LAVA(false, false),
+BE_AT_HEIGHT(true, false)
 ;
 	/**
 	 * If the challenge is punishable
