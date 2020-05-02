@@ -128,7 +128,7 @@ public class Challenges extends JavaPlugin {
 		new RandomizeListener(this);
 		new MLGListener(this);
 		new ItemCollectionLimitGlobalListener(this);
-		//new NoSameItemListener(this);
+		new NoSameItemListener(this);
 		new LavaGroundListener(this);
 		new HeightWorldChangeListener(this);
 		
@@ -158,6 +158,11 @@ public class Challenges extends JavaPlugin {
 		mlgWorld.setGameRule(GameRule.DO_MOB_SPAWNING, false);
 		mlgWorld.setDifficulty(Difficulty.PEACEFUL);
 		mlgWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+		for(int x=-50; x<=50; x+=16) {
+			for(int z=-50; z<=50; z+=16) {
+				mlgWorld.getChunkAt(x, z).setForceLoaded(true);
+			}
+		}
 		WorldLinkManager.worlds.add(mlgWorld);
 	}
 }

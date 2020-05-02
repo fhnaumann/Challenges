@@ -123,7 +123,6 @@ public class MLGChallenge extends GenericChallenge implements Punishable, Reason
 				WorldUtil.loadPlayerInformationInChallengeAndApply(p);	
 				String message = createReasonMessage(getPunishCause(), getPunishType(), p);
 				callViolationPunishmentEventAndActUpon(this, message, p);
-				ChallengeProfile.getInstance().sendMessageToAllParticipants(message);
 				if(inMLGWorld.entrySet().stream().allMatch(entry -> entry.getValue() != null)) {	
 					this.setTimer(new MLGTimer(Challenges.getPlugin(Challenges.class), this));
 					ChallengeProfile.getInstance().setInMLGRightNow();

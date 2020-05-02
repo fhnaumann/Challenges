@@ -107,7 +107,9 @@ public class LanguageMessages extends ConfigUtil {
 	public static String guiRandomMLGName;
 	public static String guiOnBlockName;
 	public static String guiItemCollectionLimitGlobalName;
+	public static String guiItemCollectionSameItemName;
 	public static String guiItemFloorIsLavaName;
+	public static String guiToBeOnHeightName;
 	
 	public static ArrayList<String> guiBackpackLore;
 	public static ArrayList<String> guiDeathLore;
@@ -127,7 +129,9 @@ public class LanguageMessages extends ConfigUtil {
 	public static ArrayList<String> guiMLGLore;
 	public static ArrayList<String> guiOnBlockLore;
 	public static ArrayList<String> guiItemCollectionLimitGlobalLore;
+	public static ArrayList<String> guiItemCollectionSameItemLore;
 	public static ArrayList<String> guiItemFloorIsLavaLore;
+	public static ArrayList<String> guiToBeOnHeightLore;
 	
 	public static String guiCustomHealthAmount;
 	public static String guiItemCollectionLimit;
@@ -317,7 +321,9 @@ public class LanguageMessages extends ConfigUtil {
 		guiRandomMLGName = formatWithoutPrefix(cfg.getString("guiRandomMLGName"));
 		guiOnBlockName = formatWithoutPrefix(cfg.getString("guiOnBlockName"));
 		guiItemCollectionLimitGlobalName = formatWithoutPrefix(cfg.getString("guiItemCollectionLimitGlobalName"));
+		guiItemCollectionSameItemName = formatWithoutPrefix(cfg.getString("guiItemCollectionSameItemName"));
 		guiItemFloorIsLavaName = formatWithoutPrefix(cfg.getString("guiItemFloorIsLavaName"));
+		guiToBeOnHeightName = formatWithoutPrefix(cfg.getString("guiToBeOnHeightName"));
 		
 		guiDeathLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiDeathLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
@@ -355,7 +361,11 @@ public class LanguageMessages extends ConfigUtil {
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		guiItemCollectionLimitGlobalLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiItemCollectionLimitGlobalLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
+		guiItemCollectionSameItemLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiItemCollectionSameItemLore")), 20, "_", true).split("_"))
+				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		guiItemFloorIsLavaLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiItemFloorIsLavaLore")), 20, "_", true).split("_"))
+				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
+		guiToBeOnHeightLore = Lists.newArrayList(WordUtils.wrap(formatWithoutPrefix(cfg.getString("guiToBeOnHeightLore")), 20, "_", true).split("_"))
 				.stream().map(string -> "&7"+string).map(LanguageMessages::formatWithoutPrefix).collect(Collectors.toCollection(ArrayList::new));
 		
 		guiCustomHealthAmount = formatWithoutPrefix(cfg.getString("guiCustomHealthAmount"));

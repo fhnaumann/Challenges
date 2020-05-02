@@ -134,7 +134,7 @@ public abstract class GenericChallenge implements Challenge, ItemDisplayCreator 
 		case ON_BLOCK: return LanguageMessages.guiOnBlockName;
 		case ITEM_LIMIT_GLOBAL: return LanguageMessages.guiItemCollectionLimitGlobalName;
 		case GROUND_IS_LAVA: return LanguageMessages.guiItemFloorIsLavaName;
-		case BE_AT_HEIGHT: return "";
+		case BE_AT_HEIGHT: return LanguageMessages.guiToBeOnHeightName;
 		default: return "";
 		}
 	}

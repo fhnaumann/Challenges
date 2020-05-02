@@ -330,9 +330,9 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 			return;
 		case SAME_ITEM_IN_INVENTORY:
 			reasonMessage = LanguageMessages.endChallengeSameItemInInventory
-				.replace("[PLAYER]", causer[0].getName())
-				.replace("[MATERIAL]", WordUtils.capitalize(((ItemCollectionSameItemLimitChallenge)GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM))
-						.getLatestAdded().toString().replace('_', ' ').toLowerCase()));
+				.replace("[PLAYER]", causer[0].getName());
+				//.replace("[MATERIAL]", WordUtils.capitalize(((ItemCollectionSameItemLimitChallenge)GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM))
+				//		.getLatestAdded().toString().replace('_', ' ').toLowerCase()));
 			break;
 		default:
 			reasonMessage = "Unknown";
@@ -352,9 +352,10 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		System.out.println(getParticipantsAsPlayers().size());
 		getParticipantsAsPlayers().forEach(WorldUtil::loadPlayerInformationBeforeChallengeAndApply);
 		Bukkit.getScheduler().runTaskLater(PLUGIN, () -> {
+			System.out.println("ran");
 			WorldUtil.deleteChallengeWorldsAndPlayerData();
-			WorldUtil.deletePortalData();
-			WorldUtil.deletePositionData();
+			//WorldUtil.deletePortalData();
+			//WorldUtil.deletePositionData();
 			
 			if(!PLUGIN.getConfig().getBoolean("autoReset")) participants.clear();
 			WorldLinkManager.worlds.clear();

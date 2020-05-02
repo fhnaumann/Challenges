@@ -41,6 +41,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge.HeightChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionSameItemLimitChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.LavaGroundChallenge.LavaGroundChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGTimer;
@@ -550,6 +551,17 @@ public class GUIClickListener implements Listener, CallSettingsChangeEvents {
 								else {
 									iCLGChallenge.getPageMap().put(p.getUniqueId(), 1);
 									gui.createGUI(p, GUIType.COLLECTED_ITEMS_LIST);								
+								}
+								break;
+							}
+							case 17:
+							{
+								ItemCollectionSameItemLimitChallenge iCSILChallenge = GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM);
+								if(!iCSILChallenge.isActive()) {
+									gui.createGUI(p, GUIType.PUNISHMENT, iCSILChallenge.getPunishCause());
+								}
+								else {
+									callSettingsChangeNormalEventAndActUpon(iCSILChallenge, p, gui);
 								}
 								break;
 							}

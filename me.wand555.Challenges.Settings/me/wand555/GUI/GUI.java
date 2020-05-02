@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -88,9 +89,9 @@ public class GUI implements ItemDisplayCreator {
 				case 16:
 					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL).getDisplayItem());
 					break;
-				//case 17:
-					//gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM).getDisplayItem());
-					//break;
+				case 17:
+					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM).getDisplayItem());
+					break;
 				case 18:
 					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.GROUND_IS_LAVA).getDisplayItem());
 					break;
@@ -165,7 +166,7 @@ public class GUI implements ItemDisplayCreator {
 			punishmentChallengeTypeOpenGUI.put(p.getUniqueId(), challengeType[0]);
 		}
 		else if(type == GUIType.COLLECTED_ITEMS_LIST) {
-			gui = ChallengeProfile.getInstance().getInventoryManager().getAlreadyCollectedGUI();
+			gui = Bukkit.createInventory(null, InventoryManager.ALREADY_COLLECTED_GUI_SIZE, ChatColor.DARK_GREEN + "Collected Items");
 			ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
 			int endIndex = iCLGChallenge.placeItemsAlreadyCollected(gui, p.getUniqueId());
 			for(int i=endIndex<0?0:endIndex; i<gui.getSize(); i++) {
@@ -184,10 +185,6 @@ public class GUI implements ItemDisplayCreator {
 				else gui.setItem(i, createGlass());
 			}
 			ChallengeProfile.getInstance().getInventoryManager().setAlreadyCollectedGUI(gui);
-		}
-		else if(type == GUIType.BACKPACK) {
-			gui = ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI();
-			
 		}
 		p.openInventory(gui);
 	}

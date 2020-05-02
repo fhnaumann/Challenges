@@ -83,7 +83,7 @@ public class ConfigHandler extends ConfigUtil {
 	
 	private static void loadBackpackFromConfig() {
 		checkOrdner();
-		File file = new File(PLUGIN.getDataFolder()+"", "backpack.yml");
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "backpack.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		ChallengeProfile.getInstance().getBackpack().setEnabled(cfg.getBoolean("Status"));
 		List<?> list = cfg.getList("Content");
@@ -94,7 +94,7 @@ public class ConfigHandler extends ConfigUtil {
 	
 	private static void storeBackpackToConfig() {
 		clearFile("backpack.yml");
-		File file = new File(PLUGIN.getDataFolder()+"", "backpack.yml");
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "backpack.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		cfg.set("Status", ChallengeProfile.getInstance().getBackpack().isEnabled());
 		cfg.set("Content", Arrays.asList(ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI().getContents()));
@@ -103,7 +103,7 @@ public class ConfigHandler extends ConfigUtil {
 	
 	private static void loadPositionsFromConfig() {
 		checkOrdner();
-		File file = new File(PLUGIN.getDataFolder()+"", "positions.yml");
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "positions.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		for(String name : cfg.getKeys(false)) {
 			ChallengeProfile.getInstance().getPosManager().addToPositions(new Position(
@@ -116,7 +116,7 @@ public class ConfigHandler extends ConfigUtil {
 	
 	private static void storePositionsToConfig() {
 		clearFile("positions.yml");
-		File file = new File(PLUGIN.getDataFolder()+"", "positions.yml");
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "positions.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		for(Position pos : ChallengeProfile.getInstance().getPosManager().getPositions()) {
 			cfg.set(pos.getName()+".Location", serializeLocation(pos.getLocation()));
@@ -129,7 +129,7 @@ public class ConfigHandler extends ConfigUtil {
 	private static void loadChallengeProfilesAndTimers() {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
 		checkOrdner();
-		File file = new File(PLUGIN.getDataFolder()+"", "profilesAndTimers.yml");
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "profilesAndTimers.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		cProfile.setParticipants(cfg.getStringList("Participants").stream()
 				.map(s -> UUID.fromString(s.trim()))
@@ -340,7 +340,7 @@ public class ConfigHandler extends ConfigUtil {
 	private static void storeChallengeProfilesAndTimers() {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
 		clearFile("profilesAndTimers.yml");
-		File file = new File(PLUGIN.getDataFolder()+"", "profilesAndTimers.yml");
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "profilesAndTimers.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		cfg.set("Participants", ChallengeProfile.getInstance().getParticipants().stream().map(uuid -> uuid.toString()).collect(Collectors.toList())); //maybe convert to List
 		cfg.set("hasStarted", cProfile.hasStarted);
@@ -521,7 +521,7 @@ public class ConfigHandler extends ConfigUtil {
 	
 	private static void loadEndPortalFromConfig() {
 		checkOrdner();
-		File file = new File(PLUGIN.getDataFolder()+"", "endportals.yml");
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "endportals.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		ObsidianPlatform.setCreated(cfg.getBoolean("Created"));
 		if(ObsidianPlatform.isCreated()) {
@@ -531,7 +531,7 @@ public class ConfigHandler extends ConfigUtil {
 	
 	private static void storeEndPortalToConfig() {
 		clearFile("endportals.yml");
-		File file = new File(PLUGIN.getDataFolder()+"", "endportals.yml");
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "endportals.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		cfg.set("Created", ObsidianPlatform.isCreated());
 		if(ObsidianPlatform.isCreated()) {
@@ -546,7 +546,7 @@ public class ConfigHandler extends ConfigUtil {
 	
 	private static void loadNetherPortalFromConfig() {
 		checkOrdner();
-		File file = new File(PLUGIN.getDataFolder()+"", "netherportals.yml");
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "netherportals.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		for(String key : cfg.getKeys(false)) {
 			new Gate(cfg.getStringList(key+".FrameBlockLocs").stream().map(sLoc -> deserializeLocation(sLoc).getBlock()).collect(Collectors.toCollection(HashSet::new)), 
@@ -559,7 +559,7 @@ public class ConfigHandler extends ConfigUtil {
 	
 	private static void storeNetherPortalToConfig() {
 		clearFile("netherportals.yml");
-		File file = new File(PLUGIN.getDataFolder()+"", "netherportals.yml");
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "netherportals.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);	
 		for(Gate gate : Gate.getGates()) {
 			String key = serializeLocationDetailed(gate.getTeleportTo()).replace('.', ',');

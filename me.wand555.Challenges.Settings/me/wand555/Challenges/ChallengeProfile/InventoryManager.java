@@ -25,7 +25,7 @@ public class InventoryManager {
 	 */
 	public Inventory getAlreadyCollectedGUI() {
 		if(alreadyCollectedGUI == null) 
-			alreadyCollectedGUI = Bukkit.getServer().createInventory(null, ALREADY_COLLECTED_GUI_SIZE	, ChatColor.DARK_GREEN + "Collected Items");
+			alreadyCollectedGUI = Bukkit.getServer().createInventory(null, ALREADY_COLLECTED_GUI_SIZE, ChatColor.DARK_GREEN + "Collected Items");
 		return alreadyCollectedGUI;
 	}
 

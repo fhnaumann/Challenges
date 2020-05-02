@@ -32,39 +32,41 @@ public class NoDamageListener extends CoreListener {
 					ChallengeProfile cProfile = ChallengeProfile.getInstance();
 					Player player = (Player) event.getEntity();
 					if(cProfile.isInChallenge(player.getUniqueId())) {
-						NoDamageChallenge noDamageChallenge = GenericChallenge.getChallenge(ChallengeType.NO_DAMAGE);
-						if(noDamageChallenge.isActive()) {
-							if(noDamageChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-								cProfile.endChallenge(noDamageChallenge, ChallengeEndReason.NO_DAMAGE, player);
-							}
-							else {
-								String message = noDamageChallenge.createNoDamageReasonMessage(
-										player.getName(), 
-										event instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent)event).getDamager() : null, 
-										event.getCause(), 
-										event.getFinalDamage());
-								NoDamageChallengeViolationEvent violationEvent = new NoDamageChallengeViolationEvent(noDamageChallenge, noDamageChallenge.getPunishType(), 
-										message, event.getCause(), event.getFinalDamage(), player);
-								Bukkit.getServer().getPluginManager().callEvent(violationEvent);
-								if(!violationEvent.isCancelled()) {
-									noDamageChallenge.enforcePunishment(noDamageChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), player);
-									cProfile.sendMessageToAllParticipants(violationEvent.getLogMessage());
+						if(event.getFinalDamage() > 0) {
+							NoDamageChallenge noDamageChallenge = GenericChallenge.getChallenge(ChallengeType.NO_DAMAGE);
+							if(noDamageChallenge.isActive()) {
+								if(noDamageChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
+									cProfile.endChallenge(noDamageChallenge, ChallengeEndReason.NO_DAMAGE, player);
 								}
 								else {
-									event.setCancelled(true);
-									if(violationEvent.hasDeniedMessage()) player.sendMessage(violationEvent.getDeniedMessage());
-								}
-							}		
-						}
-						else {
-							if(cProfile.logDamage) {
-								cProfile.sendMessageToAllParticipants(noDamageChallenge.createDamageLogMessage(
-										player.getName(), 
-										event instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent)event).getDamager() : null,
-												event.getCause(), 
-												event.getFinalDamage()));
+									String message = noDamageChallenge.createNoDamageReasonMessage(
+											player.getName(), 
+											event instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent)event).getDamager() : null, 
+											event.getCause(), 
+											event.getFinalDamage());
+									NoDamageChallengeViolationEvent violationEvent = new NoDamageChallengeViolationEvent(noDamageChallenge, noDamageChallenge.getPunishType(), 
+											message, event.getCause(), event.getFinalDamage(), player);
+									Bukkit.getServer().getPluginManager().callEvent(violationEvent);
+									if(!violationEvent.isCancelled()) {
+										noDamageChallenge.enforcePunishment(noDamageChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), player);
+										cProfile.sendMessageToAllParticipants(violationEvent.getLogMessage());
+									}
+									else {
+										event.setCancelled(true);
+										if(violationEvent.hasDeniedMessage()) player.sendMessage(violationEvent.getDeniedMessage());
+									}
+								}		
 							}
-						}
+							else {
+								if(cProfile.logDamage) {
+									cProfile.sendMessageToAllParticipants(noDamageChallenge.createDamageLogMessage(
+											player.getName(), 
+											event instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent)event).getDamager() : null,
+													event.getCause(), 
+													event.getFinalDamage()));
+								}
+							}
+						}	
 					}			
 				}
 				else {

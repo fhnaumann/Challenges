@@ -1,21 +1,18 @@
 package me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.google.common.collect.Lists;
 
+import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.Punishable;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ReasonNotifiable;
+import me.wand555.Challenges.Config.LanguageMessages;
 
 /**
  * A unique item cannot be in multiple inventories at the same time
@@ -23,12 +20,6 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ReasonNotifiable;
  *
  */
 public class ItemCollectionSameItemLimitChallenge extends ItemCollectionLimitChallenge implements Punishable, ReasonNotifiable {
-
-	private HashMap<Material, UUID> totalInventoryItems = new HashMap<>();
-	/**
-	 * Has no user other than to know which item caused the challenge to end/lead to a punishment
-	 */
-	private Material latestAdded;
 	
 	private PunishType punishType;
 	
@@ -50,30 +41,9 @@ public class ItemCollectionSameItemLimitChallenge extends ItemCollectionLimitCha
 	
 	
 	public boolean canBeObtained(Material material, UUID uuid) {
-		return totalInventoryItems.entrySet().stream().filter(entry -> !entry.getValue().equals(uuid)).noneMatch(entry -> entry.getKey() == material);
-	}
-	
-	public boolean shouldBeRemoved(Material material) {
-		return totalInventoryItems.keySet().stream().anyMatch(mat -> mat == material);
-	}
-	
-	public boolean isOnlyOneWithMaterial(Material material, UUID uuid) {
-		return totalInventoryItems.entrySet().stream()
-				.filter(entry -> entry.getKey() == material)
-				.filter(entry -> entry.getValue().equals(uuid))
-				.count() == 1;
-	}
-	
-	public boolean addToTotalInventoryItems(Material mat, UUID uuid) {
-		Object obj = totalInventoryItems.putIfAbsent(mat, uuid);
-		latestAdded = mat;
-		super.currentAmount = totalInventoryItems.size();
-		return obj == null;
-	}
-	
-	public void removeFromTotalInventoryitems(Material mat, UUID uuid) {
-		totalInventoryItems.remove(mat, uuid);
-		super.currentAmount = totalInventoryItems.size();
+		return ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+				.filter(p -> !p.getUniqueId().equals(uuid))
+				.noneMatch(p -> p.getInventory().contains(material));
 	}
 
 	@Override
@@ -94,38 +64,10 @@ public class ItemCollectionSameItemLimitChallenge extends ItemCollectionLimitCha
 	@Override
 	public ItemStack getDisplayItem() {
 		return createPunishmentItem(Material.HOPPER_MINECART, 
-				"sdg", 
-				Lists.newArrayList("df"), 
+				LanguageMessages.guiItemCollectionSameItemName, 
+				new ArrayList<String>(LanguageMessages.guiItemCollectionSameItemLore), 
 				punishType, 
 				super.active);
-	}
-
-	/**
-	 * @return the totalInventoryItems
-	 */
-	public HashMap<Material, UUID> getTotalInventoryItems() {
-		return totalInventoryItems;
-	}
-
-	/**
-	 * @param totalInventoryItems the totalInventoryItems to set
-	 */
-	public void setTotalInventoryItems(HashMap<Material, UUID> totalInventoryItems) {
-		this.totalInventoryItems = totalInventoryItems;
-	}
-
-	/**
-	 * @return the latestAdded
-	 */
-	public Material getLatestAdded() {
-		return latestAdded;
-	}
-
-	/**
-	 * @param latestAdded the latestAdded to set
-	 */
-	public void setLatestAdded(Material latestAdded) {
-		this.latestAdded = latestAdded;
 	}
 
 }

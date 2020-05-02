@@ -68,8 +68,6 @@ public interface ReasonNotifiable {
 						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
 			case NO_SAME_ITEM:
 				return LanguageMessages.violationNoSameItemInInventory.replace("[PLAYER]", causer.getName())
-						.replace("[MATERIAL]", WordUtils.capitalize(((ItemCollectionSameItemLimitChallenge)GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM))
-								.getLatestAdded().toString().replace('_', ' ').toLowerCase()))
 						.replace("[PUNISHMENT]", getFittingPunishmentMessage(punishment));
 			case BE_AT_HEIGHT:
 				return LanguageMessages.violationToBeOnHeight.replace("[PLAYER]", causer.getName())

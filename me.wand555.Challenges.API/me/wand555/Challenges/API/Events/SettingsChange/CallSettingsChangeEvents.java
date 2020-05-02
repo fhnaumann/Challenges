@@ -49,7 +49,7 @@ public interface CallSettingsChangeEvents {
 			else if(rawType.getClass().equals(OnBlockChallenge.class)) {
 				OnBlockChallenge onBlockChallenge = (OnBlockChallenge) rawType;
 				if(onBlockChallenge.getTimer() != null) {
-					onBlockChallenge.removePlayerFromBossBar(p);
+					onBlockChallenge.getBossBar().removeAll();
 					onBlockChallenge.getTimer().cancel();
 					onBlockChallenge.setTimer(null);
 					onBlockChallenge.setEarliestToShow(0);
@@ -66,6 +66,23 @@ public interface CallSettingsChangeEvents {
 				iCLGChallenge.setActive(false);
 				iCLGChallenge.setLimit(0);
 				iCLGChallenge.getUniqueItems().clear();
+			}
+			else if(rawType.getClass().equals(HeightChallenge.class)) {
+				HeightChallenge heightChallenge = (HeightChallenge) rawType;
+				heightChallenge.setActive(false);
+				heightChallenge.setEarliestToShow(0);
+				heightChallenge.setLatestToShow(0);
+				heightChallenge.setEarliestToBeOnHeight(0);
+				heightChallenge.setLatestToBeOnHeight(0);
+				heightChallenge.getNormalHeight().getBossbar().removeAll();
+				heightChallenge.getNormalHeight().setBossbar(null);
+				heightChallenge.getNetherHeight().getBossbar().removeAll();
+				heightChallenge.getNetherHeight().setBossbar(null);
+				if(heightChallenge.getTimer() != null) {
+					heightChallenge.getTimer().cancel();
+					heightChallenge.setTimer(null);
+				}
+				
 			}
 		}
 		else {
@@ -90,6 +107,7 @@ public interface CallSettingsChangeEvents {
 				mlgChallenge.setLatest(switchEvent.getLatest());
 				mlgChallenge.setHeight(switchEvent.getHeight());
 				mlgChallenge.setTimer(new MLGTimer(plugin, switchEvent.getTimeToNextMLG(), switchEvent.getTimeToNextMLG()));
+				mlgChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
 			}
 			else {
 				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	
@@ -111,6 +129,7 @@ public interface CallSettingsChangeEvents {
 				onBlockChallenge.setLatestOnBlock(switchEvent.getLatestOnBlock());
 				onBlockChallenge.setTimer(new OnBlockTimer(plugin, onBlockChallenge, switchEvent.getTimeToBlockShown(), switchEvent.getTimeToBlockShown(), true));
 				ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(player -> onBlockChallenge.addPlayerToBossBar(player));
+				onBlockChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
 			}
 			else {
 				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	
@@ -132,6 +151,7 @@ public interface CallSettingsChangeEvents {
 				heightChallenge.setLatestToBeOnHeight(switchEvent.getLatestToBeOnHeight());
 				heightChallenge.setTimer(new HeightTimer(plugin, heightChallenge, switchEvent.getTimeToHeightShown(), switchEvent.getTimeToHeightShown(), true));
 				ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(player -> heightChallenge.addPlayerToBossBar(player));
+				heightChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
 			}
 			else {
 				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	

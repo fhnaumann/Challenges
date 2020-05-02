@@ -84,7 +84,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("endChallengeNotOnBlock", "&2[PLAYER] &7failed to stand on the block! The challenge ended!");
 		msgDefaults.put("endChallengeNoTimeLeft", "&7You ran out of time! The challenge ended");
 		msgDefaults.put("endChallengeTooManyItemsGlobal", "&2[PLAYER] &7reached the item limit. The challenge ended!");
-		msgDefaults.put("endChallengeSameItemInInventory", "&2[PLAYER] &7collected &e[MATERIAL]&7, which was already in someone's inventory! The challenge ended!");
+		msgDefaults.put("endChallengeSameItemInInventory", "&2[PLAYER] &7collected an item which was already in someone's inventory! The challenge ended!");
 		
 		msgDefaults.put("timerMessageStart", "&7&l/timer start");
 		msgDefaults.put("timerMessagePause", "&7&lPAUSED &2[TIME] &7- /timer pause");
@@ -116,7 +116,9 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiRandomMLGName", "&7&lRandom MLG");
 		msgDefaults.put("guiOnBlockName", "&7&lForceBlock");
 		msgDefaults.put("guiItemCollectionLimitGlobalName", "&7&lGlobal Item Limit");
+		msgDefaults.put("guiItemCollectionSameItemName", "&7&lNo Same Items");
 		msgDefaults.put("guiItemFloorIsLavaName", "&7&lFloor is Lava");
+		msgDefaults.put("guiToBeOnHeightName", "&7&lHeight Order");
 		
 		msgDefaults.put("noPreviousPage", "&7You're on the first page.");
 		msgDefaults.put("noNextPage", "&7You're on the last page.");
@@ -141,8 +143,10 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiRandomCraftingLore", "All crafting recipes will be randomized!");
 		msgDefaults.put("guiMLGLore", "Random MLG's in custom intervals!");
 		msgDefaults.put("guiOnBlockLore", "All players have to stand on a certain block type in random intervals (configurable)!");
-		msgDefaults.put("guiItemCollectionLimitGlobalLore", "The unique amount of items players can in the inventory in total!");
+		msgDefaults.put("guiItemCollectionLimitGlobalLore", "The unique amount of items players can collect in the inventory in total!");
+		msgDefaults.put("guiItemCollectionSameItemLore", "Players are not allowed to have the same item in their inventory at the same time!");
 		msgDefaults.put("guiItemFloorIsLavaLore", "The floor is lava. The blocks you stand on transition from normal -> magma -> lava -> normal.");
+		msgDefaults.put("guiToBeOnHeightLore", "You have to be on a certain height after some time!");
 		
 		msgDefaults.put("guiCustomHealthAmount", "&7Custom HP: &a[AMOUNT]HP");
 		msgDefaults.put("guiItemCollectionLimit", "&7Limit: &a[AMOUNT] &7Unique items");
@@ -166,7 +170,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("violationSneaking", "&2[PLAYER] &7has sneaked (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationMLG", "&2[PLAYER] &7failed the MLG (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationOnBlock", "&2[PLAYER] &7failed to stand on the block (Punishment: &2[PUNISHMENT]&7!");
-		msgDefaults.put("violationNoSameItemInInventory", "&2[PLAYER] &7collected &e[MATERIAL]&7, which is already in someone's inventory (Punishment: &2[PUNISHMENT]&7)!");
+		msgDefaults.put("violationNoSameItemInInventory", "&2[PLAYER] &7collected an item which is already in someone's inventory (Punishment: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationToBeOnHeight", "&2[PLAYER] &7failed to be at &e[HEIGHT] &7(Punishment: &2[PUNISHMENT]&7!");
 		
 		msgDefaults.put("passedMLG", "&7All players beat the MLG!");
@@ -261,7 +265,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("endChallengeNotOnBlock", "&2[PLAYER] &7stand nicht auf dem Block! Die Challenge ist vorbei!");
 		msgDefaults.put("endChallengeNoTimeLeft", "&7Der Timer ist abgelaufen! Die Challenge ist vorbei!");
 		msgDefaults.put("endChallengeTooManyItemsGlobal", "&2[PLAYER] &7hat das Item-Limit überschritten! Die Challenge ist vorbei!");
-		msgDefaults.put("endChallengeSameItemInInventory", "&2[PLAYER] &7hat &e[MATERIAL] &7aufgesammelt, was bereits jemand im Inventar hatte! Die Challenge ist vorbei!");	
+		msgDefaults.put("endChallengeSameItemInInventory", "&2[PLAYER] &7hat ein Item aufgesammelt, was bereits jemand im Inventar hatte! Die Challenge ist vorbei!");	
 		
 		msgDefaults.put("timerMessageStart", "&7&l/timer start");
 		msgDefaults.put("timerMessagePause", "&7&lPAUSIERT &2[TIME] &7- /timer pause");
@@ -299,7 +303,9 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiRandomMLGName", "&7&lZufälliger MLG");
 		msgDefaults.put("guiOnBlockName", "&7&lForceBlock");
 		msgDefaults.put("guiItemCollectionLimitGlobalName", "&7&lGlobales Item Limit");
+		msgDefaults.put("guiItemCollectionSameItemName", "&7&lKeine Gleichen Items");
 		msgDefaults.put("guiItemFloorIsLavaName", "&7&lDer Boden ist Lava");
+		msgDefaults.put("guiToBeOnHeightName", "&7&lHöhenanweisung");
 		
 		msgDefaults.put("guiBackpackLore", "&7Ein gemeinsamer Rucksack zum Teilen von Items!");
 		msgDefaults.put("guiDeathLore", "Die Challenge ist vorbei sobald ein Spieler stirbt!");
@@ -319,7 +325,9 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("guiMLGLore", "Zufällige MLG's in ausgewählten Intervallen!");
 		msgDefaults.put("guiOnBlockLore", "Es werden in bestimmten Intervallen zufällig Blöcke ausgewählt, auf denen ihr nach einer konfigurienten Zeit draufstehen müsst!");
 		msgDefaults.put("guiItemCollectionLimitGlobalLore", "Begrenzt die maximale Anzahl an verschiedenen Items, die genutzt werden!");
+		msgDefaults.put("guiItemCollectionSameItemLore", "Spieler dürfen nicht zum gleichen Zeitpunkt dieselben Items im Inventar haben!");
 		msgDefaults.put("guiItemFloorIsLavaLore", "Der Boden ist Lava. Die Blöcke unter dir verwandeln sich wie folgt: Normal -> Magma -> Lava -> Normal");
+		msgDefaults.put("guiToBeOnHeightLore", "Ihr müsst in einer bestimmten Zeit auf einer bestimmten Höhe sein!");
 		
 		msgDefaults.put("guiCustomHealthAmount", "&7Ausgewählte HP: &a[AMOUNT]HP");
 		msgDefaults.put("guiItemCollectionLimit", "&7Limit: &a[AMOUNT] &7verschiedene Items");
@@ -343,7 +351,7 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("violationSneaking", "&2[PLAYER] &7hat gesneakt (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationMLG", "&2[PLAYER]&7 hat den MLG nicht geschafft (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationOnBlock", "&2[PLAYER] &7stand nicht auf dem Block (Bestrafung: &2[PUNISHMENT]&7!");
-		msgDefaults.put("violationNoSameItemInInventory", "&2[PLAYER] &7hat &e[MATERIAL] &7aufgesammelt, was bereits jemand im Inventar hatte (Bestrafung: &2[PUNISHMENT]&7)!");
+		msgDefaults.put("violationNoSameItemInInventory", "&2[PLAYER] &7hat ein Item aufgesammelt, was bereits jemand im Inventar hatte (Bestrafung: &2[PUNISHMENT]&7)!");
 		msgDefaults.put("violationToBeOnHeight", "&2[PLAYER] &7war nicht auf der Höhe &e[HEIGHT] &7(Bestrafung: &2[PUNISHMENT]&7!");
 		
 		msgDefaults.put("passedMLG", "&7Alle Spieler haben den MLG geschafft!");

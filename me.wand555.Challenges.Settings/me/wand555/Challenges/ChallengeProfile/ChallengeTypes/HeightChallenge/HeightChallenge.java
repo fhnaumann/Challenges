@@ -1,6 +1,7 @@
 package me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge;
 
 import java.util.ArrayList;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Bukkit;
@@ -11,8 +12,6 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import com.google.common.collect.Lists;
 
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.BossBarShown;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.BossBarStatus;
@@ -61,8 +60,8 @@ public class HeightChallenge extends GenericChallenge implements Punishable, Rea
 	@Override
 	public ItemStack getDisplayItem() {
 		return createItem(Material.FEATHER, 
-				"dsg", 
-				Lists.newArrayList("abc"), 
+				LanguageMessages.guiToBeOnHeightName, 
+				new ArrayList<String>(LanguageMessages.guiToBeOnHeightLore), 
 				super.active);
 	}
 

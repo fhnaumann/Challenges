@@ -117,21 +117,21 @@ public class ConfigUtil {
 	}
 		
 	protected static void clearFile(String fileName) {
-		File file = new File(PLUGIN.getDataFolder()+"", fileName);
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", fileName);
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		cfg.getKeys(false).forEach(key -> cfg.set(key, null));
 		saveCustomYml(cfg, file);
 	}
 	
 	protected static void clearPlayerNormalFile(String playerFilename) {
-		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"PlayerData"+File.separatorChar, playerFilename);
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data"+File.separatorChar+"PlayerData"+File.separatorChar, playerFilename);
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		cfg.getKeys(false).stream().filter(key -> key.equalsIgnoreCase("Normal")).forEach(key -> cfg.set(key, null));
 		saveCustomYml(cfg, file);
 	}
 	
 	protected static void clearPlayerChallengeFile(String playerFilename) {
-		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"PlayerData"+File.separatorChar, playerFilename);
+		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data"+File.separatorChar+"PlayerData"+File.separatorChar, playerFilename);
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		cfg.getKeys(false).stream().filter(key -> key.equalsIgnoreCase("Challenge")).forEach(key -> cfg.set(key, null));
 		saveCustomYml(cfg, file);
