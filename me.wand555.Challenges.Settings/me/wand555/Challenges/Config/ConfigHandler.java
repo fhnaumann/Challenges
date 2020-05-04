@@ -233,7 +233,7 @@ public class ConfigHandler extends ConfigUtil {
 				onBlockChallenge.createBossBar(cfg.isSet("onBlock.Message") ? 
 						cfg.getString("onBlock.Message").replace("[TIME]", DateUtil.formatNoHourDuration(onBlockChallenge.getTimer().getTimeTo())) 
 						: LanguageMessages.onBlockHidden, BarColor.WHITE);
-				cProfile.getParticipantsAsPlayers().forEach(p -> onBlockChallenge.addPlayerToBossBar(p));
+				cProfile.getParticipants().forEach(p -> onBlockChallenge.addPlayerToBossBar(p));
 			}
 			ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
 			if(iCLGChallenge.isActive()) {
@@ -283,7 +283,7 @@ public class ConfigHandler extends ConfigUtil {
 				heightChallenge.createBossBar(cfg.isSet("onBlock.Message") ? 
 						cfg.getString("heightChallenge.Message").replace("[TIME]", DateUtil.formatNoHourDuration(heightChallenge.getTimer().getTimeTo())) 
 						: LanguageMessages.onHeightHidden, BarColor.WHITE);
-				cProfile.getParticipantsAsPlayers().forEach(p -> heightChallenge.addPlayerToBossBar(p));
+				cProfile.getParticipants().forEach(p -> heightChallenge.addPlayerToBossBar(p));
 			}
 		}
 		else {
@@ -342,7 +342,7 @@ public class ConfigHandler extends ConfigUtil {
 		clearFile("profilesAndTimers.yml");
 		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "profilesAndTimers.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-		cfg.set("Participants", ChallengeProfile.getInstance().getParticipants().stream().map(uuid -> uuid.toString()).collect(Collectors.toList())); //maybe convert to List
+		cfg.set("Participants", ChallengeProfile.getInstance().getParticipants().stream().map(p -> p.getUniqueId().toString()).collect(Collectors.toList())); //maybe convert to List
 		cfg.set("hasStarted", cProfile.hasStarted);
 		cfg.set("endOnDeath", GenericChallenge.isActive(ChallengeType.END_ON_DEATH));
 		cfg.set("spawnNearFortress", GenericChallenge.isActive(ChallengeType.NETHER_FORTRESS_SPAWN));

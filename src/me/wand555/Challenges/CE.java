@@ -10,9 +10,11 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 
+import me.wand555.Challenge.DeathRun.Conversations.ConversationsHandler;
 import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.InventoryManager;
@@ -54,14 +56,14 @@ public class CE implements CommandExecutor {
 				if(args[0].equalsIgnoreCase("join")) {
 					if(player.hasPermission("challenge.join")) {
 						if(!ChallengeProfile.getInstance().isDone) {
-							if(!ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+							if(!ChallengeProfile.getInstance().isInChallenge(player)) {
 								if(!ChallengeProfile.getInstance().isRestarted) {
 									//load player in challenge information
 									//store normal world information
 									WorldUtil.storePlayerInformationBeforeChallenge(player);
 									WorldUtil.loadPlayerInformationInChallengeAndApply(player);
 									
-									ChallengeProfile.getInstance().addToParticipants(player.getUniqueId());
+									ChallengeProfile.getInstance().addToParticipants(player);
 									ChallengeProfile.getInstance().addToScoreBoard(player);
 									player.sendMessage(LanguageMessages.teleportMsg);
 								}
@@ -80,13 +82,13 @@ public class CE implements CommandExecutor {
 				}
 				else if(args[0].equalsIgnoreCase("leave")) {
 					if(player.hasPermission("challenge.leave")) {
-						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+						if(ChallengeProfile.getInstance().isInChallenge(player)) {
 							//store player in challenge information
 							//load normal world information
 							WorldUtil.storePlayerInformationInChallenge(player);
 							WorldUtil.loadPlayerInformationBeforeChallengeAndApply(player);
 							
-							ChallengeProfile.getInstance().removeFromParticipants(player.getUniqueId());
+							ChallengeProfile.getInstance().removeFromParticipants(player);
 							ChallengeProfile.getInstance().removeFromScoreBoard(player);
 							player.sendMessage(LanguageMessages.teleportMsg);
 						}
@@ -117,7 +119,7 @@ public class CE implements CommandExecutor {
 									ChallengeProfile.getInstance().sendMessageToAllParticipants(LanguageMessages.loadingWorlds);
 									Challenges.initializeWorlds();	
 									Bukkit.getScheduler().runTaskLater(plugin, () -> {
-										ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(p -> {
+										ChallengeProfile.getInstance().getParticipants().forEach(p -> {
 											p.sendMessage(LanguageMessages.teleportMsg);
 											WorldUtil.storePlayerInformationBeforeChallenge(p);
 											WorldUtil.loadPlayerInformationInChallengeAndApply(p);
@@ -149,7 +151,7 @@ public class CE implements CommandExecutor {
 			if(args.length == 2) {
 				if(args[0].equalsIgnoreCase("start")) {
 					if(player.hasPermission("timer.start")) {
-						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+						if(ChallengeProfile.getInstance().isInChallenge(player)) {
 							if(!ChallengeProfile.getInstance().hasStarted) {
 								if(args[1].equalsIgnoreCase("asc")) {
 									ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
@@ -177,7 +179,7 @@ public class CE implements CommandExecutor {
 			else if(args.length == 1) {
 				if(args[0].equalsIgnoreCase("pause")) {
 					if(player.hasPermission("timer.pause")) {
-						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+						if(ChallengeProfile.getInstance().isInChallenge(player)) {
 							if(ChallengeProfile.getInstance().canTakeEffect()) {
 								ChallengeProfile.getInstance().pauseTimer();
 							}
@@ -196,7 +198,7 @@ public class CE implements CommandExecutor {
 				}
 				else if(args[0].equalsIgnoreCase("set")) {
 					if(player.hasPermission("timer.set")) {
-						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+						if(ChallengeProfile.getInstance().isInChallenge(player)) {
 							if(ChallengeProfile.getInstance().hasStarted && !ChallengeProfile.getInstance().isDone) {
 								ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
 								ChallengeProfile.getInstance().displayTimerSetEnterGUI(signMenuFactory, player);
@@ -212,7 +214,7 @@ public class CE implements CommandExecutor {
 				}
 				else if(args[0].equalsIgnoreCase("reset")) {
 					if(player.hasPermission("timer.reset")) {
-						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+						if(ChallengeProfile.getInstance().isInChallenge(player)) {
 							if(ChallengeProfile.getInstance().hasStarted && !ChallengeProfile.getInstance().isDone) {
 								ChallengeProfile.getInstance().closeOtherPlayerSettingsGUI();
 								if(ChallengeProfile.getInstance().getSecondTimer().getOrder() == TimerOrder.ASC) {
@@ -259,7 +261,7 @@ public class CE implements CommandExecutor {
 						Position pos = new Position(args[0], player.getLocation(), player.getUniqueId(), new Date());
 						posManager.addToPositions(pos);
 						player.sendMessage(LanguageMessages.registeredPosition.replace("[POS]", args[0]));
-						ChallengeProfile.getInstance().getParticipantsAsPlayers()
+						ChallengeProfile.getInstance().getParticipants()
 							.forEach(p -> p.sendMessage(posManager.displayPosition(pos)));
 					}
 				}
@@ -271,7 +273,7 @@ public class CE implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("bp")) {
 			if(args.length == 0) {
 				if(player.hasPermission("challenge.bp")) {
-					if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+					if(ChallengeProfile.getInstance().isInChallenge(player)) {
 						if(ChallengeProfile.getInstance().getBackpack().isEnabled()) {
 							player.openInventory(ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI());
 						}
@@ -292,9 +294,9 @@ public class CE implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("hp")) {
 			if(args.length == 2) {
 				if(player.hasPermission("challenge.hp")) {
-					if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+					if(ChallengeProfile.getInstance().isInChallenge(player)) {
 						if(args[1].equalsIgnoreCase("all")) {
-							ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(p -> {
+							ChallengeProfile.getInstance().getParticipants().forEach(p -> {
 								if(StringUtils.isNumeric(args[0])) {
 									double number = Double.valueOf(args[0]);
 									p.setHealth(number < 0 ? 
@@ -318,11 +320,11 @@ public class CE implements CommandExecutor {
 							OfflinePlayer offlinetarget = Bukkit.getOfflinePlayer(args[1]);
 							if(offlinetarget.isOnline()) {
 								Player target = (Player) offlinetarget;
-								if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+								if(ChallengeProfile.getInstance().isInChallenge(player)) {
 									if(StringUtils.isNumeric(args[0])) {
 										double number = Double.valueOf(args[0]);
 										if(GenericChallenge.isActive(ChallengeType.SHARED_HEALTH)) {
-											ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(p -> {
+											ChallengeProfile.getInstance().getParticipants().forEach(p -> {
 												p.setHealth(number < 0 ? 
 														0 : 
 													number > p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() ? 
@@ -371,7 +373,7 @@ public class CE implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("settings")) {
 			if(args.length == 0) {
 				if(player.hasPermission("challenge.settings.view")) {
-					if(cProfile.isInChallenge(player.getUniqueId())) {
+					if(cProfile.isInChallenge(player)) {
 						//if(cProfile.isPaused || !cProfile.hasStarted) {
 							//create settings gui
 							gui.createGUI(player, GUIType.OVERVIEW);
@@ -387,6 +389,26 @@ public class CE implements CommandExecutor {
 			}
 			else {
 				player.sendMessage(LanguageMessages.settingSyntax);
+			}
+		}
+		
+		//------------------------------------DEATHRUN-----------------------------
+		else if(cmd.getName().equalsIgnoreCase("deathrun")) {
+			if(args.length == 0) {
+				if(player.hasPermission("challenge.deathrun")) {
+					if(cProfile.isInChallenge(player)) {
+						ConversationsHandler.getConversationsHandler().startConversation(player);
+					}
+					else {
+						
+					}
+				}
+				else {
+					
+				}
+			}
+			else {
+				
 			}
 		}
 		return true;

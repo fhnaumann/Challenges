@@ -25,7 +25,7 @@ public class NoSneakingListener extends CoreListener {
 			if(ChallengeProfile.getInstance().canTakeEffect()) {
 				if(GenericChallenge.isActive(ChallengeType.NO_SNEAKING)) {
 					ChallengeProfile cProfile = ChallengeProfile.getInstance();
-					if(cProfile.isInChallenge(event.getPlayer().getUniqueId())) {
+					if(cProfile.isInChallenge(event.getPlayer())) {
 						NoSneakingChallenge nSChallenge = GenericChallenge.getChallenge(ChallengeType.NO_SNEAKING);
 						if(nSChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
 							cProfile.endChallenge(nSChallenge, ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());

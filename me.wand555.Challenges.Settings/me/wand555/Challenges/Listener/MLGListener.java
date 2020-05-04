@@ -29,7 +29,7 @@ public class MLGListener implements Listener {
 		if(event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
 			ChallengeProfile cProfile = ChallengeProfile.getInstance();
-			if(cProfile.isInChallenge(player.getUniqueId())) {
+			if(cProfile.isInChallenge(player)) {
 				MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
 				if(mlgChallenge.isActive()) {
 					if(Bukkit.getWorld("MLGWorld").equals(player.getWorld())) {
@@ -44,7 +44,7 @@ public class MLGListener implements Listener {
 	public void onMLGBeatenEvent(PlayerBucketEmptyEvent event) {
 		if(event.getBucket() == Material.WATER_BUCKET) {
 			ChallengeProfile cProfile = ChallengeProfile.getInstance();
-			if(cProfile.isInChallenge(event.getPlayer().getUniqueId())) {
+			if(cProfile.isInChallenge(event.getPlayer())) {
 				MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
 				if(mlgChallenge.isActive()) {
 					if(Bukkit.getWorld("MLGWorld").equals(event.getPlayer().getWorld())) {

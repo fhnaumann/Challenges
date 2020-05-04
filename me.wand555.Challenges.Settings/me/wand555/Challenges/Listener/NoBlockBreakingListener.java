@@ -24,7 +24,7 @@ public class NoBlockBreakingListener extends CoreListener {
 		if(ChallengeProfile.getInstance().canTakeEffect()) {
 			if(GenericChallenge.isActive(ChallengeType.NO_BLOCK_BREAKING)) {
 				ChallengeProfile cProfile = ChallengeProfile.getInstance();
-				if(cProfile.isInChallenge(event.getPlayer().getUniqueId())) {
+				if(cProfile.isInChallenge(event.getPlayer())) {
 					NoBlockBreakingChallenge nBBChallenge = GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_BREAKING);
 					if(nBBChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
 						cProfile.endChallenge(nBBChallenge, ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());

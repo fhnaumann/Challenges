@@ -24,7 +24,7 @@ public class PlayerQuitListener implements Listener {
 	@EventHandler
 	public void onPlayerQuitEvent(PlayerQuitEvent event) {
 		if(WorldLinkManager.worlds.contains(event.getPlayer().getWorld())) {
-			ChallengeProfile.getInstance().removeFromParticipants(event.getPlayer().getUniqueId());
+			ChallengeProfile.getInstance().removeFromParticipants(event.getPlayer());
 			if(GenericChallenge.isActive(ChallengeType.ON_BLOCK) && ChallengeProfile.getInstance().canTakeEffect()) {
 				((OnBlockChallenge)GenericChallenge.getChallenge(ChallengeType.ON_BLOCK)).removePlayerFromBossBar(event.getPlayer());
 				((HeightChallenge)GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT)).removePlayerFromBossBar(event.getPlayer());

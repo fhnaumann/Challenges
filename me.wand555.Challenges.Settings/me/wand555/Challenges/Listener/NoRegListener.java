@@ -26,7 +26,7 @@ public class NoRegListener implements Listener {
 				if(GenericChallenge.isActive(ChallengeType.NO_REG_HARD)) {
 					ChallengeProfile cProfile = ChallengeProfile.getInstance();
 					Player player = (Player) event.getEntity();
-					if(cProfile.isInChallenge(player.getUniqueId())) {
+					if(cProfile.isInChallenge(player)) {
 						System.out.println("blocked");
 						event.setCancelled(true);
 					}
@@ -43,7 +43,7 @@ public class NoRegListener implements Listener {
 					if(GenericChallenge.isActive(ChallengeType.NO_REG_HARD)) {
 						ChallengeProfile cProfile = ChallengeProfile.getInstance();
 						Player player = (Player) event.getEntity();
-						if(cProfile.isInChallenge(player.getUniqueId())) {
+						if(cProfile.isInChallenge(player)) {
 							System.out.println("blockedPotion");
 							event.setCancelled(true);
 						}

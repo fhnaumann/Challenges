@@ -47,7 +47,7 @@ public class MLGTimer extends BukkitRunnable {
 			timeToMLG = 0;
 			MLGChallenge mlgChallenge = GenericChallenge.getChallenge(ChallengeType.MLG);
 			//if(ChallengeProfile.getInstance().canTakeEffect()) {
-				mlgChallenge.onMLGPrepare(ChallengeProfile.getInstance().getParticipantsAsPlayers().stream().filter(p -> !p.isDead()).collect(Collectors.toSet()));
+				mlgChallenge.onMLGPrepare(ChallengeProfile.getInstance().getParticipants().stream().filter(p -> !p.isDead()).collect(Collectors.toSet()));
 			//}
 			this.cancel();
 		}

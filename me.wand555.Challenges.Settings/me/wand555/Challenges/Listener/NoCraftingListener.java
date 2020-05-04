@@ -31,7 +31,7 @@ public class NoCraftingListener extends CoreListener {
 					if(ChallengeProfile.getInstance().canTakeEffect()) {
 						if(GenericChallenge.isActive(ChallengeType.NO_CRAFTING)) {
 							ChallengeProfile cProfile = ChallengeProfile.getInstance();
-							if(cProfile.isInChallenge(player.getUniqueId())) {
+							if(cProfile.isInChallenge(player)) {
 								if(event.getCurrentItem() != null) {
 									if(event.getCurrentItem().getType() != Material.AIR) {
 										NoCraftingChallenge nCChallenge = GenericChallenge.getChallenge(ChallengeType.NO_CRAFTING);

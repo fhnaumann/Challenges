@@ -25,7 +25,7 @@ public interface ReasonNotifiable {
 		case ON_BLOCK:
 			return LanguageMessages.passedOnBlock;
 		case BE_AT_HEIGHT:
-			return "ADD TRANSLATION PASSED MESSAGE";
+			return LanguageMessages.passedHeight;
 		default: return "unknown";
 		}
 	}

@@ -101,6 +101,7 @@ public class Challenges extends JavaPlugin {
 		this.getCommand("bp").setExecutor(myCE);
 		this.getCommand("hp").setExecutor(myCE);
 		this.getCommand("settings").setExecutor(myCE);
+		this.getCommand("deathrun").setExecutor(myCE);
 		
 		registerListeners();	
 	}
@@ -140,29 +141,48 @@ public class Challenges extends JavaPlugin {
     }
 	
 	public static void initializeWorlds() {
-		World overWorld = Bukkit.createWorld(new WorldCreator("ChallengeOverworld").environment(Environment.NORMAL));
-		overWorld.setDifficulty(Difficulty.HARD);
-		WorldLinkManager.worlds.add(overWorld);
-		World netherWorld = Bukkit.createWorld(new WorldCreator("ChallengeNether").environment(Environment.NETHER));
-		netherWorld.setDifficulty(Difficulty.HARD);
-		WorldLinkManager.worlds.add(netherWorld);
-		World endWorld = Bukkit.createWorld(new WorldCreator("ChallengeEnd").environment(Environment.THE_END));
-		endWorld.setDifficulty(Difficulty.HARD);
-		WorldLinkManager.worlds.add(endWorld);
-		World mlgWorld = new WorldCreator("MLGWorld")
-				.environment(Environment.NORMAL)
-				.type(WorldType.FLAT)
-				.generateStructures(false)
-				.createWorld();
-		mlgWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-		mlgWorld.setGameRule(GameRule.DO_MOB_SPAWNING, false);
-		mlgWorld.setDifficulty(Difficulty.PEACEFUL);
-		mlgWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-		for(int x=-50; x<=50; x+=16) {
-			for(int z=-50; z<=50; z+=16) {
-				mlgWorld.getChunkAt(x, z).setForceLoaded(true);
-			}
-		}
-		WorldLinkManager.worlds.add(mlgWorld);
+		Challenges plugin = Challenges.getPlugin(Challenges.class);
+		
+		Bukkit.broadcastMessage(Challenges.PREFIX + ChatColor.GRAY + "Generating worlds... Please don't move!");
+		
+		Bukkit.getScheduler().runTaskLater(plugin, () -> {
+			World overWorld = Bukkit.createWorld(new WorldCreator("ChallengeOverworld").environment(Environment.NORMAL));
+			overWorld.setDifficulty(Difficulty.HARD);
+			WorldLinkManager.worlds.add(overWorld);
+			Bukkit.broadcastMessage(Challenges.PREFIX + ChatColor.GRAY + "Overworld loaded/generated!");
+			
+			Bukkit.getScheduler().runTaskLater(plugin, () -> {
+				World netherWorld = Bukkit.createWorld(new WorldCreator("ChallengeNether").environment(Environment.NETHER));
+				netherWorld.setDifficulty(Difficulty.HARD);
+				WorldLinkManager.worlds.add(netherWorld);
+				Bukkit.broadcastMessage(Challenges.PREFIX + ChatColor.GRAY + "Nether loaded/generated!");
+				
+				Bukkit.getScheduler().runTaskLater(plugin, () -> {
+					World endWorld = Bukkit.createWorld(new WorldCreator("ChallengeEnd").environment(Environment.THE_END));
+					endWorld.setDifficulty(Difficulty.HARD);
+					WorldLinkManager.worlds.add(endWorld);
+					Bukkit.broadcastMessage(Challenges.PREFIX + ChatColor.GRAY + "End loaded/generated!");
+					
+					Bukkit.getScheduler().runTaskLater(plugin, () -> {
+						World mlgWorld = new WorldCreator("MLGWorld")
+								.environment(Environment.NORMAL)
+								.type(WorldType.FLAT)
+								.generateStructures(false)
+								.createWorld();
+						mlgWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+						mlgWorld.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+						mlgWorld.setDifficulty(Difficulty.PEACEFUL);
+						mlgWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+						for(int x=-50; x<=50; x+=16) {
+							for(int z=-50; z<=50; z+=16) {
+								mlgWorld.getChunkAt(x, z).setForceLoaded(true);
+							}
+						}
+						WorldLinkManager.worlds.add(mlgWorld);
+						Bukkit.broadcastMessage(Challenges.PREFIX + ChatColor.GRAY + "MLG World loaded/generated!");
+					}, 20*3L);
+				}, 20*3L);
+			}, 20*3L);
+		}, 10L);	
 	}
 }

@@ -28,4 +28,8 @@ commands:
     usage: /settings
     description: Opens gui with settings.
     permission: challenge.settings.view
+  deathrun:
+    usage: /deathrun
+    description: Converts to deathrun mode. If already in deathrun mode it exists it.
+    permission: challenge.deathrun
     

@@ -28,7 +28,7 @@ public class PlayerDeathListener extends CoreListener {
 		Player player = event.getEntity();
 		if(GenericChallenge.isActive(ChallengeType.END_ON_DEATH)) {
 			ChallengeProfile cProfile = ChallengeProfile.getInstance();
-			if(cProfile.isInChallenge(player.getUniqueId())) {
+			if(cProfile.isInChallenge(player)) {
 				if(cProfile.canTakeEffect()) {
 					event.getDrops().clear();
 					cProfile.endChallenge(GenericChallenge.getChallenge(ChallengeType.END_ON_DEATH), ChallengeEndReason.NATURAL_DEATH, player);
@@ -41,7 +41,7 @@ public class PlayerDeathListener extends CoreListener {
 	@EventHandler
 	public void onPlayerRespawnEvent(PlayerRespawnEvent event) {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
-		if(cProfile.isInChallenge(event.getPlayer().getUniqueId())) {
+		if(cProfile.isInChallenge(event.getPlayer())) {
 			if(event.isBedSpawn()) {
 				if(event.getRespawnLocation() != null) {
 					if(!WorldLinkManager.worlds.contains(event.getRespawnLocation().getWorld())) {

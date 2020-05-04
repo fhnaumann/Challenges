@@ -19,7 +19,7 @@ public class HeightWorldChangeListener implements Listener {
 	@EventHandler
 	public void onHeightWorldChangeEvent(PlayerChangedWorldEvent event) {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
-		if(cProfile.isInChallenge(event.getPlayer().getUniqueId())) {
+		if(cProfile.isInChallenge(event.getPlayer())) {
 			HeightChallenge heightChallenge = GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT);
 			if(heightChallenge.isActive()) {
 				heightChallenge.removePlayerFromBossBar(event.getPlayer());

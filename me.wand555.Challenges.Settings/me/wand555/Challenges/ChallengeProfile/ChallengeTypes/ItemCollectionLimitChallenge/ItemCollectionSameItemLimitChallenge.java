@@ -41,7 +41,7 @@ public class ItemCollectionSameItemLimitChallenge extends ItemCollectionLimitCha
 	
 	
 	public boolean canBeObtained(Material material, UUID uuid) {
-		return ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+		return ChallengeProfile.getInstance().getParticipants().stream()
 				.filter(p -> !p.getUniqueId().equals(uuid))
 				.noneMatch(p -> p.getInventory().contains(material));
 	}

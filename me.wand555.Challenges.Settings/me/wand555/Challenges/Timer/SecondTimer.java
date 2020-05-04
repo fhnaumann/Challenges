@@ -42,7 +42,7 @@ public class SecondTimer extends BukkitRunnable {
 			this.time = order == TimerOrder.ASC ? this.time+1 : this.time-1;
 			String displayTime = DateUtil.formatDuration(time);
 			TextComponent component = new TextComponent(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + displayTime);
-			cProfile.getParticipantsAsPlayers()
+			cProfile.getParticipants()
 				.forEach(p -> p.spigot().sendMessage(ChatMessageType.ACTION_BAR, component));
 		}
 		else {
@@ -62,7 +62,7 @@ public class SecondTimer extends BukkitRunnable {
 				break;
 			}
 			//System.out.println(component);
-			cProfile.getParticipantsAsPlayers()
+			cProfile.getParticipants()
 				.forEach(p -> {
 					p.spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
 					p.getWorld().spawnParticle(Particle.PORTAL, p.getLocation().add(0, 1, 0), 50);

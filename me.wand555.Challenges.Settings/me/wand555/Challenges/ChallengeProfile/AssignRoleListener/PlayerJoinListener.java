@@ -34,7 +34,7 @@ public class PlayerJoinListener implements Listener {
 	@EventHandler
 	public void onPlayerJoinListener(PlayerJoinEvent event) {
 		if(WorldLinkManager.worlds.contains(event.getPlayer().getWorld())) {
-			ChallengeProfile.getInstance().addToParticipants(event.getPlayer().getUniqueId());
+			ChallengeProfile.getInstance().addToParticipants(event.getPlayer());
 			ChallengeProfile.getInstance().addToScoreBoard(event.getPlayer());
 			CustomHealthChallenge cHealthChallenge = GenericChallenge.getChallenge(ChallengeType.CUSTOM_HEALTH);
 			OnBlockChallenge onBlockChallenge = GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);

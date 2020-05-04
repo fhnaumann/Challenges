@@ -249,6 +249,7 @@ public class WorldUtil extends ConfigUtil {
 		ChallengeProfile.getInstance().getInventoryManager().getAlreadyCollectedGUI().clear();
 		ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI().clear();
 		ChallengeProfile.getInstance().getBackpack().setEnabled(false);
+		ChallengeProfile.getInstance().getPosManager().getPositions().clear();
 		
 		try {
 			File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data");

@@ -738,7 +738,7 @@ public class GUIClickListener implements Listener, CallSettingsChangeEvents {
 	
 	@Deprecated
 	private void reloadOtherPlayerInvs(GUI gui, Player changer) {
-		ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+		ChallengeProfile.getInstance().getParticipants().stream()
 			.filter(p -> !p.getUniqueId().equals(changer.getUniqueId()))
 			.filter(p -> p.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.GREEN + "Settings"))
 			.forEach(p -> gui.createGUI(p, GUIType.OVERVIEW));

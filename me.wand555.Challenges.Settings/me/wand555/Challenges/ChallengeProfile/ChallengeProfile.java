@@ -36,6 +36,7 @@ import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
+import me.wand555.Challenge.DeathRun.Conversations.DeathRunHandler;
 import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.API.Events.Violation.CallViolationEvent;
 import me.wand555.Challenges.API.Events.Violation.ChallengeEnd.ChallengeEndEvent;
@@ -44,7 +45,9 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.CustomHealthChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoRegenerationChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoRegenerationHardChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.RandomChallenge;
+import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.HeightChallenge.HeightChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionSameItemLimitChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.MLGChallenge.MLGChallenge;
@@ -69,7 +72,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	private static ChallengeProfile cProfile;
 	private static final Challenges PLUGIN = Challenges.getPlugin(Challenges.class);
 	
-	private HashSet<UUID> participants = new HashSet<UUID>();
+	private HashSet<Player> participants = new HashSet<Player>();
 	private SecondTimer secondTimer;
 	private RestoreChallenge restoreChallenge;
 	private Backpack backpack;
@@ -81,7 +84,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	
 	private ChallengeProfile() {}
 	
-	public HashSet<UUID> getParticipants() {
+	public HashSet<Player> getParticipants() {
 		return this.participants;
 	}
 	
@@ -89,20 +92,20 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	 * @param participants the participants to set
 	 */
 	public void setParticipants(HashSet<UUID> participants) {
-		this.participants = participants;
+		this.participants = participants.stream().map(Bukkit::getPlayer).filter(p -> p != null).collect(Collectors.toCollection(HashSet::new));
 	}
 
-	public void addToParticipants(UUID uuid) {
-		participants.add(uuid);
+	public void addToParticipants(Player player) {
+		participants.add(player);
 	}
 	
-	public void removeFromParticipants(UUID uuid) {
-		participants.remove(uuid);
+	public void removeFromParticipants(Player player) {
+		participants.remove(player);
 	}
 	
-	public Set<Player> getParticipantsAsPlayers() {
+	/*public Set<Player> getParticipantsAsPlayers() {
 		return participants.stream().map(Bukkit::getPlayer).filter(p -> p != null).collect(Collectors.toSet());
-	}
+	}*/
 	
 	public static ChallengeProfile getInstance() {
 		if(ChallengeProfile.cProfile == null) ChallengeProfile.cProfile = new ChallengeProfile();
@@ -110,11 +113,11 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	}
 	
 	public void sendMessageToAllParticipants(String msg) {
-		participants.forEach(key -> Bukkit.getPlayer(key).sendMessage(msg));
+		participants.forEach(key ->key.sendMessage(msg));
 	}
 	
-	public boolean isInChallenge(UUID uuid) {
-		return participants.stream().anyMatch(key -> key.equals(uuid));
+	public boolean isInChallenge(Player player) {
+		return participants.stream().anyMatch(key -> key.equals(player));
 	}
 	
 	public void initializeScoreBoard() {
@@ -184,7 +187,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		setStarted();
 		checkConditionsAndApply();
 		//initialize first time things
-		getParticipantsAsPlayers().forEach(p -> {
+		getParticipants().forEach(p -> {
 			p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
 			p.setFoodLevel(25);
 			p.getActivePotionEffects().clear();
@@ -221,12 +224,14 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		WorldLinkManager.worlds.forEach(w -> {
 				w.setGameRule(GameRule.NATURAL_REGENERATION, !noRegChallenge.isActive());
 			});
+		NoRegenerationHardChallenge noRegHard = GenericChallenge.getChallenge(ChallengeType.NO_REG_HARD);
+		WorldLinkManager.worlds.forEach(w -> w.setGameRule(GameRule.NATURAL_REGENERATION, !noRegHard.isActive()));
 		
 		CustomHealthChallenge cHealthChallenge = GenericChallenge.getChallenge(ChallengeType.CUSTOM_HEALTH);
 		if(cHealthChallenge.isActive()) {
 			SharedHealthChallenge sHChallenge = GenericChallenge.getChallenge(ChallengeType.SHARED_HEALTH);
 			sHChallenge.setSharedHealth(cHealthChallenge.getAmount());
-			getParticipantsAsPlayers().forEach(p -> {
+			getParticipants().forEach(p -> {
 				//System.out.println("Custom HP in Settings: " + cHealthChallenge.getAmount());
 				p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(cHealthChallenge.getAmount());
 				//System.out.println("reached");
@@ -242,7 +247,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		}
 		else {
 			//System.out.println("custom health not active");
-			getParticipantsAsPlayers().forEach(p -> {
+			getParticipants().forEach(p -> {
 				AttributeInstance maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH);
 				//System.out.println("here1");
 				maxHealth.setBaseValue(maxHealth.getDefaultValue());
@@ -278,7 +283,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 
 	@Override
 	public <T extends GenericChallenge> void endChallenge(T rawType, ChallengeEndReason reason, Player... causer) {		
-		if(reason.isRestorable()) restoreChallenge = new RestoreChallenge(getParticipantsAsPlayers(), getSecondTimer().getTime(), reason);	
+		if(reason.isRestorable()) restoreChallenge = new RestoreChallenge(getParticipants(), getSecondTimer().getTime(), reason);	
 		String reasonMessage;
 		LinkedHashMap<UUID, Integer> sorted = new LinkedHashMap<UUID, Integer>();
 		switch(reason) {
@@ -349,10 +354,17 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	@Override
 	public void resetChallenge() {
 		isRestarted = true;
-		System.out.println(getParticipantsAsPlayers().size());
-		getParticipantsAsPlayers().forEach(WorldUtil::loadPlayerInformationBeforeChallengeAndApply);
+		
+		OnBlockChallenge onBlockChallenge = (OnBlockChallenge) GenericChallenge.getChallenge(ChallengeType.ON_BLOCK);
+		if(onBlockChallenge.getBossBar() != null) onBlockChallenge.getBossBar().removeAll();
+		
+		HeightChallenge heightChallenge = (HeightChallenge) GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT);
+		if(heightChallenge.getNormalHeight().getBossbar() != null) heightChallenge.getNormalHeight().getBossbar().removeAll();
+		if(heightChallenge.getNetherHeight().getBossbar() != null) heightChallenge.getNetherHeight().getBossbar().removeAll();
+		
+		System.out.println(getParticipants().size());
+		getParticipants().forEach(WorldUtil::loadPlayerInformationBeforeChallengeAndApply);
 		Bukkit.getScheduler().runTaskLater(PLUGIN, () -> {
-			System.out.println("ran");
 			WorldUtil.deleteChallengeWorldsAndPlayerData();
 			//WorldUtil.deletePortalData();
 			//WorldUtil.deletePositionData();
@@ -401,7 +413,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	}
 	
 	public void closeOtherPlayerSettingsGUI() {
-		ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+		ChallengeProfile.getInstance().getParticipants().stream()
 		.filter(p -> p.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.GREEN + "Settings") 
 				|| p.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.RED + "Punishments"))
 		.forEach(Player::closeInventory);

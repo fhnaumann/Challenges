@@ -34,7 +34,7 @@ public interface CallSettingsChangeEvents {
 		Bukkit.getServer().getPluginManager().callEvent(switchEvent);
 		if(!switchEvent.isCancelled()) {
 			genericChallenge.setAround();	
-			genericChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());	
+			genericChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());	
 			
 			
 			if(rawType.getClass().equals(MLGChallenge.class)) {
@@ -107,7 +107,7 @@ public interface CallSettingsChangeEvents {
 				mlgChallenge.setLatest(switchEvent.getLatest());
 				mlgChallenge.setHeight(switchEvent.getHeight());
 				mlgChallenge.setTimer(new MLGTimer(plugin, switchEvent.getTimeToNextMLG(), switchEvent.getTimeToNextMLG()));
-				mlgChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+				mlgChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());
 			}
 			else {
 				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	
@@ -128,8 +128,8 @@ public interface CallSettingsChangeEvents {
 				onBlockChallenge.setEarliestOnBlock(switchEvent.getEarliestOnBlock());
 				onBlockChallenge.setLatestOnBlock(switchEvent.getLatestOnBlock());
 				onBlockChallenge.setTimer(new OnBlockTimer(plugin, onBlockChallenge, switchEvent.getTimeToBlockShown(), switchEvent.getTimeToBlockShown(), true));
-				ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(player -> onBlockChallenge.addPlayerToBossBar(player));
-				onBlockChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+				ChallengeProfile.getInstance().getParticipants().forEach(player -> onBlockChallenge.addPlayerToBossBar(player));
+				onBlockChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());
 			}
 			else {
 				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	
@@ -150,8 +150,8 @@ public interface CallSettingsChangeEvents {
 				heightChallenge.setEarliestToBeOnHeight(switchEvent.getEarliestToBeOnHeight());
 				heightChallenge.setLatestToBeOnHeight(switchEvent.getLatestToBeOnHeight());
 				heightChallenge.setTimer(new HeightTimer(plugin, heightChallenge, switchEvent.getTimeToHeightShown(), switchEvent.getTimeToHeightShown(), true));
-				ChallengeProfile.getInstance().getParticipantsAsPlayers().forEach(player -> heightChallenge.addPlayerToBossBar(player));
-				heightChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+				ChallengeProfile.getInstance().getParticipants().forEach(player -> heightChallenge.addPlayerToBossBar(player));
+				heightChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());
 			}
 			else {
 				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	
@@ -165,7 +165,7 @@ public interface CallSettingsChangeEvents {
 				Punishable punishable = (Punishable) rawType;	
 				punishable.setPunishType(switchEvent.getPunishType());
 				genericChallenge.setAround();
-				genericChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+				genericChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());
 			}
 			else {
 				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());			
@@ -181,7 +181,7 @@ public interface CallSettingsChangeEvents {
 		if(!switchEvent.isCancelled()) {
 			customHealthChallenge.setAround();
 			customHealthChallenge.setAmount(switchEvent.getCustomHP());
-			customHealthChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+			customHealthChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());
 		}
 		else {
 			if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());		
@@ -196,7 +196,7 @@ public interface CallSettingsChangeEvents {
 		if(!switchEvent.isCancelled()) {
 			randomChallenge.setAround();
 			randomChallenge.setRandomizedMapped(Maps.newLinkedHashMap(switchEvent.getRandomizedMapped()));
-			randomChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+			randomChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());
 			if(!randomChallenge.isActive()) RandomChallenge.clearRandomizationIfCase();
 		}
 		else {
@@ -212,7 +212,7 @@ public interface CallSettingsChangeEvents {
 		if(!switchEvent.isCancelled()) {
 			iCLGChallenge.setAround();
 			iCLGChallenge.setLimit(switchEvent.getLimit());
-			iCLGChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipantsAsPlayers());
+			iCLGChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());
 			/*if(!iCLGChallenge.isActive()) {
 				iCLGChallenge.setCurrentAmount(0);
 				iCLGChallenge.setLimit(0);

@@ -40,14 +40,14 @@ public class SharedHealthPlayerChangeLifeListener implements Listener {
 				if(ChallengeProfile.getInstance().canTakeEffect()) {
 					if(GenericChallenge.isActive(ChallengeType.SHARED_HEALTH)) {
 						Player player = (Player) event.getEntity();
-						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {	
+						if(ChallengeProfile.getInstance().isInChallenge(player)) {	
 							event.setCancelled(true);
 							SharedHealthChallenge sHChallenge = GenericChallenge.getChallenge(ChallengeType.SHARED_HEALTH);
 							if(sHChallenge.getSharedHealthWaitDamageRunnableID() == 0) {
 								sHChallenge.setSharedHealthWaitDamageRunnableID(new SharedHealthWaitDamageRunnable(plugin).getTaskId());
 								sHChallenge.setSharedHealth(sHChallenge.getSharedHealth() - event.getFinalDamage());
 								if(sHChallenge.getSharedHealth() > 0) {
-									ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+									ChallengeProfile.getInstance().getParticipants().stream()
 										.filter(p -> p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
 										.forEach(p -> {
 											p.setHealth(sHChallenge.getSharedHealth());
@@ -55,7 +55,7 @@ public class SharedHealthPlayerChangeLifeListener implements Listener {
 										});
 								}
 								else {
-									ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+									ChallengeProfile.getInstance().getParticipants().stream()
 									.filter(p -> p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
 									.forEach(p -> {
 										if(p != null) p.setHealth(0);
@@ -77,14 +77,14 @@ public class SharedHealthPlayerChangeLifeListener implements Listener {
 				if(ChallengeProfile.getInstance().canTakeEffect()) {
 					if(GenericChallenge.isActive(ChallengeType.SHARED_HEALTH)) {
 						Player player = (Player) event.getEntity();
-						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+						if(ChallengeProfile.getInstance().isInChallenge(player)) {
 							SharedHealthChallenge sHChallenge = GenericChallenge.getChallenge(ChallengeType.SHARED_HEALTH);
 							event.setCancelled(true);
 							if(sHChallenge.getSharedHealthWaitRegRunnableID() == 0) {
 								sHChallenge.setSharedHealthWaitRegRunnableID(new SharedHealthWaitRegRunnable(plugin).getTaskId());
 								sHChallenge.setSharedHealth(sHChallenge.getSharedHealth() + event.getAmount());
 								if(sHChallenge.getSharedHealth() < player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) {
-									ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+									ChallengeProfile.getInstance().getParticipants().stream()
 									.filter(p -> p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
 									.filter(p -> !p.isDead())
 									.forEach(p -> {
@@ -93,7 +93,7 @@ public class SharedHealthPlayerChangeLifeListener implements Listener {
 									});
 								}
 								else {
-									ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+									ChallengeProfile.getInstance().getParticipants().stream()
 									.filter(p -> p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
 									.filter(p -> !p.isDead())
 									.forEach(p -> {
@@ -118,11 +118,11 @@ public class SharedHealthPlayerChangeLifeListener implements Listener {
 					
 					if(GenericChallenge.isActive(ChallengeType.SHARED_HEALTH)) {
 						Player player = (Player) event.getEntity();
-						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+						if(ChallengeProfile.getInstance().isInChallenge(player)) {
 							
 							//event.setCancelled(true);
 							Bukkit.getScheduler().runTaskLater(plugin, () -> {
-								ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+								ChallengeProfile.getInstance().getParticipants().stream()
 								.filter(p -> !p.hasPotionEffect(PotionEffectType.ABSORPTION))
 								.forEach(p -> {
 									boolean b = p.addPotionEffect(event.getNewEffect());
@@ -139,10 +139,10 @@ public class SharedHealthPlayerChangeLifeListener implements Listener {
 				if(event.getEntity() instanceof Player) {
 					if(GenericChallenge.isActive(ChallengeType.SHARED_HEALTH)) {
 						Player player = (Player) event.getEntity();
-						if(ChallengeProfile.getInstance().isInChallenge(player.getUniqueId())) {
+						if(ChallengeProfile.getInstance().isInChallenge(player)) {
 							//event.setCancelled(true);
 							Bukkit.getScheduler().runTaskLater(plugin, () -> {
-								ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+								ChallengeProfile.getInstance().getParticipants().stream()
 								.filter(p -> !p.hasPotionEffect(PotionEffectType.ABSORPTION))
 								.forEach(p -> {
 									p.removePotionEffect(event.getOldEffect().getType());

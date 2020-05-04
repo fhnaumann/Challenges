@@ -23,7 +23,7 @@ public class LavaGroundListener extends CoreListener {
 		if(event.getPlayer().isOnGround()) {
 			ChallengeProfile cProfile = ChallengeProfile.getInstance();
 			if(cProfile.canTakeEffect()) {
-				if(cProfile.isInChallenge(event.getPlayer().getUniqueId())) {
+				if(cProfile.isInChallenge(event.getPlayer())) {
 					LavaGroundChallenge lavaGroundChallenge = GenericChallenge.getChallenge(ChallengeType.GROUND_IS_LAVA);
 					if(lavaGroundChallenge.isActive()) {
 						if(event.getFrom().getBlock().getType() != Material.LAVA) {

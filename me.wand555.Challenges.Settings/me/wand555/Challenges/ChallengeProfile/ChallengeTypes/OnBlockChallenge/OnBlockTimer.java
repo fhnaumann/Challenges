@@ -77,7 +77,7 @@ public class OnBlockTimer extends BukkitRunnable implements CallViolationEvent {
 			}
 			else {
 				
-				Set<Player> notStandingOnBlock = ChallengeProfile.getInstance().getParticipantsAsPlayers().stream()
+				Set<Player> notStandingOnBlock = ChallengeProfile.getInstance().getParticipants().stream()
 					.filter(p -> !playersOnBlock(p)).collect(Collectors.toSet());
 				if(notStandingOnBlock.size() != 0) {
 					if(onBlockChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {

@@ -170,6 +170,7 @@ public class LanguageMessages extends ConfigUtil {
 	 */
 	public static String passedMLG;
 	public static String passedOnBlock;
+	public static String passedHeight;
 	
 	/**
 	 * Logging messages (logDamage can be turned off in config)
@@ -395,6 +396,7 @@ public class LanguageMessages extends ConfigUtil {
 		
 		passedMLG = format(cfg.getString("passedMLG"));
 		passedOnBlock = format(cfg.getString("passedOnBlock"));
+		passedHeight = format(cfg.getString("passedHeight"));
 		
 		logDamage = format(cfg.getString("logDamage"));
 		logItemPickUp = format(cfg.getString("logItemPickUp"));

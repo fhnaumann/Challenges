@@ -26,7 +26,7 @@ public class NoBlockPlacingListener extends CoreListener {
 		if(ChallengeProfile.getInstance().canTakeEffect()) {
 			if(GenericChallenge.isActive(ChallengeType.NO_BLOCK_PLACING)) {
 				ChallengeProfile cProfile = ChallengeProfile.getInstance();
-				if(cProfile.isInChallenge(event.getPlayer().getUniqueId())) {
+				if(cProfile.isInChallenge(event.getPlayer())) {
 					Material mat = event.getBlockPlaced().getType();
 					if(mat != Material.LAVA 
 							&& mat != Material.WATER

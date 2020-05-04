@@ -175,6 +175,7 @@ public class UserConfig extends ConfigUtil {
 		
 		msgDefaults.put("passedMLG", "&7All players beat the MLG!");
 		msgDefaults.put("passedOnBlock", "&7All players stood on the correct block!");
+		msgDefaults.put("passedHeight", "&7All players were at the correct height!");
 		
 		msgDefaults.put("logDamage", "&2[PLAYER] &7took &e[AMOUNT] &7damage (Reason: &a[REASON]&7)!");
 		msgDefaults.put("logItemPickUp", "&2[PLAYER] &7collected &a[MATERIAL] &7(&e[AMOUNT]&7/&e[LIMIT]&7)!");
@@ -355,7 +356,8 @@ public class UserConfig extends ConfigUtil {
 		msgDefaults.put("violationToBeOnHeight", "&2[PLAYER] &7war nicht auf der Höhe &e[HEIGHT] &7(Bestrafung: &2[PUNISHMENT]&7!");
 		
 		msgDefaults.put("passedMLG", "&7Alle Spieler haben den MLG geschafft!");
-		msgDefaults.put("passedOnBlock", "Alle Spieler standen auf dem korrekten Block!");
+		msgDefaults.put("passedOnBlock", "&7Alle Spieler standen auf dem korrekten Block!");
+		msgDefaults.put("passedHeight", "&7Alle Spieler befanden sich auf der korrekten Höhe!");
 		
 		msgDefaults.put("logDamage", "&2[PLAYER] &7hat &e[AMOUNT] &7Schaden genommen (Grund: &a[REASON]&7)!");
 		msgDefaults.put("logItemPickUp", "&2[PLAYER] &7hat &a[MATERIAL] &7aufgesammelt(&e[AMOUNT]&7/&e[LIMIT]&7)!");

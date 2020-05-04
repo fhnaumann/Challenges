@@ -34,7 +34,7 @@ public class RandomizeListener implements Listener {
 			if(GenericChallenge.isActive(ChallengeType.RANDOMIZE_BLOCK_DROPS)) {
 				ChallengeProfile cProfile = ChallengeProfile.getInstance();
 				Player player = event.getPlayer();
-				if(cProfile.isInChallenge(player.getUniqueId())) {
+				if(cProfile.isInChallenge(player)) {
 					Block block = event.getBlock();
 					RandomizedBlockDropsChallenge rBDChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_BLOCK_DROPS);
 					Material random = rBDChallenge.getRandomizedMaterial(block.getType());
@@ -57,7 +57,7 @@ public class RandomizeListener implements Listener {
 			if(ChallengeProfile.getInstance().canTakeEffect()) {
 				if(GenericChallenge.isActive(ChallengeType.RANDOMIZE_MOB_DROPS)) {
 					ChallengeProfile cProfile = ChallengeProfile.getInstance();
-					if(cProfile.isInChallenge(player.getUniqueId())) {
+					if(cProfile.isInChallenge(player)) {
 						RandomizedMobDropsChallenge rMDChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_MOB_DROPS);
 						event.getDrops().forEach(itemstack -> {
 							Material random = rMDChallenge.getRandomizedMaterial(itemstack.getType());
@@ -78,7 +78,7 @@ public class RandomizeListener implements Listener {
 		if(ChallengeProfile.getInstance().canTakeEffect()) {
 			if(GenericChallenge.isActive(ChallengeType.RANDOMIZE_CRAFTING)) {
 				ChallengeProfile cProfile = ChallengeProfile.getInstance();
-				if(cProfile.isInChallenge(event.getViewers().get(0).getUniqueId())) {
+				if(cProfile.isInChallenge((Player)event.getViewers().get(0))) {
 					ItemStack original = event.getRecipe().getResult();
 					RandomizedCraftingChallenge rCChallenge = GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_CRAFTING);
 					event.getInventory().setResult(new ItemStack(rCChallenge.getRandomizedMaterial(original.getType()), original.getAmount()));

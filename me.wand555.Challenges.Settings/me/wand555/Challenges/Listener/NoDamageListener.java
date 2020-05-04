@@ -31,7 +31,7 @@ public class NoDamageListener extends CoreListener {
 				if(ChallengeProfile.getInstance().canTakeEffect()) {
 					ChallengeProfile cProfile = ChallengeProfile.getInstance();
 					Player player = (Player) event.getEntity();
-					if(cProfile.isInChallenge(player.getUniqueId())) {
+					if(cProfile.isInChallenge(player)) {
 						if(event.getFinalDamage() > 0) {
 							NoDamageChallenge noDamageChallenge = GenericChallenge.getChallenge(ChallengeType.NO_DAMAGE);
 							if(noDamageChallenge.isActive()) {
@@ -48,7 +48,7 @@ public class NoDamageListener extends CoreListener {
 											message, event.getCause(), event.getFinalDamage(), player);
 									Bukkit.getServer().getPluginManager().callEvent(violationEvent);
 									if(!violationEvent.isCancelled()) {
-										noDamageChallenge.enforcePunishment(noDamageChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), player);
+										noDamageChallenge.enforcePunishment(noDamageChallenge.getPunishType(), cProfile.getParticipants(), player);
 										cProfile.sendMessageToAllParticipants(violationEvent.getLogMessage());
 									}
 									else {

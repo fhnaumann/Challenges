@@ -34,7 +34,7 @@ public interface CallViolationEvent {
 		ChallengeViolationPunishmentEvent<T> violationEvent = new ChallengeViolationPunishmentEvent<T>(rawType, punishable.getPunishType(), logMessage, players);
 		Bukkit.getServer().getPluginManager().callEvent(violationEvent);
 		if(!violationEvent.isCancelled()) {
-			punishable.enforcePunishment(punishable.getPunishType(), cProfile.getParticipantsAsPlayers(), players);
+			punishable.enforcePunishment(punishable.getPunishType(), cProfile.getParticipants(), players);
 			cProfile.sendMessageToAllParticipants(violationEvent.getLogMessage());
 		}
 		else {
@@ -48,7 +48,7 @@ public interface CallViolationEvent {
 		ForceBlockChallengeViolationEvent violationEvent = new ForceBlockChallengeViolationEvent(onBlockChallenge, onBlockChallenge.getPunishType(), logMessage, toStayOn, players);
 		Bukkit.getServer().getPluginManager().callEvent(violationEvent);
 		if(!violationEvent.isCancelled()) {
-			onBlockChallenge.enforcePunishment(onBlockChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), players);
+			onBlockChallenge.enforcePunishment(onBlockChallenge.getPunishType(), cProfile.getParticipants(), players);
 			cProfile.sendMessageToAllParticipants(violationEvent.getLogMessage());
 		}
 		else {
@@ -61,7 +61,7 @@ public interface CallViolationEvent {
 		HeightChallengeViolationEvent violationEvent = new HeightChallengeViolationEvent(heightChallenge, heightChallenge.getPunishType(), logMessage, toBeOnHeightNormal, toBeOnHeightNether, players);
 		Bukkit.getServer().getPluginManager().callEvent(violationEvent);
 		if(!violationEvent.isCancelled()) {
-			heightChallenge.enforcePunishment(heightChallenge.getPunishType(), cProfile.getParticipantsAsPlayers(), players);
+			heightChallenge.enforcePunishment(heightChallenge.getPunishType(), cProfile.getParticipants(), players);
 			cProfile.sendMessageToAllParticipants(violationEvent.getLogMessage());
 		}
 		else {
@@ -78,7 +78,7 @@ public interface CallViolationEvent {
 			cProfile.setPaused();
 			cProfile.setDone();
 			cProfile.getSecondTimer().setMessageType(TimerMessage.TIMER_FINISHED);
-			for(Player p : cProfile.getParticipantsAsPlayers()) {
+			for(Player p : cProfile.getParticipants()) {
 				p.sendMessage(endEvent.getEndMessage());
 				p.setGameMode(GameMode.SPECTATOR);
 			}	
@@ -97,7 +97,7 @@ public interface CallViolationEvent {
 			cProfile.setPaused();
 			cProfile.setDone();
 			cProfile.getSecondTimer().setMessageType(TimerMessage.TIMER_FINISHED);
-			for(Player p : cProfile.getParticipantsAsPlayers()) {
+			for(Player p : cProfile.getParticipants()) {
 				p.sendMessage(endEvent.getEndMessage());
 				p.setGameMode(GameMode.SPECTATOR);
 				if(!sorted.isEmpty()) {
@@ -119,7 +119,7 @@ public interface CallViolationEvent {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
 		TimerHitZeroEvent zeroEvent = new TimerHitZeroEvent(message);
 		Bukkit.getServer().getPluginManager().callEvent(zeroEvent);
-		for(Player p : cProfile.getParticipantsAsPlayers()) {
+		for(Player p : cProfile.getParticipants()) {
 			p.sendMessage(zeroEvent.getEndMessage());
 			p.setGameMode(GameMode.SPECTATOR);
 		}
@@ -129,7 +129,7 @@ public interface CallViolationEvent {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
 		ChallengeBeatenEvent beatenEvent = new ChallengeBeatenEvent(activeChallenges, message);
 		Bukkit.getServer().getPluginManager().callEvent(beatenEvent);
-		for(Player p : cProfile.getParticipantsAsPlayers()) {
+		for(Player p : cProfile.getParticipants()) {
 			p.sendMessage(beatenEvent.getEndMessage());
 			p.setGameMode(GameMode.SPECTATOR);
 		}
@@ -139,7 +139,7 @@ public interface CallViolationEvent {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
 		ItemCollectionLimitGlobalChallengeBeatenEvent beatenEvent = new ItemCollectionLimitGlobalChallengeBeatenEvent(activeChallenges, message, sorted);
 		Bukkit.getServer().getPluginManager().callEvent(beatenEvent);
-		for(Player p : cProfile.getParticipantsAsPlayers()) {
+		for(Player p : cProfile.getParticipants()) {
 			p.sendMessage(beatenEvent.getEndMessage());
 			if(!sorted.isEmpty()) {
 				int place = 0;
