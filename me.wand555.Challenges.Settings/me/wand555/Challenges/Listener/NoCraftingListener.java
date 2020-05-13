@@ -14,6 +14,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoCraftingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
+import me.wand555.Challenges.Config.DisplayUtil;
 
 public class NoCraftingListener extends CoreListener {
 
@@ -37,7 +38,10 @@ public class NoCraftingListener extends CoreListener {
 										NoCraftingChallenge nCChallenge = GenericChallenge.getChallenge(ChallengeType.NO_CRAFTING);
 										if(!nCChallenge.byPassItems.contains(event.getCurrentItem().getType())) {
 											if(nCChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-												cProfile.endChallenge(nCChallenge, ChallengeEndReason.NO_BLOCK_PLACE, player);
+												cProfile.endChallenge(nCChallenge, 
+														ChallengeEndReason.NO_BLOCK_PLACE, 
+														new Object[] {DisplayUtil.displayItemStack(event.getCurrentItem())},
+														player);
 											}
 											else {		
 												String message = nCChallenge.createReasonMessage(nCChallenge.getPunishCause(), nCChallenge.getPunishType(), player);

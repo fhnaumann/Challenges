@@ -70,6 +70,7 @@ public class LanguageMessages extends ConfigUtil {
 	public static String endChallengeNoTimeLeft;
 	public static String endChallengeTooManyItemsGlobal;
 	public static String endChallengeSameItemInInventory;
+	public static String endChallengeNotOnHeight;
 	
 	public static String timerMessageStart;
 	public static String timerMessagePause;
@@ -285,6 +286,7 @@ public class LanguageMessages extends ConfigUtil {
 		endChallengeNoTimeLeft = format(cfg.getString("endChallengeNoTimeLeft"));
 		endChallengeTooManyItemsGlobal = format(cfg.getString("endChallengeTooManyItemsGlobal"));
 		endChallengeSameItemInInventory = format(cfg.getString("endChallengeSameItemInInventory"));
+		endChallengeNotOnHeight = format(cfg.getString("endChallengeNotOnHeight"));
 		
 		timerMessageStart = formatWithoutPrefix(cfg.getString("timerMessageStart"));
 		timerMessagePause = formatWithoutPrefix(cfg.getString("timerMessagePause"));

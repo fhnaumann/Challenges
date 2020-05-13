@@ -17,6 +17,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeEndReason;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.BossBarStatus;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
+import me.wand555.Challenges.Config.DisplayUtil;
 import me.wand555.Challenges.Config.LanguageMessages;
 
 public class OnBlockTimer extends BukkitRunnable implements CallViolationEvent {
@@ -82,7 +83,14 @@ public class OnBlockTimer extends BukkitRunnable implements CallViolationEvent {
 				if(notStandingOnBlock.size() != 0) {
 					if(onBlockChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
 						ChallengeProfile.getInstance()
-							.endChallenge(onBlockChallenge, ChallengeEndReason.NOT_ON_BLOCK, notStandingOnBlock.toArray(new Player[notStandingOnBlock.size()]));
+							.endChallenge(onBlockChallenge, 
+									ChallengeEndReason.NOT_ON_BLOCK, 
+									new Object[] {DisplayUtil.displayMaterial(onBlockChallenge.getToStayOn())},
+									notStandingOnBlock.toArray(new Player[notStandingOnBlock.size()]));
+						timeTo = ThreadLocalRandom.current()
+								.nextLong(onBlockChallenge.getEarliestToShow(), (onBlockChallenge.getLatestToShow()+1));
+						totalTimeTo = timeTo;
+						onBlockChallenge.fromShownToHiddenChange();
 					}
 					else {
 						Player[] causers = notStandingOnBlock.toArray(new Player[notStandingOnBlock.size()]);

@@ -1,10 +1,15 @@
 package me.wand555.Challenges.Config;
 
 import java.io.File;
-
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import me.wand555.Challenges.Challenges;
@@ -21,6 +26,17 @@ public class UserConfig extends ConfigUtil {
 		PLUGIN.getConfig().addDefault("Language", "de");
 		PLUGIN.getConfig().addDefault("logDamage", true);
 		PLUGIN.getConfig().addDefault("autoReset", false);
+		/*
+		final Map<Material, String> mapped = Stream.of(Material.values())
+				.filter(Material::isBlock)
+				.filter(Material::isItem)
+				.collect(Collectors.toMap(Function.identity(), mat -> DisplayUtil.displayMaterial(mat)));
+		
+		List<String> list = mapped.entrySet().stream().map(entry -> entry.getKey().toString() + "," + entry.getValue().toString())
+			.collect(Collectors.toList());
+		
+		PLUGIN.getConfig().addDefault("Translation", list.size()); */
+		
 		PLUGIN.saveConfig();
 	}
 	
@@ -256,17 +272,18 @@ public class UserConfig extends ConfigUtil {
 		
 		msgDefaults.put("endChallengeReset", "&7Nutze &a/challenge reset &7um die Challenge zu beenden.");
 		msgDefaults.put("endChallengeComplete", "&7Die Challenge wurde in &2&l[TIME] &7gemeistert!");
-		msgDefaults.put("endChallengeNaturalDeath", "&2[PLAYER] &7starb! Die Challenge ist vorbei!");
-		msgDefaults.put("endChallengeNoDamage", "&2[PLAYER] &7nahm Schaden! Die Challenge ist vorbei!");
-		msgDefaults.put("endChallengeNoPlace", "&2[PLAYER] &7platzierte einen Block! Die Challenge ist vorbei!");
-		msgDefaults.put("endChallengeNoBreak", "&2[PLAYER] &7baute einen Block ab! Die Challenge ist vorbei!");
-		msgDefaults.put("endChallengeNoCrafting", "&2[PLAYER] &7craftete ein Item! Die Challenge ist vorbei!");
+		msgDefaults.put("endChallengeNaturalDeath", "&2[PLAYER] &7starb (Grund: &e[REASON]&7! Die Challenge ist vorbei!");
+		msgDefaults.put("endChallengeNoDamage", "&2[PLAYER] &7nahm &a[AMOUNT] &7Schaden (&e[REASON]&7! Die Challenge ist vorbei!");
+		msgDefaults.put("endChallengeNoPlace", "&2[PLAYER] &7platzierte &e[BLOCK]&7! Die Challenge ist vorbei!");
+		msgDefaults.put("endChallengeNoBreak", "&2[PLAYER] &7baute &e[BLOCK] &7ab! Die Challenge ist vorbei!");
+		msgDefaults.put("endChallengeNoCrafting", "&2[PLAYER] &7craftete &e[ITEM]&7! Die Challenge ist vorbei!");
 		msgDefaults.put("endChallengeNoSneaking", "&2[PLAYER] &7sneakte! Die Challenge ist vorbei!");
 		msgDefaults.put("endChallengeFailedMLG", "&2[PLAYER] hat den MLG nicht geschafft! Die Challenge ist vorbei!");
-		msgDefaults.put("endChallengeNotOnBlock", "&2[PLAYER] &7stand nicht auf dem Block! Die Challenge ist vorbei!");
+		msgDefaults.put("endChallengeNotOnBlock", "&2[PLAYER] &7stand nicht auf &e[BLOCK]&7! Die Challenge ist vorbei!");
 		msgDefaults.put("endChallengeNoTimeLeft", "&7Der Timer ist abgelaufen! Die Challenge ist vorbei!");
-		msgDefaults.put("endChallengeTooManyItemsGlobal", "&2[PLAYER] &7hat das Item-Limit überschritten! Die Challenge ist vorbei!");
-		msgDefaults.put("endChallengeSameItemInInventory", "&2[PLAYER] &7hat ein Item aufgesammelt, was bereits jemand im Inventar hatte! Die Challenge ist vorbei!");	
+		msgDefaults.put("endChallengeTooManyItemsGlobal", "&2[PLAYER] &7hat mit &e[ITEM] &7Item-Limit überschritten! Die Challenge ist vorbei!");
+		msgDefaults.put("endChallengeSameItemInInventory", "&2[PLAYER] &7hat &e[ITEM] &7aufgesammelt, was bereits [PLAYERS] im Inventar haben! Die Challenge ist vorbei!");	
+		msgDefaults.put("endChallengeNotOnHeight", "&2[PLAYER] &7war nicht auf der vorgegebenen Höhe von &e[HEIGHT_NORMAL] &7(Nether: &e[HEIGHT_NETHER]&7)! Die Challenge ist vorbei!");
 		
 		msgDefaults.put("timerMessageStart", "&7&l/timer start");
 		msgDefaults.put("timerMessagePause", "&7&lPAUSIERT &2[TIME] &7- /timer pause");

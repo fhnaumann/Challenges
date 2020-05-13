@@ -12,7 +12,8 @@ public enum ChallengeEndReason {
 	FAILED_MLG(true), 
 	NOT_ON_BLOCK(true), 
 	TOO_MANY_ITEMS_GLOBAL(false),
-	SAME_ITEM_IN_INVENTORY(true)
+	SAME_ITEM_IN_INVENTORY(true),
+	NOT_ON_HEIGHT(true)
 	;
 	
 	private final boolean restorable;

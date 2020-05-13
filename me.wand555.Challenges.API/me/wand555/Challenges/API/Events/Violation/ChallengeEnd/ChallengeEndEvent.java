@@ -15,6 +15,7 @@ public class ChallengeEndEvent<T extends GenericChallenge> extends ChallengeViol
 	public ChallengeEndEvent(T challenge, ChallengeEndReason endReason, String message, Player... players) {
 		super(challenge, players);
 		this.endReason = endReason;
+		this.endMessage = message;
 		this.restorable = endReason.isRestorable();
 	}
 

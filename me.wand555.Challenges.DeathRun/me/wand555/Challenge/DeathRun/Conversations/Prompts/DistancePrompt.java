@@ -6,8 +6,9 @@ import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 
+import me.wand555.Challenge.DeathRun.DeathRunSettingType;
 import me.wand555.Challenge.DeathRun.Conversations.ConversationsHandler;
-import me.wand555.Challenge.DeathRun.Conversations.DeathRunSettingType;
+import me.wand555.Challenge.DeathRun.Conversations.Prompts.extra.DeathRunGoal;
 import me.wand555.Challenges.Challenges;
 
 public class DistancePrompt extends NumericPrompt {
@@ -27,18 +28,9 @@ public class DistancePrompt extends NumericPrompt {
 
 	@Override
 	public Prompt acceptValidatedInput(ConversationContext context, Number number) {
-		ConversationsHandler handler = ConversationsHandler.getConversationsHandler();
-		Player player = (Player) context.getForWhom();
-		handler.addAnswer(player, number.toString());
-		context.getAllSessionData().put(DeathRunSettingType.DISTANCE, number.intValue());
-		if(isNumberValid(context, number)) {
-			String distanceOrTime = handler.getAnswers(player).get(1);
-			return distanceOrTime.equalsIgnoreCase(DistanceOrTimePrompt.BOTH_GOAL) ? new TimePrompt() : new BorderPrompt();
-		}
-		else {
-			context.getForWhom().sendRawMessage("Wrong entry");
-			return this;
-		}
+	context.getAllSessionData().put(DeathRunSettingType.DISTANCE, number.intValue());
+		return context.getSessionData(DeathRunSettingType.DISTANCE_OR_TIME) == DeathRunGoal.BOTH_GOAL.getString() ? 
+				new TimePrompt() : new DirectionPrompt();
 		
 	}
 }

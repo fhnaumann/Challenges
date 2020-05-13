@@ -36,7 +36,7 @@ import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
-import me.wand555.Challenge.DeathRun.Conversations.DeathRunHandler;
+import me.wand555.Challenge.DeathRun.DeathRunHandler;
 import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.API.Events.Violation.CallViolationEvent;
 import me.wand555.Challenges.API.Events.Violation.ChallengeEnd.ChallengeEndEvent;
@@ -282,7 +282,7 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	}
 
 	@Override
-	public <T extends GenericChallenge> void endChallenge(T rawType, ChallengeEndReason reason, Player... causer) {		
+	public <T extends GenericChallenge> void endChallenge(T rawType, ChallengeEndReason reason, Object[] extraData, Player... causer) {		
 		if(reason.isRestorable()) restoreChallenge = new RestoreChallenge(getParticipants(), getSecondTimer().getTime(), reason);	
 		String reasonMessage;
 		LinkedHashMap<UUID, Integer> sorted = new LinkedHashMap<UUID, Integer>();
@@ -297,22 +297,34 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 			else {	
 				callChallengeBeatenEvent(activeChallenges, reasonMessage);
 			}
+			
 			return;
 		case NATURAL_DEATH:
-			reasonMessage = LanguageMessages.endChallengeNaturalDeath.replace("[PLAYER]", causer[0].getName());
-			break;
-		case NO_BLOCK_BREAK:
-			reasonMessage = LanguageMessages.endChallengeNoBreak.replace("[PLAYER]", causer[0].getName());
-			break;
-		case NO_BLOCK_PLACE:
-			reasonMessage = LanguageMessages.endChallengeNoPlace.replace("[PLAYER]", causer[0].getName());
-			break;
-		case NO_CRAFTING:
-			reasonMessage = LanguageMessages.endChallengeNoCrafting.replace("[PLAYER]", causer[0].getName());
+			reasonMessage = LanguageMessages.endChallengeNaturalDeath
+				.replace("[PLAYER]", causer[0].getName())
+				.replace("[REASON]", extraData[0].toString());
 			break;
 		case NO_DAMAGE:
-			reasonMessage = LanguageMessages.endChallengeNoDamage.replace("[PLAYER]", causer[0].getName());
+			reasonMessage = LanguageMessages.endChallengeNoDamage
+				.replace("[PLAYER]", causer[0].getName())
+				.replace("[AMOUNT]", extraData[0].toString())
+				.replace("[REASON]", extraData[1].toString());
 			break;
+		case NO_BLOCK_BREAK:
+			reasonMessage = LanguageMessages.endChallengeNoBreak
+				.replace("[PLAYER]", causer[0].getName())
+				.replace("[BLOCK]", extraData[0].toString());
+			break;
+		case NO_BLOCK_PLACE:
+			reasonMessage = LanguageMessages.endChallengeNoPlace
+				.replace("[PLAYER]", causer[0].getName())
+				.replace("[BLOCK]", extraData[0].toString());
+			break;
+		case NO_CRAFTING:
+			reasonMessage = LanguageMessages.endChallengeNoCrafting
+				.replace("[PLAYER]", causer[0].getName())
+				.replace("[ITEM]", extraData[0].toString());
+			break;	
 		case NO_SNEAKING:
 			reasonMessage = LanguageMessages.endChallengeNoSneaking.replace("[PLAYER]", causer[0].getName());
 			break;
@@ -320,7 +332,9 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 			reasonMessage = LanguageMessages.endChallengeFailedMLG.replace("[PLAYER]", causer[0].getName());
 			break;
 		case NOT_ON_BLOCK:
-			reasonMessage = LanguageMessages.endChallengeNotOnBlock.replace("[PLAYER]", getMultipleCausers(causer));
+			reasonMessage = LanguageMessages.endChallengeNotOnBlock
+				.replace("[PLAYER]", getMultipleCausers(causer))
+				.replace("[BLOCK]", extraData[0].toString());
 			break;
 		case NO_TIME_LEFT:
 			//rawType will be null here.
@@ -328,16 +342,26 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 			callEndChallengeNoTimeLeft(reasonMessage);
 			return;
 		case TOO_MANY_ITEMS_GLOBAL:
-			reasonMessage = LanguageMessages.endChallengeTooManyItemsGlobal.replace("[PLAYER]", causer[0].getName());	
+			reasonMessage = LanguageMessages.endChallengeTooManyItemsGlobal
+				.replace("[PLAYER]", causer[0].getName())
+				.replace("[ITEM]", extraData[0].toString());	
 			ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
 			sorted = iCLGChallenge.displayReadyStats();
 			callEndChallengeItemCollectionLimitGlobalChallengeEventAndActUpon(iCLGChallenge, reason, reasonMessage, sorted, causer[0]);
 			return;
 		case SAME_ITEM_IN_INVENTORY:
 			reasonMessage = LanguageMessages.endChallengeSameItemInInventory
-				.replace("[PLAYER]", causer[0].getName());
+				.replace("[PLAYER]", causer[0].getName())
+				.replace("[ITEM]", extraData[0].toString())
+				.replace("[PLAYERS]", extraData[1].toString());
 				//.replace("[MATERIAL]", WordUtils.capitalize(((ItemCollectionSameItemLimitChallenge)GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM))
 				//		.getLatestAdded().toString().replace('_', ' ').toLowerCase()));
+			break;
+		case NOT_ON_HEIGHT:
+			reasonMessage = LanguageMessages.endChallengeNotOnHeight
+				.replace("[PLAYER]", getMultipleCausers(causer))
+				.replace("[HEIGHT_NORMAL]", extraData[0].toString())
+			.replace("[HEIGHT_NETHER]", extraData[1].toString());
 			break;
 		default:
 			reasonMessage = "Unknown";

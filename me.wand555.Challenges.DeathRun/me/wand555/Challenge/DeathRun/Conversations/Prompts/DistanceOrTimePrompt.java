@@ -1,24 +1,23 @@
 package me.wand555.Challenge.DeathRun.Conversations.Prompts;
 
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.BooleanPrompt;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
-
-import me.wand555.Challenge.DeathRun.Conversations.ConversationsHandler;
-import me.wand555.Challenge.DeathRun.Conversations.DeathRunSettingType;
+import me.wand555.Challenge.DeathRun.DeathRunSettingType;
+import me.wand555.Challenge.DeathRun.Conversations.Prompts.extra.DeathRunGoal;
 import me.wand555.Challenges.Challenges;
 
 public class DistanceOrTimePrompt extends FixedSetPrompt {
-
-	public static final String DISTANCE_GOAL = "distance"; 
-	public static final String TIME_GOAL = "time";
-	public static final String BOTH_GOAL = "both";
 	
-	public DistanceOrTimePrompt(String... fixedSet) {
-		super(fixedSet);
+	public DistanceOrTimePrompt() {
+		super(Stream.of(DeathRunGoal.values())
+				.map(DeathRunGoal::getString).collect(Collectors.toList())
+				.toArray(new String[DeathRunGoal.values().length]));
 	}
 	
 	@Override
@@ -28,17 +27,19 @@ public class DistanceOrTimePrompt extends FixedSetPrompt {
 	
 	@Override
 	protected Prompt acceptValidatedInput(ConversationContext context, String answer) {
-		ConversationsHandler handler = ConversationsHandler.getConversationsHandler();
-		handler.addAnswer((Player) context.getForWhom(), answer);
-		context.getAllSessionData().put(DeathRunSettingType.DISTANCE_OR_TIME, answer);
-		if(isInputValid(context, answer)) {
-			if(answer.equalsIgnoreCase(DISTANCE_GOAL)) return new DistancePrompt();
-			else if(answer.equalsIgnoreCase(TIME_GOAL)) return new TimePrompt();
-			else if(answer.equalsIgnoreCase(BOTH_GOAL)) return new DistancePrompt(); //check previous answers and load TimePrompt after entering...
+		
+		if(answer.equalsIgnoreCase(DeathRunGoal.DISTANCE_GOAL.getString())) {
+			context.getAllSessionData().put(DeathRunSettingType.DISTANCE_OR_TIME, DeathRunGoal.DISTANCE_GOAL.getString());
+			return new DistancePrompt();
 		}
-		else {
-			context.getForWhom().sendRawMessage("Wrong");		
+		else if(answer.equalsIgnoreCase(DeathRunGoal.TIME_GOAL.getString())) {
+			context.getAllSessionData().put(DeathRunSettingType.DISTANCE_OR_TIME, DeathRunGoal.TIME_GOAL.getString());
+			return new TimePrompt();
 		}
-		return new DistanceOrTimePrompt(new String[] {DISTANCE_GOAL, TIME_GOAL, BOTH_GOAL});
+		else if(answer.equalsIgnoreCase(DeathRunGoal.BOTH_GOAL.getString())) {
+			context.getAllSessionData().put(DeathRunSettingType.DISTANCE_OR_TIME, DeathRunGoal.BOTH_GOAL.getString());
+			return new DistancePrompt(); //check previous answers and load TimePrompt after entering...
+		}
+		return new DistanceOrTimePrompt();
 	}
 }

@@ -15,6 +15,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoDamageChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
+import me.wand555.Challenges.Config.DisplayUtil;
 import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
 
 public class NoDamageListener extends CoreListener {
@@ -36,7 +37,14 @@ public class NoDamageListener extends CoreListener {
 							NoDamageChallenge noDamageChallenge = GenericChallenge.getChallenge(ChallengeType.NO_DAMAGE);
 							if(noDamageChallenge.isActive()) {
 								if(noDamageChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-									cProfile.endChallenge(noDamageChallenge, ChallengeEndReason.NO_DAMAGE, player);
+									cProfile.endChallenge(noDamageChallenge, 
+											ChallengeEndReason.NO_DAMAGE, 
+											new Object[] {event.getFinalDamage(),
+													event instanceof EntityDamageByEntityEvent ? 
+													DisplayUtil.displayDamageDealtBy(((EntityDamageByEntityEvent)event).getDamager())
+														: DisplayUtil.displayDamageCause(event.getCause())		
+											},
+											player);
 								}
 								else {
 									String message = noDamageChallenge.createNoDamageReasonMessage(

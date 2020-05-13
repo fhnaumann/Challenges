@@ -1,10 +1,15 @@
 package me.wand555.Challenges.Listener;
 
+import java.util.Arrays;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
@@ -13,6 +18,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeEndReason;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
+import me.wand555.Challenges.Config.DisplayUtil;
 import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
 
 public class PlayerDeathListener extends CoreListener {
@@ -23,19 +29,39 @@ public class PlayerDeathListener extends CoreListener {
 		this.plugin = plugin;
 	}
 	
-	@EventHandler
-	public void onPlayerDeathEvent(PlayerDeathEvent event) {
-		Player player = event.getEntity();
+	@EventHandler (priority = EventPriority.LOW)
+	public void onPlayerDeathEvent(EntityDamageEvent event) {
+		if(!(event.getEntity() instanceof Player)) return;
+		Player player = (Player) event.getEntity();
+		if(event.getFinalDamage() < player.getHealth()) return;
+		
 		if(GenericChallenge.isActive(ChallengeType.END_ON_DEATH)) {
 			ChallengeProfile cProfile = ChallengeProfile.getInstance();
 			if(cProfile.isInChallenge(player)) {
 				if(cProfile.canTakeEffect()) {
-					event.getDrops().clear();
-					cProfile.endChallenge(GenericChallenge.getChallenge(ChallengeType.END_ON_DEATH), ChallengeEndReason.NATURAL_DEATH, player);
-					player.spigot().respawn();	
+					//event.getDrops().clear();
+					Bukkit.getPluginManager().callEvent(new PlayerDeathEvent(player, Arrays.asList(player.getInventory().getContents()), player.getExpToLevel(), ""));
+					cProfile.endChallenge(GenericChallenge.getChallenge(ChallengeType.END_ON_DEATH), 
+							ChallengeEndReason.NATURAL_DEATH, 
+							new Object[] {event instanceof EntityDamageByEntityEvent ? 
+									DisplayUtil.displayDamageDealtBy(((EntityDamageByEntityEvent)event).getDamager())
+									: DisplayUtil.displayDamageCause(event.getCause())},
+							player);
+					player.spigot().respawn();
 				}
 			}
 		}	
+	}
+	
+	@EventHandler (priority = EventPriority.HIGH)
+	public void onPlayerDeathDropItemsEvent(PlayerDeathEvent event) {
+		Player player = event.getEntity();
+		if(GenericChallenge.isActive(ChallengeType.END_ON_DEATH)) {
+			ChallengeProfile cProfile = ChallengeProfile.getInstance();
+			if(cProfile.isInChallenge(player)) {
+				event.getDrops().clear();
+			}
+		}
 	}
 	
 	@EventHandler

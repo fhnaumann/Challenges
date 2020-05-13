@@ -28,7 +28,7 @@ public class NoSneakingListener extends CoreListener {
 					if(cProfile.isInChallenge(event.getPlayer())) {
 						NoSneakingChallenge nSChallenge = GenericChallenge.getChallenge(ChallengeType.NO_SNEAKING);
 						if(nSChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-							cProfile.endChallenge(nSChallenge, ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());
+							cProfile.endChallenge(nSChallenge, ChallengeEndReason.NO_BLOCK_PLACE, null, event.getPlayer());
 						}
 						else {
 							String message = nSChallenge.createReasonMessage(nSChallenge.getPunishCause(), nSChallenge.getPunishType(), event.getPlayer());

@@ -5,6 +5,7 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
@@ -14,6 +15,7 @@ import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 
+import me.wand555.Challenge.DeathRun.DeathRunHandler;
 import me.wand555.Challenge.DeathRun.Conversations.ConversationsHandler;
 import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
@@ -405,6 +407,23 @@ public class CE implements CommandExecutor {
 				}
 				else {
 					
+				}
+			}
+			else if(args.length == 1) {
+				if(args[0].equalsIgnoreCase("start")) {
+					if(player.hasPermission("challenge.deathrun.start")) {
+						if(cProfile.isInChallenge(player)) {
+							if(cProfile.isDeathRunMode()) {
+								//DeathRunHandler.getDeathRunHandler().startDeathRunCountdown(plugin);
+							}
+							else {
+								
+							}
+						}
+						else {
+							
+						}
+					}
 				}
 			}
 			else {

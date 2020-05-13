@@ -11,6 +11,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoBlockBreakingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
+import me.wand555.Challenges.Config.DisplayUtil;
 
 public class NoBlockBreakingListener extends CoreListener {
 	
@@ -27,7 +28,10 @@ public class NoBlockBreakingListener extends CoreListener {
 				if(cProfile.isInChallenge(event.getPlayer())) {
 					NoBlockBreakingChallenge nBBChallenge = GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_BREAKING);
 					if(nBBChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-						cProfile.endChallenge(nBBChallenge, ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());
+						cProfile.endChallenge(nBBChallenge, 
+								ChallengeEndReason.NO_BLOCK_PLACE, 
+								new Object[] {DisplayUtil.displayBlock(event.getBlock())},
+								event.getPlayer());
 					}
 					else {
 						String message = nBBChallenge.createReasonMessage(nBBChallenge.getPunishCause(), nBBChallenge.getPunishType(), event.getPlayer());

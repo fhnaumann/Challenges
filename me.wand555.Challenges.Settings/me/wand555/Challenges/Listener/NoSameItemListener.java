@@ -1,5 +1,6 @@
 package me.wand555.Challenges.Listener;
 
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.bukkit.Material;
@@ -23,6 +24,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionSameItemLimitChallenge;
+import me.wand555.Challenges.Config.DisplayUtil;
 
 public class NoSameItemListener extends CoreListener {
 
@@ -48,7 +50,15 @@ public class NoSameItemListener extends CoreListener {
 				//Player has clicked top
 				if(!iCSILChallenge.canBeObtained(mat, player.getUniqueId())) {
 					if(iCSILChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-						cProfile.endChallenge(iCSILChallenge, ChallengeEndReason.SAME_ITEM_IN_INVENTORY, player);
+						cProfile.endChallenge(iCSILChallenge, 
+								ChallengeEndReason.SAME_ITEM_IN_INVENTORY,
+								new Object[] {
+										DisplayUtil.displayItemStack(event.getCurrentItem()),
+										DisplayUtil.displayPlayersAlreadyOwningItem(
+												cProfile.getParticipants().stream()
+													.filter(p -> p.getInventory().contains(event.getCurrentItem().getType()))
+													.collect(Collectors.toList()))},
+								player);
 					}
 					else if(iCSILChallenge.getPunishType() == PunishType.NOTHING) {
 						event.setCancelled(true);
@@ -73,7 +83,15 @@ public class NoSameItemListener extends CoreListener {
 					Material mat = event.getItem().getItemStack().getType();
 					if(!iCSILChallenge.canBeObtained(mat, player.getUniqueId())) {
 						if(iCSILChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-							cProfile.endChallenge(iCSILChallenge, ChallengeEndReason.SAME_ITEM_IN_INVENTORY, player);
+							cProfile.endChallenge(iCSILChallenge, 
+									ChallengeEndReason.SAME_ITEM_IN_INVENTORY, 
+									new Object[] {
+											DisplayUtil.displayItemStack(event.getItem().getItemStack()),
+											DisplayUtil.displayPlayersAlreadyOwningItem(
+													cProfile.getParticipants().stream()
+														.filter(p -> p.getInventory().contains(event.getItem().getItemStack()))
+														.collect(Collectors.toList()))},
+									player);
 						}
 						else if(iCSILChallenge.getPunishType() == PunishType.NOTHING) {
 							event.setCancelled(true);

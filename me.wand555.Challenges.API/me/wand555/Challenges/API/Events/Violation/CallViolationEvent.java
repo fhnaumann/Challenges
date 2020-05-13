@@ -70,7 +70,7 @@ public interface CallViolationEvent {
 	}
 	
 	
-	default <T extends GenericChallenge> void callEndChallengeEventAndActUpon(T rawType, ChallengeEndReason endReason, String message, Player... players) {
+	default <T extends GenericChallenge> void callEndChallengeEventAndActUpon(T rawType, ChallengeEndReason endReason, String message, Object[] extraData, Player... players) {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
 		ChallengeEndEvent<T> endEvent = new ChallengeEndEvent<T>(rawType, endReason, message, players);
 		Bukkit.getServer().getPluginManager().callEvent(endEvent);
@@ -119,16 +119,24 @@ public interface CallViolationEvent {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
 		TimerHitZeroEvent zeroEvent = new TimerHitZeroEvent(message);
 		Bukkit.getServer().getPluginManager().callEvent(zeroEvent);
+		
+		cProfile.setPaused();
+		cProfile.setDone();
+		cProfile.getSecondTimer().setMessageType(TimerMessage.TIMER_FINISHED);
 		for(Player p : cProfile.getParticipants()) {
 			p.sendMessage(zeroEvent.getEndMessage());
 			p.setGameMode(GameMode.SPECTATOR);
-		}
+		}		
 	}
 	
 	default void callChallengeBeatenEvent(List<ChallengeType> activeChallenges, String message) {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
 		ChallengeBeatenEvent beatenEvent = new ChallengeBeatenEvent(activeChallenges, message);
 		Bukkit.getServer().getPluginManager().callEvent(beatenEvent);
+		
+		cProfile.setPaused();
+		cProfile.setDone();
+		cProfile.getSecondTimer().setMessageType(TimerMessage.TIMER_FINISHED);
 		for(Player p : cProfile.getParticipants()) {
 			p.sendMessage(beatenEvent.getEndMessage());
 			p.setGameMode(GameMode.SPECTATOR);
@@ -139,6 +147,10 @@ public interface CallViolationEvent {
 		ChallengeProfile cProfile = ChallengeProfile.getInstance();
 		ItemCollectionLimitGlobalChallengeBeatenEvent beatenEvent = new ItemCollectionLimitGlobalChallengeBeatenEvent(activeChallenges, message, sorted);
 		Bukkit.getServer().getPluginManager().callEvent(beatenEvent);
+		
+		cProfile.setPaused();
+		cProfile.setDone();
+		cProfile.getSecondTimer().setMessageType(TimerMessage.TIMER_FINISHED);
 		for(Player p : cProfile.getParticipants()) {
 			p.sendMessage(beatenEvent.getEndMessage());
 			if(!sorted.isEmpty()) {

@@ -549,6 +549,7 @@ public class ConfigHandler extends ConfigUtil {
 		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "netherportals.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		for(String key : cfg.getKeys(false)) {
+			if(key == null || key.isEmpty()) continue;
 			new Gate(cfg.getStringList(key+".FrameBlockLocs").stream().map(sLoc -> deserializeLocation(sLoc).getBlock()).collect(Collectors.toCollection(HashSet::new)), 
 					cfg.getStringList(key+".PortalBlockLocs").stream().map(sLoc -> deserializeLocation(sLoc).getBlock()).collect(Collectors.toCollection(HashSet::new)), 
 					Axis.valueOf(cfg.getString(key+".Axis")), 

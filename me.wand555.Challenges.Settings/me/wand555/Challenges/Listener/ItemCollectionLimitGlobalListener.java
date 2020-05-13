@@ -15,6 +15,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
+import me.wand555.Challenges.Config.DisplayUtil;
 import me.wand555.Challenges.Config.LanguageMessages;
 
 public class ItemCollectionLimitGlobalListener implements Listener {
@@ -34,7 +35,10 @@ public class ItemCollectionLimitGlobalListener implements Listener {
 					boolean added = iCLGChallenge.addToUniqueItems(event.getItem().getItemStack().getType(), player.getUniqueId());
 					if(added) {
 						if(iCLGChallenge.isOverLimit()) {
-							cProfile.endChallenge(iCLGChallenge, ChallengeEndReason.TOO_MANY_ITEMS_GLOBAL, player);
+							cProfile.endChallenge(iCLGChallenge, 
+									ChallengeEndReason.TOO_MANY_ITEMS_GLOBAL, 
+									new Object[] {DisplayUtil.displayItemStack(event.getItem().getItemStack())},
+									player);
 						}
 						else {
 							String message = iCLGChallenge.createItemCollectLogMessage(player.getName(), event.getItem().getItemStack().getType());
@@ -67,7 +71,10 @@ public class ItemCollectionLimitGlobalListener implements Listener {
 				boolean added = iCLGChallenge.addToUniqueItems(event.getCurrentItem().getType(), player.getUniqueId());
 				if(added) {
 					if(iCLGChallenge.isOverLimit()) {
-						cProfile.endChallenge(iCLGChallenge, ChallengeEndReason.TOO_MANY_ITEMS_GLOBAL, player);
+						cProfile.endChallenge(iCLGChallenge, 
+								ChallengeEndReason.TOO_MANY_ITEMS_GLOBAL, 
+								new Object[] {DisplayUtil.displayItemStack(event.getCurrentItem())},
+								player);
 					}
 					else {
 						String message = iCLGChallenge.createItemCollectLogMessage(player.getName(), event.getCurrentItem().getType());
@@ -107,6 +114,7 @@ public class ItemCollectionLimitGlobalListener implements Listener {
 	@EventHandler
 	public void playerDropItemEvent(ItemSpawnEvent event) {
 		ItemCollectionLimitGlobalChallenge iCLGChallenge = GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL);
+		if(iCLGChallenge == null) return;
 		if(iCLGChallenge.isActive()) {
 			if(iCLGChallenge.getUniqueItems().containsKey(event.getEntity().getItemStack().getType())) {
 				event.getEntity().setCustomName(LanguageMessages.itemOnGroundAlreadyCollectedName);

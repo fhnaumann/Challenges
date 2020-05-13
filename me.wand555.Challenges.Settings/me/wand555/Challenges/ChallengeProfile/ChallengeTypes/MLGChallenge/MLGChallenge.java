@@ -74,6 +74,7 @@ public class MLGChallenge extends GenericChallenge implements Punishable, Reason
 		for(Player p : players) {
 			if(p.isDead()) continue;
 			WorldUtil.storePlayerInformationInChallenge(p);
+			p.closeInventory();
 			p.getInventory().clear();
 			p.getInventory().setItemInMainHand(new ItemStack(Material.WATER_BUCKET));
 			p.setGameMode(GameMode.SURVIVAL);
@@ -113,8 +114,7 @@ public class MLGChallenge extends GenericChallenge implements Punishable, Reason
 				.map(Bukkit::getPlayer)
 				.filter(p1 -> p1 != null)
 				.forEach(WorldUtil::loadPlayerInformationInChallengeAndApply);
-				ChallengeProfile.getInstance().endChallenge(GenericChallenge.getChallenge(ChallengeType.MLG), ChallengeEndReason.FAILED_MLG, p);
-				
+				ChallengeProfile.getInstance().endChallenge(GenericChallenge.getChallenge(ChallengeType.MLG), ChallengeEndReason.FAILED_MLG, null, p);
 				ChallengeProfile.getInstance().setInMLGRightNow();
 				inMLGWorld.clear();
 			}

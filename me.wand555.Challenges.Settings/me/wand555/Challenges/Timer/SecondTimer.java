@@ -36,14 +36,20 @@ public class SecondTimer extends BukkitRunnable {
 		
 		if(cProfile.hasStarted && !cProfile.isPaused) {
 			if(this.order == TimerOrder.DESC && time <= 0) {
-				cProfile.endChallenge(null, ChallengeEndReason.NO_TIME_LEFT);
+				cProfile.endChallenge(null, ChallengeEndReason.NO_TIME_LEFT, null);
 				return;
 			}
 			this.time = order == TimerOrder.ASC ? this.time+1 : this.time-1;
-			String displayTime = DateUtil.formatDuration(time);
-			TextComponent component = new TextComponent(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + displayTime);
-			cProfile.getParticipants()
-				.forEach(p -> p.spigot().sendMessage(ChatMessageType.ACTION_BAR, component));
+			if(messageType == TimerMessage.DEATHRUN_RUNNING) {
+				
+			}
+			else {
+				String displayTime = DateUtil.formatDuration(time);
+				TextComponent component = new TextComponent(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + displayTime);
+				cProfile.getParticipants()
+					.forEach(p -> p.spigot().sendMessage(ChatMessageType.ACTION_BAR, component));
+			}
+			
 		}
 		else {
 			TextComponent component;

@@ -6,8 +6,8 @@ import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 
+import me.wand555.Challenge.DeathRun.DeathRunSettingType;
 import me.wand555.Challenge.DeathRun.Conversations.ConversationsHandler;
-import me.wand555.Challenge.DeathRun.Conversations.DeathRunSettingType;
 import me.wand555.Challenges.Challenges;
 
 public class BorderPrompt extends NumericPrompt {
@@ -29,7 +29,6 @@ public class BorderPrompt extends NumericPrompt {
 	protected Prompt acceptValidatedInput(ConversationContext context, Number number) {
 		ConversationsHandler handler = ConversationsHandler.getConversationsHandler();
 		Player player = (Player) context.getForWhom();
-		handler.addAnswer(player, number.toString());
 		context.getAllSessionData().put(DeathRunSettingType.BORDER, number.intValue());
 		if(isNumberValid(context, number)) {
 			return new OutOnDeathPrompt();

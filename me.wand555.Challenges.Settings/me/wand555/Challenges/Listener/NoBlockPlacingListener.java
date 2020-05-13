@@ -13,6 +13,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.NoBlockPlacingChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.PunishType;
+import me.wand555.Challenges.Config.DisplayUtil;
 
 public class NoBlockPlacingListener extends CoreListener {
 
@@ -35,7 +36,10 @@ public class NoBlockPlacingListener extends CoreListener {
 								&& event.getBlock().getRelative(BlockFace.DOWN).getType() == Material.OBSIDIAN)) {
 						NoBlockPlacingChallenge nBPChallenge = GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_PLACING);					
 						if(nBPChallenge.getPunishType() == PunishType.CHALLENGE_OVER) {
-							cProfile.endChallenge(nBPChallenge, ChallengeEndReason.NO_BLOCK_PLACE, event.getPlayer());
+							cProfile.endChallenge(nBPChallenge, 
+									ChallengeEndReason.NO_BLOCK_PLACE, 
+									new Object[] {DisplayUtil.displayBlock(event.getBlock())},
+									event.getPlayer());
 						}
 						else {
 							String message = nBPChallenge.createReasonMessage(nBPChallenge.getPunishCause(), nBPChallenge.getPunishType(), event.getPlayer());
