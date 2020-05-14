@@ -28,7 +28,7 @@ import me.wand555.GUI.GUIType;
 
 public interface CallSettingsChangeEvents {
 
-	default <T extends GenericChallenge> void callSettingsChangeNormalEventAndActUpon(T rawType, Player p, GUI gui) {
+	default <T extends GenericChallenge> void callSettingsChangeNormalEventAndActUpon(T rawType, Player p, int indexClicked, GUI gui) {
 		GenericChallenge genericChallenge = (GenericChallenge) rawType;
 		ChallengeStatusSwitchEvent<T> switchEvent = new ChallengeStatusSwitchEvent<T>(rawType, p);
 		Bukkit.getServer().getPluginManager().callEvent(switchEvent);
@@ -88,7 +88,8 @@ public interface CallSettingsChangeEvents {
 		else {
 			if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());
 		}
-		gui.createGUI(p, GUIType.OVERVIEW);	
+		//System.out.println("index called from normal settings change event: " + indexClicked);
+		gui.createGUI(p, GUIType.OVERVIEW, indexClicked, rawType);	
 	}
 	
 	default <T extends GenericChallenge & Punishable> void callSettingsChangePunishableEventAndActUpon(T rawType, PunishType type, Player p, GUI gui, Challenges plugin) {
@@ -172,10 +173,100 @@ public interface CallSettingsChangeEvents {
 			}
 			if(switchEvent.hasOverrideMessage()) p.sendMessage(switchEvent.getOverrideMessage());
 		}
-		gui.createGUI(p, GUIType.PUNISHMENT.getGoBack());
+		//System.out.println("From Map: " + gui.punishmentChallengeTypeOpenGUI.get(p.getUniqueId()));
+		//System.out.println("Raw Type: " + rawType);
+		gui.createGUI(p, GUIType.PUNISHMENT.getGoBack(), gui.punishmentChallengeTypeOpenGUI.get(p.getUniqueId()), rawType);
+		//gui.punishmentChallengeTypeOpenGUI.remove(p.getUniqueId());
 	}
 	
-	default void callSettingsChangeCustomHealthEventAndActUpon(CustomHealthChallenge customHealthChallenge, int amount, Player p, GUI gui) {
+	default <T extends GenericChallenge & Punishable> void callSettingsChangePunishableEventAndActUpon(T rawType, PunishType type, Player p, int indexClicked, GUI gui, Challenges plugin) {
+		GenericChallenge genericChallenge = (GenericChallenge) rawType;
+		
+		if(rawType.getClass().equals(MLGChallenge.class)) {
+			MLGChallenge mlgChallenge = (MLGChallenge) rawType;			
+			long timeToMLG = ThreadLocalRandom.current()
+					.nextLong(mlgChallenge.getEarliest()*20, (mlgChallenge.getLatest()+1)*20);
+			MLGChallengeStatusSwitchEvent switchEvent = new MLGChallengeStatusSwitchEvent(mlgChallenge, timeToMLG, type, p);
+			Bukkit.getServer().getPluginManager().callEvent(switchEvent);
+			if(!switchEvent.isCancelled()) {
+				mlgChallenge.setPunishType(switchEvent.getPunishType());
+				mlgChallenge.setAround();
+				mlgChallenge.setEarliest(switchEvent.getEarliest());
+				mlgChallenge.setLatest(switchEvent.getLatest());
+				mlgChallenge.setHeight(switchEvent.getHeight());
+				mlgChallenge.setTimer(new MLGTimer(plugin, switchEvent.getTimeToNextMLG(), switchEvent.getTimeToNextMLG()));
+				mlgChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());
+			}
+			else {
+				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	
+			}
+			if(switchEvent.hasOverrideMessage()) p.sendMessage(switchEvent.getOverrideMessage());
+		}
+		else if(rawType.getClass().equals(OnBlockChallenge.class)) {
+			OnBlockChallenge onBlockChallenge = (OnBlockChallenge) rawType;
+			long timeToBlockShown = ThreadLocalRandom.current()
+					.nextLong(onBlockChallenge.getEarliestToShow(), (onBlockChallenge.getLatestToShow()+1));
+			ForceBlockChallengeStatusSwitchEvent switchEvent = new ForceBlockChallengeStatusSwitchEvent(onBlockChallenge, timeToBlockShown, type, p);
+			Bukkit.getServer().getPluginManager().callEvent(switchEvent);
+			if(!switchEvent.isCancelled()) {
+				onBlockChallenge.setAround();
+				onBlockChallenge.setPunishType(switchEvent.getPunishType());
+				onBlockChallenge.setEarliestToShow(switchEvent.getEarliestToShow());
+				onBlockChallenge.setLatestToShow(switchEvent.getLatestToShow());
+				onBlockChallenge.setEarliestOnBlock(switchEvent.getEarliestOnBlock());
+				onBlockChallenge.setLatestOnBlock(switchEvent.getLatestOnBlock());
+				onBlockChallenge.setTimer(new OnBlockTimer(plugin, onBlockChallenge, switchEvent.getTimeToBlockShown(), switchEvent.getTimeToBlockShown(), true));
+				ChallengeProfile.getInstance().getParticipants().forEach(player -> onBlockChallenge.addPlayerToBossBar(player));
+				onBlockChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());
+			}
+			else {
+				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	
+			}
+			if(switchEvent.hasOverrideMessage()) p.sendMessage(switchEvent.getOverrideMessage());
+		}
+		else if(rawType.getClass().equals(HeightChallenge.class)) {
+			HeightChallenge heightChallenge = (HeightChallenge) rawType;
+			long timeToHeightShown = ThreadLocalRandom.current()
+					.nextLong(heightChallenge.getEarliestToShow(), (heightChallenge.getLatestToShow()+1));
+			HeightChallengeStatusSwitchEvent switchEvent = new HeightChallengeStatusSwitchEvent(heightChallenge, timeToHeightShown, type, p);
+			Bukkit.getServer().getPluginManager().callEvent(switchEvent);
+			if(!switchEvent.isCancelled()) {
+				heightChallenge.setAround();
+				heightChallenge.setPunishType(switchEvent.getPunishType());
+				heightChallenge.setEarliestToShow(switchEvent.getEarliestToShow());
+				heightChallenge.setLatestToShow(switchEvent.getLatestToShow());
+				heightChallenge.setEarliestToBeOnHeight(switchEvent.getEarliestToBeOnHeight());
+				heightChallenge.setLatestToBeOnHeight(switchEvent.getLatestToBeOnHeight());
+				heightChallenge.setTimer(new HeightTimer(plugin, heightChallenge, switchEvent.getTimeToHeightShown(), switchEvent.getTimeToHeightShown(), true));
+				ChallengeProfile.getInstance().getParticipants().forEach(player -> heightChallenge.addPlayerToBossBar(player));
+				heightChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());
+			}
+			else {
+				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	
+			}
+			if(switchEvent.hasOverrideMessage()) p.sendMessage(switchEvent.getOverrideMessage());
+		}
+		else {
+			PunishableChallengeStatusSwitchEvent<T> switchEvent = new PunishableChallengeStatusSwitchEvent<T>(rawType, type, p);
+			Bukkit.getServer().getPluginManager().callEvent(switchEvent);
+			if(!switchEvent.isCancelled()) {
+				Punishable punishable = (Punishable) rawType;	
+				punishable.setPunishType(switchEvent.getPunishType());
+				genericChallenge.setAround();
+				genericChallenge.sendTitleChangeMessage(ChallengeProfile.getInstance().getParticipants());
+			}
+			else {
+				if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());			
+			}
+			if(switchEvent.hasOverrideMessage()) p.sendMessage(switchEvent.getOverrideMessage());
+		}
+		//System.out.println("From Map: " + gui.punishmentChallengeTypeOpenGUI.get(p.getUniqueId()));
+		//System.out.println("Raw Type: " + rawType);
+		gui.createGUI(p, GUIType.PUNISHMENT.getGoBack(), indexClicked, rawType);
+		//gui.punishmentChallengeTypeOpenGUI.remove(p.getUniqueId());
+	}
+	
+	default void callSettingsChangeCustomHealthEventAndActUpon(CustomHealthChallenge customHealthChallenge, int amount, Player p, int indexClicked, GUI gui) {
 		CustomHealthChallengeStatusSwitchEvent switchEvent = new CustomHealthChallengeStatusSwitchEvent(customHealthChallenge, amount, p);
 		Bukkit.getServer().getPluginManager().callEvent(switchEvent);
 		if(!switchEvent.isCancelled()) {
@@ -187,10 +278,10 @@ public interface CallSettingsChangeEvents {
 			if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());		
 		}
 		if(switchEvent.hasOverrideMessage()) p.sendMessage(switchEvent.getOverrideMessage());
-		gui.createGUI(p, GUIType.OVERVIEW);
+		gui.createGUI(p, GUIType.OVERVIEW, indexClicked, customHealthChallenge);
 	}
 	
-	default void callSettingsChangeRandomChallengeEventAndActUpon(RandomChallenge randomChallenge, HashMap<Material, Material> randomizedMapped, Player p, GUI gui) {
+	default void callSettingsChangeRandomChallengeEventAndActUpon(RandomChallenge randomChallenge, HashMap<Material, Material> randomizedMapped, Player p, int indexClicked, GUI gui) {
 		RandomChallengeStatusSwitchEvent<RandomChallenge> switchEvent = new RandomChallengeStatusSwitchEvent<RandomChallenge>(randomChallenge, randomizedMapped, p);
 		Bukkit.getServer().getPluginManager().callEvent(switchEvent);
 		if(!switchEvent.isCancelled()) {
@@ -203,10 +294,10 @@ public interface CallSettingsChangeEvents {
 			if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());	
 		}
 		if(switchEvent.hasOverrideMessage()) p.sendMessage(switchEvent.getOverrideMessage());
-		gui.createGUI(p, GUIType.OVERVIEW);
+		gui.createGUI(p, GUIType.OVERVIEW, indexClicked, randomChallenge);
 	}
 	
-	default void callSettingsChangeItemCollectionLimitGlobalChallengeEventAndActUpon(ItemCollectionLimitGlobalChallenge iCLGChallenge, int limit, Player p, GUI gui) {
+	default void callSettingsChangeItemCollectionLimitGlobalChallengeEventAndActUpon(ItemCollectionLimitGlobalChallenge iCLGChallenge, int limit, Player p, int indexClicked, GUI gui) {
 		ItemCollectionLimitGlobalChallengeStatusSwitchEvent switchEvent = new ItemCollectionLimitGlobalChallengeStatusSwitchEvent(iCLGChallenge, limit, p);
 		Bukkit.getServer().getPluginManager().callEvent(switchEvent);
 		if(!switchEvent.isCancelled()) {
@@ -223,6 +314,6 @@ public interface CallSettingsChangeEvents {
 			if(switchEvent.hasDeniedMessage()) p.sendMessage(switchEvent.getDeniedMessage());
 		}
 		if(switchEvent.hasOverrideMessage()) p.sendMessage(switchEvent.getOverrideMessage());
-		gui.createGUI(p, GUIType.OVERVIEW);
+		gui.createGUI(p, GUIType.OVERVIEW, indexClicked, iCLGChallenge);
 	}
 }

@@ -65,6 +65,7 @@ import me.wand555.Challenges.Timer.TimerMessage;
 import me.wand555.Challenges.Timer.TimerOrder;
 import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
 import me.wand555.GUI.GUIType;
+import me.wand555.GUI.InventoryManager;
 import me.wand555.GUI.SignMenuFactory;
 
 public class ChallengeProfile extends Settings implements TimerOptions, ChallengeOptions, CallViolationEvent {
@@ -77,8 +78,6 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 	private RestoreChallenge restoreChallenge;
 	private Backpack backpack;
 	private PositionManager posManager;
-	
-	private InventoryManager invManager;
 	
 	private Scoreboard scoreBoard;
 	
@@ -441,10 +440,5 @@ public class ChallengeProfile extends Settings implements TimerOptions, Challeng
 		.filter(p -> p.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.GREEN + "Settings") 
 				|| p.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.RED + "Punishments"))
 		.forEach(Player::closeInventory);
-	}
-	
-	public InventoryManager getInventoryManager() {
-		if(invManager == null) invManager = new InventoryManager();
-		return invManager;
 	}
 }

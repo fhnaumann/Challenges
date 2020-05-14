@@ -28,6 +28,7 @@ import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.WorldLinkingManager.WorldLinkManager;
 import me.wand555.EndLinking.EndHelper;
+import me.wand555.GUI.InventoryManager;
 import me.wand555.NetherLinking.Gate;
 
 public class WorldUtil extends ConfigUtil {
@@ -246,8 +247,8 @@ public class WorldUtil extends ConfigUtil {
 	public static void deleteChallengeWorldsAndPlayerData() {
 		ChallengeProfile.getInstance().restoreDefault();
 		GenericChallenge.clearAllChallenges();
-		ChallengeProfile.getInstance().getInventoryManager().getAlreadyCollectedGUI().clear();
-		ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI().clear();
+		InventoryManager.getInventoryManager().getAlreadyCollectedGUI().clear();
+		InventoryManager.getInventoryManager().getBackpackGUI().clear();
 		ChallengeProfile.getInstance().getBackpack().setEnabled(false);
 		ChallengeProfile.getInstance().getPosManager().getPositions().clear();
 		

@@ -17,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 
 import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
-import me.wand555.Challenges.ChallengeProfile.InventoryManager;
 import me.wand555.Challenges.ChallengeProfile.Settings;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.BossBarStatus;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
@@ -53,6 +52,7 @@ import me.wand555.Challenges.Timer.SecondTimer;
 import me.wand555.Challenges.Timer.TimerMessage;
 import me.wand555.Challenges.Timer.TimerOrder;
 import me.wand555.EndLinking.ObsidianPlatform;
+import me.wand555.GUI.InventoryManager;
 import me.wand555.NetherLinking.Gate;
 
 import org.apache.commons.lang.WordUtils;
@@ -89,7 +89,7 @@ public class ConfigHandler extends ConfigUtil {
 		List<?> list = cfg.getList("Content");
 		if(list == null) {
 			//ChallengeProfile.getInstance().getBackpack().setContents(new ItemStack[InventoryManager.BACKPACK_GUI_SIZE]);
-		} else ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI().setContents(list.toArray(new ItemStack[list.size()]));
+		} else InventoryManager.getInventoryManager().getBackpackGUI().setContents(list.toArray(new ItemStack[list.size()]));
 	}
 	
 	private static void storeBackpackToConfig() {
@@ -97,7 +97,7 @@ public class ConfigHandler extends ConfigUtil {
 		File file = new File(PLUGIN.getDataFolder()+""+File.separatorChar+"Data", "backpack.yml");
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		cfg.set("Status", ChallengeProfile.getInstance().getBackpack().isEnabled());
-		cfg.set("Content", Arrays.asList(ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI().getContents()));
+		cfg.set("Content", Arrays.asList(InventoryManager.getInventoryManager().getBackpackGUI().getContents()));
 		saveCustomYml(cfg, file);
 	}
 	

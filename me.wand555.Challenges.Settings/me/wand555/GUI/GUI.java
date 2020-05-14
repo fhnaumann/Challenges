@@ -15,16 +15,16 @@ import com.google.common.collect.Lists;
 import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
-import me.wand555.Challenges.ChallengeProfile.InventoryManager;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemDisplayCreator;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ItemCollectionLimitChallenge.ItemCollectionLimitGlobalChallenge;
 import me.wand555.Challenges.Config.LanguageMessages;
+import me.wand555.GUI.Holders.SettingsHolder;
 
 public class GUI implements ItemDisplayCreator {
 
-	public HashMap<UUID, ChallengeType> punishmentChallengeTypeOpenGUI = new HashMap<UUID, ChallengeType>();
+	public HashMap<UUID, Integer> punishmentChallengeTypeOpenGUI = new HashMap<UUID, Integer>();
 	
 	private Challenges plugin;
 	
@@ -32,138 +32,24 @@ public class GUI implements ItemDisplayCreator {
 		this.plugin = plugin;
 	}
 	
-	public void createGUI(Player p, GUIType type, ChallengeType...challengeType) {
+	public <T extends GenericChallenge> void createGUI(Player p, GUIType type, int indexClicked, T challenge) {
+		InventoryManager invManager = InventoryManager.getInventoryManager();
 		Inventory gui = null;
 		if(type == GUIType.OVERVIEW) {
-			gui = ChallengeProfile.getInstance().getInventoryManager().getSettingsGUI();
-			for(int i=0; i<gui.getSize(); i++) {
-				switch(i) {
-				case 0:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.END_ON_DEATH).getDisplayItem());
-					break;
-				case 1:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NETHER_FORTRESS_SPAWN).getDisplayItem());
-					break;
-				case 2:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_DAMAGE).getDisplayItem());
-					break;
-				case 3:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_REG).getDisplayItem());
-					break;			
-				case 4:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_REG_HARD).getDisplayItem());
-					break;	
-				case 5:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.CUSTOM_HEALTH).getDisplayItem());
-					break;
-				case 6:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.SHARED_HEALTH).getDisplayItem());
-					break;
-				case 7:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_PLACING).getDisplayItem());
-					break;
-				case 8:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_BLOCK_BREAKING).getDisplayItem());
-					break;
-				case 9:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_CRAFTING).getDisplayItem());
-					break;
-				case 10:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_SNEAKING).getDisplayItem());
-					break;
-				case 11:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_BLOCK_DROPS).getDisplayItem());
-					break;
-				case 12:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_MOB_DROPS).getDisplayItem());
-					break;
-				case 13:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.RANDOMIZE_CRAFTING).getDisplayItem());
-					break;
-				case 14:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.MLG).getDisplayItem());
-					break;
-				case 15:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.ON_BLOCK).getDisplayItem());
-					break;
-				case 16:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.ITEM_LIMIT_GLOBAL).getDisplayItem());
-					break;
-				case 17:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.NO_SAME_ITEM).getDisplayItem());
-					break;
-				case 18:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.GROUND_IS_LAVA).getDisplayItem());
-					break;
-				case 19:
-					gui.setItem(i, GenericChallenge.getChallenge(ChallengeType.BE_AT_HEIGHT).getDisplayItem());
-					break;
-				case 26:
-					gui.setItem(i, createItem(Material.CHEST, 
-							LanguageMessages.guiBackpackName, 
-							new ArrayList<String>(LanguageMessages.guiBackpackLore), 
-							ChallengeProfile.getInstance().getBackpack().isEnabled()));
-					break;		
-				default:	
-					gui.setItem(i, createGlass());
-				}
-			}	
-			ChallengeProfile.getInstance().getInventoryManager().setSettingsGUI(gui);
+			if(indexClicked >= InventoryManager.SETTINGS_GUI_SIZE) return;	
+			if(challenge != null) System.out.println(challenge.getChallengeType());
+			if(indexClicked > -1) {
+				System.out.println("index clicked before updating: " + indexClicked);
+				invManager.changeSetting(indexClicked, challenge);
+			}
+			gui = invManager.getSettingsGUI();
 		}
 		else if(type == GUIType.PUNISHMENT) {
-			//make a small method the get a more convient challenge type name
-			gui = ChallengeProfile.getInstance().getInventoryManager().getPunishmentGUI();
-			for(int i=0; i<gui.getSize(); i++) {
-				switch(i) {
-				case 0:
-					gui.setItem(i, createItemWithoutBoolean(Material.WRITABLE_BOOK, 
-							LanguageMessages.punishNothing));
-					break;
-				case 2:
-					gui.setItem(i, createItemWithoutBoolean(Material.WRITABLE_BOOK, 
-							LanguageMessages.punishHealth.replace("[AMOUNT]", "1-10")));
-					break;
-				case 4:
-					gui.setItem(i, createItemWithoutBoolean(Material.WRITABLE_BOOK, 
-							LanguageMessages.punishHealthAll.replace("[AMOUNT]", "1-10")));
-					break;
-				case 6:
-					gui.setItem(i, createItemWithoutBoolean(Material.WRITABLE_BOOK, 
-							LanguageMessages.punishDeath));
-					break;
-				case 8:
-					gui.setItem(i, createItemWithoutBoolean(Material.WRITABLE_BOOK, 
-							LanguageMessages.punishDeathAll));
-					break;
-				case 18:
-					gui.setItem(i, createItemWithoutBoolean(Material.WRITABLE_BOOK, 
-							LanguageMessages.punishOneRandomItem));
-					break;
-				case 20:
-					gui.setItem(i, createItemWithoutBoolean(Material.WRITABLE_BOOK, 
-							LanguageMessages.punishOneRandomItemAll));
-					break;
-				case 22:
-					gui.setItem(i, createItemWithoutBoolean(Material.WRITABLE_BOOK, 
-							LanguageMessages.punishAllItems));
-					break;
-				case 24:
-					gui.setItem(i, createItemWithoutBoolean(Material.WRITABLE_BOOK, 
-							LanguageMessages.punishAllItemsAll));
-					break;
-				case 26:
-					gui.setItem(i, createItemWithoutBoolean(Material.WRITABLE_BOOK, 
-							LanguageMessages.punishChallengeOver));
-					break;
-				case 31:
-					gui.setItem(i, createGoBack(type));
-					break;
-				default:
-					gui.setItem(i, createGlass());
-				}
-			}
-			ChallengeProfile.getInstance().getInventoryManager().setPunishmentGUI(gui);
-			punishmentChallengeTypeOpenGUI.put(p.getUniqueId(), challengeType[0]);
+			//indexClicked is still the challenge index
+			System.out.println("added index: " + indexClicked);
+			punishmentChallengeTypeOpenGUI.put(p.getUniqueId(), indexClicked);
+			System.out.println("(after) index in map: " + punishmentChallengeTypeOpenGUI.get(p.getUniqueId()));
+			gui = invManager.getPunishmentGUI();
 		}
 		else if(type == GUIType.COLLECTED_ITEMS_LIST) {
 			gui = Bukkit.createInventory(null, InventoryManager.ALREADY_COLLECTED_GUI_SIZE, ChatColor.DARK_GREEN + "Collected Items");
@@ -184,7 +70,6 @@ public class GUI implements ItemDisplayCreator {
 				}
 				else gui.setItem(i, createGlass());
 			}
-			ChallengeProfile.getInstance().getInventoryManager().setAlreadyCollectedGUI(gui);
 		}
 		p.openInventory(gui);
 	}

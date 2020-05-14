@@ -19,7 +19,6 @@ import me.wand555.Challenge.DeathRun.DeathRunHandler;
 import me.wand555.Challenge.DeathRun.Conversations.ConversationsHandler;
 import me.wand555.Challenges.ChallengeProfile.Backpack;
 import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
-import me.wand555.Challenges.ChallengeProfile.InventoryManager;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ChallengeType;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.GenericChallenge;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.SharedHealthChallenge.SharedHealthChallenge;
@@ -30,6 +29,7 @@ import me.wand555.Challenges.Config.WorldUtil;
 import me.wand555.Challenges.Timer.TimerOrder;
 import me.wand555.GUI.GUI;
 import me.wand555.GUI.GUIType;
+import me.wand555.GUI.InventoryManager;
 import me.wand555.GUI.SignMenuFactory;
 
 public class CE implements CommandExecutor {
@@ -277,7 +277,7 @@ public class CE implements CommandExecutor {
 				if(player.hasPermission("challenge.bp")) {
 					if(ChallengeProfile.getInstance().isInChallenge(player)) {
 						if(ChallengeProfile.getInstance().getBackpack().isEnabled()) {
-							player.openInventory(ChallengeProfile.getInstance().getInventoryManager().getBackpackGUI());
+							player.openInventory(InventoryManager.getInventoryManager().getBackpackGUI());
 						}
 						else {
 							player.sendMessage(LanguageMessages.backpackDisabled);
@@ -378,7 +378,7 @@ public class CE implements CommandExecutor {
 					if(cProfile.isInChallenge(player)) {
 						//if(cProfile.isPaused || !cProfile.hasStarted) {
 							//create settings gui
-							gui.createGUI(player, GUIType.OVERVIEW);
+							gui.createGUI(player, GUIType.OVERVIEW, -1, null);
 						//}
 						//else {
 						//	player.sendMessage(LanguageMessages.noSettingsHasToBePaused);

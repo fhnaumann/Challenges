@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.wand555.Challenges.Challenges;
 import me.wand555.Challenges.ChallengeProfile.ChallengeTypes.ReasonNotifiable;
+import me.wand555.GUI.InventoryManager;
 
 @Deprecated
 public class Backpack {
