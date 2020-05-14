@@ -25,11 +25,11 @@ import org.bukkit.scoreboard.Team;
 import me.wand555.Challenge.DeathRun.Conversations.Prompts.extra.DeathRunGoal;
 import me.wand555.Challenge.DeathRun.distancecalculations.DeathRunPlace;
 import me.wand555.Challenge.DeathRun.distancecalculations.DeathRunPlaceManager;
-import me.wand555.Challenges.Challenges;
-import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
-import me.wand555.Challenges.Timer.SecondTimer;
-import me.wand555.Challenges.Timer.TimerMessage;
-import me.wand555.Challenges.Timer.TimerOrder;
+import me.wand555.challenges.settings.challengeprofile.ChallengeProfile;
+import me.wand555.challenges.settings.timer.SecondTimer;
+import me.wand555.challenges.settings.timer.TimerMessage;
+import me.wand555.challenges.settings.timer.TimerOrder;
+import me.wand555.challenges.start.Challenges;
 
 public class DeathRunHandler {
 

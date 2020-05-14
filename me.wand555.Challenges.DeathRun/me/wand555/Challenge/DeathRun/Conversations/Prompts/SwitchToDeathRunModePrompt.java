@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import me.wand555.Challenge.DeathRun.DeathRunHandler;
 import me.wand555.Challenge.DeathRun.Conversations.ConversationsHandler;
 import me.wand555.Challenge.DeathRun.Conversations.Prompts.Extension.EnhancedBooleanPrompt;
-import me.wand555.Challenges.Challenges;
+import me.wand555.challenges.start.Challenges;
 
 public class SwitchToDeathRunModePrompt extends EnhancedBooleanPrompt {
 	

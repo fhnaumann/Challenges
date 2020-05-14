@@ -2,8 +2,8 @@ package me.wand555.Challenge.DeathRun;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.wand555.Challenges.Challenges;
-import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
+import me.wand555.challenges.settings.challengeprofile.ChallengeProfile;
+import me.wand555.challenges.start.Challenges;
 
 public class Countdown extends BukkitRunnable {
 

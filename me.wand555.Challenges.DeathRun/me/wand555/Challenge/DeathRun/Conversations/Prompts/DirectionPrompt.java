@@ -10,7 +10,7 @@ import org.bukkit.conversations.Prompt;
 
 import me.wand555.Challenge.DeathRun.DeathRunDirection;
 import me.wand555.Challenge.DeathRun.DeathRunSettingType;
-import me.wand555.Challenges.Challenges;
+import me.wand555.challenges.start.Challenges;
 public class DirectionPrompt extends FixedSetPrompt {
 
 	public DirectionPrompt() {

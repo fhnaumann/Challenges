@@ -5,7 +5,7 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 
 import me.wand555.Challenge.DeathRun.Conversations.Prompts.SwitchToDeathRunModePrompt;
-import me.wand555.Challenges.Challenges;
+import me.wand555.challenges.start.Challenges;
 
 public class ConversationsHandler {
 

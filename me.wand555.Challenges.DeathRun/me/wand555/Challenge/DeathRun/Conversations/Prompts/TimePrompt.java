@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 
 import me.wand555.Challenge.DeathRun.DeathRunSettingType;
 import me.wand555.Challenge.DeathRun.Conversations.ConversationsHandler;
-import me.wand555.Challenges.Challenges;
-import me.wand555.Challenges.Timer.DateUtil;
+import me.wand555.challenges.settings.timer.DateUtil;
+import me.wand555.challenges.start.Challenges;
 
 public class TimePrompt extends StringPrompt {
 

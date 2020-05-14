@@ -4,7 +4,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.wand555.Challenge.DeathRun.DeathRunHandler;
 import me.wand555.Challenge.DeathRun.Conversations.Prompts.extra.DeathRunGoal;
-import me.wand555.Challenges.Challenges;
+import me.wand555.challenges.start.Challenges;
 
 public class CheckOvertakingTimer extends BukkitRunnable {
 

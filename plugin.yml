@@ -1,4 +1,4 @@
-main: me.wand555.Challenges.Challenges
+main: me.wand555.challenges.Challenges
 name: Challenges
 prefix: Challenges
 version: 1.0.5

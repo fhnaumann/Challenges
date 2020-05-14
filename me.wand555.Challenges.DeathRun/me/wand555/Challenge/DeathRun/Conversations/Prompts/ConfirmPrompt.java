@@ -10,9 +10,9 @@ import me.wand555.Challenge.DeathRun.DeathRunHandler;
 import me.wand555.Challenge.DeathRun.DeathRunSettingType;
 import me.wand555.Challenge.DeathRun.Conversations.Prompts.Extension.EnhancedBooleanPrompt;
 import me.wand555.Challenge.DeathRun.Conversations.Prompts.extra.DeathRunGoal;
-import me.wand555.Challenges.Challenges;
-import me.wand555.Challenges.ChallengeProfile.ChallengeMode;
-import me.wand555.Challenges.ChallengeProfile.ChallengeProfile;
+import me.wand555.challenges.settings.challengeprofile.ChallengeMode;
+import me.wand555.challenges.settings.challengeprofile.ChallengeProfile;
+import me.wand555.challenges.start.Challenges;
 
 public class ConfirmPrompt extends EnhancedBooleanPrompt {
 
